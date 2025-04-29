@@ -41,12 +41,12 @@ export default function Home() {
       <>
         <mesh position={position}>
           <boxGeometry args={[0.95, 0.95, 0.95]} />
-          <meshPhongMaterial attach="material-0" color={colors[0]} shininess={100} specular="#ffffff" />
-          <meshPhongMaterial attach="material-1" color={colors[1]} shininess={100} specular="#ffffff" />
-          <meshPhongMaterial attach="material-2" color={colors[2]} shininess={100} specular="#ffffff" />
-          <meshPhongMaterial attach="material-3" color={colors[3]} shininess={100} specular="#ffffff" />
-          <meshPhongMaterial attach="material-4" color={colors[4]} shininess={100} specular="#ffffff" />
-          <meshPhongMaterial attach="material-5" color={colors[5]} shininess={100} specular="#ffffff" />
+          <meshPhysicalMaterial attach="material-0" color={colors[0]} roughness={0.3} metalness={0.0} clearcoat={1} clearcoatRoughness={0.1} />
+          <meshPhysicalMaterial attach="material-1" color={colors[1]} roughness={0.3} metalness={0.0} clearcoat={1} clearcoatRoughness={0.1} />
+          <meshPhysicalMaterial attach="material-2" color={colors[2]} roughness={0.3} metalness={0.0} clearcoat={1} clearcoatRoughness={0.1} />
+          <meshPhysicalMaterial attach="material-3" color={colors[3]} roughness={0.3} metalness={0.0} clearcoat={1} clearcoatRoughness={0.1} />
+          <meshPhysicalMaterial attach="material-4" color={colors[4]} roughness={0.3} metalness={0.0} clearcoat={1} clearcoatRoughness={0.1} />
+          <meshPhysicalMaterial attach="material-5" color={colors[5]} roughness={0.3} metalness={0.0} clearcoat={1} clearcoatRoughness={0.1} />
         </mesh>
         
         {/* 上面编码 */}
@@ -159,9 +159,10 @@ export default function Home() {
             >
               <OrbitControls/>
               <ambientLight intensity={0.7} />
-              <directionalLight position={[5, 5, 5]} intensity={1} />
-              <directionalLight position={[-5, -5, -5]} intensity={1} />
+              <directionalLight position={[5, 5, 5]} intensity={1.5} />
+              <directionalLight position={[-5, -5, -5]} intensity={0.5} />
               <pointLight position={[10, 10, 10]} intensity={1} />
+              <Environment preset="city" />
               <Rubik />
             </Canvas>
           </div>
