@@ -1,11 +1,25 @@
 'use client'
+import '@ant-design/v5-patch-for-react-19';
 import { Button } from "antd";
 import Image from "next/image";
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Stats, OrbitControls, Environment, Text } from '@react-three/drei'
+import { useState, useRef } from 'react'
 
 export default function Home() {
+  // 添加旋转状态管理
+  const [isRotating, setIsRotating] = useState(false);
+  const rotationRef = useRef(0);
+  const animationRef = useRef(null);
+
+  // 旋转U层的函数
+  const rotateULayer = () => {
+    if (isRotating) return; // 如果正在旋转，则不执行
+    setIsRotating(true);
+    rotationRef.current = 0;
+  };
+
   function Cube({ position }) {
     const colors = ['#009E60', '#0051BA', '#FFD500', '#FFFFFF', '#C41E3A', '#FF5800'] // R L U D F B
     
@@ -112,19 +126,40 @@ export default function Home() {
     )
   }
 
-  function Rubik(){
+  function Rubik() {
+    // 动画逻辑
+    useFrame((state, delta) => {
+      if (isRotating) {
+        rotationRef.current += delta * Math.PI; // 控制旋转速度
+        if (rotationRef.current >= Math.PI/2) {
+          // 完成90度旋转
+          rotationRef.current = Math.PI/2;
+          setIsRotating(false);
+        }
+      }
+    });
+
     return (
-      <group >
-      {[...Array(3).keys()].map((x) =>
-        [...Array(3).keys()].map((y) => 
-          [...Array(3).keys()].map((z) => 
-          <Cube key={x + y * 3 + z * 9} position={[x - 1, y - 1, z - 1]} />
-              )
+      <group>
+        {[...Array(3).keys()].map((x) =>
+          [...Array(3).keys()].map((y) => 
+            [...Array(3).keys()].map((z) => {
+              const isUpperLayer = y === 2; // 判断是否是上层
+              const rotation = isUpperLayer && isRotating ? [0, -rotationRef.current, 0] : [0, 0, 0];
+              return (
+                <group 
+                  key={x + y * 3 + z * 9} 
+                  position={[x - 1, y - 1, z - 1]}
+                  rotation={rotation}
+                >
+                  <Cube position={[0, 0, 0]} />
+                </group>
+              );
+            })
           )
-      )}
-    </group>
-      
-    )
+        )}
+      </group>
+    );
   }
 
   return (
@@ -138,7 +173,11 @@ export default function Home() {
       <main className="flex flex-1 gap-4 p-2 min-h-0">
         {/* Left Panel - 30% */}
         <div className="w-[30%] bg-gray-100 rounded-lg p-4 overflow-auto">
-          <Button type="primary">Primary Button</Button>
+          <div className="space-y-4">
+            <Button type="primary" onClick={rotateULayer}>
+              旋转U层
+            </Button>
+          </div>
         </div>
 
         {/* Right Panel - 70% with Canvas */}
@@ -162,7 +201,7 @@ export default function Home() {
               <directionalLight position={[5, 5, 5]} intensity={1.5} />
               <directionalLight position={[-5, -5, -5]} intensity={0.5} />
               <pointLight position={[10, 10, 10]} intensity={1} />
-              <Environment preset="city" />
+              <Environment preset="warehouse" /> {/* Changed from "city" to "warehouse" */}
               <Rubik />
             </Canvas>
           </div>
