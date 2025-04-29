@@ -7,6 +7,16 @@ import * as THREE from 'three'
 import { Stats, OrbitControls, Environment, Text } from '@react-three/drei'
 import { useState, useRef } from 'react'
 
+//重点参考
+//https://github.com/starkeyyyy/3d-Rubiks-cube 
+
+
+//https://blog.songxingguo.com/posts/tech/react-three-fiber-cube/
+//https://abhtri.medium.com/rubiks-cube-in-react-three-fiber-0e8d81fae769
+//https://medium.com/@nicholasrogers_98170/building-a-rubiks-cube-in-react-three-js-and-good-ole-javascript-96649d1172d9
+//https://github.com/selfboot/ai_gallery
+
+
 export default function Home() {
   // 添加旋转状态管理
   const [isRotating, setIsRotating] = useState(false);
