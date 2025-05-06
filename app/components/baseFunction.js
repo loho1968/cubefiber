@@ -1,4 +1,28 @@
 import * as XLSX from "xlsx";
+/**
+ * 公式反转
+ * @param formula
+ * @returns
+ */
+export function getReverseFormula(formula) {
+  const arr = formula.split(/ +/);
+  let reverseFormula = "";
+  for (let i = arr.length - 1; i >= 0; i--) {
+    arr[i] = arr[i].replace(" ", "");
+    if (arr[i] == "") continue;
+    if (arr[i].indexOf("2") > -1) {
+      reverseFormula += " " + arr[i];
+      continue;
+    }
+    if (arr[i].indexOf("'") == -1) {
+      reverseFormula += " " + arr[i] + "'";
+    } else {
+      reverseFormula += " " + arr[i].replace("'", "");
+    }
+  }
+  return reverseFormula.substring(1).split(" ");
+}
+
 export async function loadData() {
   let data = [];
   let result = {};

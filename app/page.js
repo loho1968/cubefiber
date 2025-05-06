@@ -5,7 +5,8 @@ import { Button, Flex, Radio, Switch, Table, TableColumnsType } from "antd";
 import Search from "antd/es/input/Search";
 import { EditOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { loadData, loadBlindCode } from "./components/loaddata";
+import { loadData, getReverseFormula } from "./components/baseFunction";
+import target from "three/src/nodes/core/Node";
 //重点参考
 //https://github.com/starkeyyyy/3d-Rubiks-cube
 
@@ -43,12 +44,25 @@ export default function Home() {
   ];
   const cfopCloumns = [
     {
-      title: "Name",
-      dataIndex: "Name",
+      title: "编码",
+      dataIndex: "编码",
+      align: "center",
+      sortOrder: "ascend",
+    },
+    {
+      title: "名称",
+      dataIndex: "名称",
+      align: "center",
+      sortOrder: "ascend",
+    },
+    {
+      title: "分组",
+      dataIndex: "分组",
       align: "center",
       sortOrder: "ascend",
     },
   ];
+  const [tabColumns, setTabColumns] = useState(blindColumns);
   //#endregion
   //#region 加载数据数据
   const [blindCode, setBlindCode] = useState([]); //盲拧公式编码
@@ -92,12 +106,14 @@ export default function Home() {
         blindFormula.forEach((item, index) => {
           item.id = index;
         });
+        setTabColumns(blindColumns);
         setCubeFormula(blindFormula);
         break;
       case "cfop":
         cropFormula.forEach((item, index) => {
           item.id = index;
         });
+        setTabColumns(cfopCloumns);
         setCubeFormula(cropFormula);
         break;
       case "special":
@@ -107,6 +123,7 @@ export default function Home() {
         break;
     }
   };
+
   //盲拧过滤数据
   const filterBlindData = (s = "", c) => {
     const blindType = c ? "edge" : "corner";
@@ -120,6 +137,7 @@ export default function Home() {
 
   //#region 点击公式行
   const clickRow = (record) => {
+    record.逆向公式 = getReverseFormula(record.公式);
     setCurrentFormula(record);
     // showCube(record, allColorChecked, showCodeChecked);
   };
@@ -128,6 +146,8 @@ export default function Home() {
   //公式类型
   const setFormulaTypeValue = ({ target: { value } }) => {
     setFormulaType(value);
+    setCubeFormulaData(value);
+
     // filterCFOPData(value);
   };
 
@@ -264,7 +284,7 @@ export default function Home() {
           <div className="">
             <Table
               dataSource={cubeFormula}
-              columns={blindColumns}
+              columns={tabColumns}
               rowKey={(record) => record.id}
               rowHoverable={false}
               bordered={true}
