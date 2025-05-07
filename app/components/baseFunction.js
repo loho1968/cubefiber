@@ -1,11 +1,44 @@
 import * as XLSX from "xlsx";
 /**
+ * 将魔方公式字符串转换为步骤数组
+ * @param {string} formula - 魔方公式字符串，支持多种格式：
+ * 1. 空格分隔: "U R U2 R' U R U' R'"
+ * 2. 多空格分隔: "U  R   U2   R'  U  R  U' R'"
+ * 3. 无分隔: "URU2R'URU'R'"
+ * 4. 逗号分隔: "U,R,U2,R',U,R,U',R'"
+ * @returns {string[]} 标准化的步骤数组，如 ['U','R','U2',"R'",'U','R',"U'",'R']
+ */
+export function parseFormula(formula) {
+  if (!formula) return [];
+
+  // 1. 先将逗号分隔的格式转换为空格分隔
+  formula = formula.replace(/,/g, " ");
+
+  // 2. 将多个空格替换为单个空格
+  formula = formula.replace(/\s+/g, " ");
+
+  // 3. 处理无空格的情况，在以下位置添加空格：
+  // - 在单字母后面（如U、R、F等）
+  // - 在数字前面（如U2）
+  // - 在撇号前面（如R'）
+  formula = formula.replace(/([URFDLB])(?=[URFDLB2'])/g, "$1 ");
+  formula = formula.replace(/([URFDLB])(?=\d)/g, "$1");
+  formula = formula.replace(/(\d)(?=[URFDLB])/g, "$1 ");
+
+  // 4. 去除首尾空格并分割成数组
+  return formula
+    .trim()
+    .split(" ")
+    .filter((step) => step.length > 0);
+}
+
+/**
  * 公式反转
  * @param formula
  * @returns
  */
-export function getReverseFormula(formula) {
-  const arr = formula.split(/ +/);
+export function getReverseFormula(arr) {
+  // const arr = formula.split(/ +/);
   let reverseFormula = "";
   for (let i = arr.length - 1; i >= 0; i--) {
     arr[i] = arr[i].replace(" ", "");

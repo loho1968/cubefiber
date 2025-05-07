@@ -2,10 +2,20 @@
 import HeaderBase from "./components/HeaderBase.js";
 import Link from "next/link";
 import { Button, Flex, Radio, Switch, Table, TableColumnsType } from "antd";
+import {
+  LeftOutlined,
+  RightOutlined,
+  VerticalLeftOutlined,
+  VerticalRightOutlined,
+} from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import { EditOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { loadData, getReverseFormula } from "./components/baseFunction";
+import {
+  loadData,
+  getReverseFormula,
+  parseFormula,
+} from "./components/baseFunction";
 import target from "three/src/nodes/core/Node";
 //重点参考
 //https://github.com/starkeyyyy/3d-Rubiks-cube
@@ -48,6 +58,9 @@ export default function Home() {
       align: "center",
     },
   ];
+  const [currentStep, setCurrentStep] = useState(-1); //公式当前步数
+  const [totalSteps, setTotalSteps] = useState(0); //公式总步数
+
   const [cfopGroups, setCfopGroups] = useState([]);
 
   const [edgeChecked, setEdgeChecked] = useState(true); //盲拧公式的：角块、棱块类型
@@ -108,8 +121,13 @@ export default function Home() {
         return { text: item, value: item };
       });
       setCfopGroups(tmp);
+
       setBlindCode(res.blindCode);
+      res.blindformula.forEach((item) => {
+        item.公式 = parseFormula(item.公式);
+      });
       setBlindFormula(res.blindformula);
+
       setCfopFormula(res.cfop);
       res.special.forEach((item, index) => {
         item.id = index;
@@ -130,7 +148,7 @@ export default function Home() {
   useEffect(() => {}, [blindCode]);
   //#endregion
 
-  //#region 基础函数
+  //#region 基础函数  魔方公式，可能是这样：U R U2 R' U R U' R'，或这样：U  R   U2   R'  U  R  U' R'，或者这样：URU2R'URU'R',或者这样：U,R,U2,R',U,R,U',R'。写一个函数，把公式拆分为一个步骤数组['U','R','U2',"R'",'U','R',"U'",'R']
   //切换公式数据
   const setCubeFormulaData = (type = "blind") => {
     switch (type) {
@@ -197,6 +215,8 @@ export default function Home() {
   const clickRow = (record) => {
     record.逆向公式 = getReverseFormula(record.公式);
     setCurrentFormula(record);
+    setCurrentStep(0);
+    setTotalSteps(record.公式.length);
     // showCube(record, allColorChecked, showCodeChecked);
   };
 
@@ -240,6 +260,18 @@ export default function Home() {
   };
   //#endregion
 
+  //#region 公式步骤操作
+  //按公式重置
+  const firstStep = () => {};
+  //上一步
+  const previousStep = () => {};
+  //下一步
+  const nextStep = () => {
+    setCurrentStep(currentStep + 1);
+  };
+  //最后一步
+  const lastStep = () => {};
+  //#endregion
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
@@ -388,7 +420,55 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="h-[48px] shrink-0 bg-gray-800 text-white flex items-center justify-center">
-        <p>© 2024 Cube Fiber</p>
+        {currentStep > -1 && (
+          <div className={`flex `}>
+            <Button className="ml-1 mr-2" type="text" size="large">
+              ({currentStep + 1}/{totalSteps})
+            </Button>
+            <Button
+              className="mr-2"
+              onClick={firstStep}
+              disabled={currentStep === -1 || totalSteps === 0}
+            >
+              <VerticalRightOutlined />
+            </Button>
+            <Button
+              className="mr-2"
+              onClick={previousStep}
+              disabled={currentStep === -1 || totalSteps === 0}
+            >
+              <LeftOutlined />
+            </Button>
+            {currentFormula.公式 &&
+              currentFormula.公式.map((item, index) => (
+                <Button
+                  key={index}
+                  className={
+                    currentStep === index + 1 ? "mr-1 mt-[-3]" : "mr-1"
+                  }
+                  color={currentStep === index + 1 ? "primary" : "default"}
+                  size={currentStep === index + 1 ? "large" : "middle"}
+                  variant={currentStep === index + 1 ? "outlined" : "text"}
+                >
+                  {item}
+                </Button>
+              ))}
+            <Button
+              className="mr-2"
+              onClick={nextStep}
+              disabled={currentStep === totalSteps}
+            >
+              <RightOutlined />
+            </Button>
+            <Button
+              className="mr-2"
+              onClick={lastStep}
+              disabled={currentStep === totalSteps}
+            >
+              <VerticalLeftOutlined />
+            </Button>
+          </div>
+        )}
       </footer>
     </div>
   );
