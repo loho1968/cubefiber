@@ -302,9 +302,10 @@ const RubiksCube = (blindCodeData) => {
 
       const keyPressed = key.toLowerCase();
 
+      //x y z 轴旋转
       switch (key) {
         case "ArrowUp":
-          rotateFullCube("x", Math.PI / 2, "anti-clockwise");
+          rotateFullCube("x", Math.PI / 2, "clockwise");
           break;
         case "ArrowDown":
           rotateFullCube("x", Math.PI / 2, "clockwise");
@@ -320,6 +321,15 @@ const RubiksCube = (blindCodeData) => {
       if (shiftKey) {
         // 按Shift键，旋转反向  R L U D F B
         switch (keyPressed) {
+          case "x":
+            rotateFullCube("x", Math.PI / 2, "clockwise");
+            break;
+          case "y":
+            rotateFullCube("y", Math.PI / 2, "clockwise");
+            break;
+          case "z":
+            rotateFullCube("z", Math.PI / 2, "clockwise");
+            break;
           case "u":
             rotateLayer("y", 1, "anti-clockwise");
             return;
@@ -343,6 +353,15 @@ const RubiksCube = (blindCodeData) => {
 
       // Handle Regular Rotations
       switch (keyPressed) {
+        case "x":
+          rotateFullCube("x", Math.PI / 2, "anti-clockwise");
+          break;
+        case "y":
+          rotateFullCube("y", Math.PI / 2, "anti-clockwise");
+          break;
+        case "z":
+          rotateFullCube("z", Math.PI / 2, "anti-clockwise");
+          break;
         case "u":
           rotateLayer("y", 1, "clockwise");
           break;
@@ -464,12 +483,12 @@ const RubiksCube = (blindCodeData) => {
     rotate();
   };
 
-  //rotating the layer selected by moves
+  //旋转所选图层
   const rotateLayer = (axis, layerValue, direction) => {
-    if (rotateStatus.current) return; // Prevent multiple rotations at once
+    if (rotateStatus.current) return; // 防止同时进行多次旋转
     rotateStatus.current = true;
     setIsRotating(true);
-    const rotationStep = Math.PI / 2; // 90 degrees in radians
+    const rotationStep = Math.PI / 2; // 旋转90度
 
     const cubesToRotate = cubeRefs.filter(
       ({ position }) =>
@@ -490,7 +509,7 @@ const RubiksCube = (blindCodeData) => {
           );
 
     let progress = 0;
-    const rotationSpeed = rotationStep / 30; // Adjust speed for smooth animation
+    const rotationSpeed = rotationStep / 30; // 调整速度以获得流畅的动画
 
     const rotate = async () => {
       cubesToRotate.forEach(({ ref }) => {
@@ -502,7 +521,8 @@ const RubiksCube = (blindCodeData) => {
 
       progress += rotationSpeed;
       if (progress >= rotationStep) {
-        // ✅ Snap to exact rotation to fix floating point errors
+        // ✅ 旋转后，消除精度差异，对齐魔方块
+
         cubesToRotate.forEach(({ ref, position }) => {
           if (ref.current) {
             const originalPosition = [...position];
