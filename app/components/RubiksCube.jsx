@@ -332,22 +332,22 @@ const RubiksCube = (blindCodeData) => {
             break;
           case "u":
             rotateLayer("y", 1, "anti-clockwise");
-            return;
+            break;
           case "d":
             rotateLayer("y", -1, "anti-clockwise");
-            return;
+            break;
           case "l":
             rotateLayer("x", -1, "anti-clockwise");
-            return;
+            break;
           case "r":
             rotateLayer("x", 1, "anti-clockwise");
-            return;
+            break;
           case "f":
             rotateLayer("z", 1, "anti-clockwise");
-            return;
+            break;
           case "b":
             rotateLayer("z", -1, "anti-clockwise");
-            return;
+            break;
         }
       }
 
@@ -399,15 +399,15 @@ const RubiksCube = (blindCodeData) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-            axis === "x" ? -1 : 0,
-            axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0,
-          )
+          axis === "x" ? -1 : 0,
+          axis === "y" ? -1 : 0,
+          axis === "z" ? -1 : 0,
+        )
         : new THREE.Vector3(
-            axis === "x" ? 1 : 0,
-            axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0,
-          );
+          axis === "x" ? 1 : 0,
+          axis === "y" ? 1 : 0,
+          axis === "z" ? 1 : 0,
+        );
 
     let progress = 0;
     const totalRotation = rotationStep;
@@ -431,11 +431,11 @@ const RubiksCube = (blindCodeData) => {
             const originalPosition = [...position];
             ref.current.rotation.set(
               Math.round(ref.current.rotation.x / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
               Math.round(ref.current.rotation.y / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
               Math.round(ref.current.rotation.z / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
             );
 
             const matrix = new THREE.Matrix4().makeRotationAxis(
@@ -498,15 +498,15 @@ const RubiksCube = (blindCodeData) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-            axis === "x" ? -1 : 0,
-            axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0,
-          )
+          axis === "x" ? -1 : 0,
+          axis === "y" ? -1 : 0,
+          axis === "z" ? -1 : 0,
+        )
         : new THREE.Vector3(
-            axis === "x" ? 1 : 0,
-            axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0,
-          );
+          axis === "x" ? 1 : 0,
+          axis === "y" ? 1 : 0,
+          axis === "z" ? 1 : 0,
+        );
 
     let progress = 0;
     const rotationSpeed = rotationStep / 30; // 调整速度以获得流畅的动画
@@ -639,6 +639,68 @@ const RubiksCube = (blindCodeData) => {
 
     rotate();
   };
+
+  //通过公式选择魔方
+  const rotateCube = (step) => {
+    // ... existing code ...
+    switch (step) {
+      case "x'":
+        rotateFullCube("x", Math.PI / 2, "clockwise");
+        break;
+      case "y'":
+        rotateFullCube("y", Math.PI / 2, "clockwise");
+        break;
+      case "z'":
+        rotateFullCube("z", Math.PI / 2, "clockwise");
+        break;
+      case "u'":
+        rotateLayer("y", 1, "anti-clockwise");
+        break;
+      case "d'":
+        rotateLayer("y", -1, "anti-clockwise");
+        break;
+      case "l'":
+        rotateLayer("x", -1, "anti-clockwise");
+        break;
+      case "r'":
+        rotateLayer("x", 1, "anti-clockwise");
+        break;
+      case "f'":
+        rotateLayer("z", 1, "anti-clockwise");
+        break;
+      case "b'":
+        rotateLayer("z", -1, "anti-clockwise");
+        break;
+      case "x":
+        rotateFullCube("x", Math.PI / 2, "anti-clockwise");
+        break;
+      case "y":
+        rotateFullCube("y", Math.PI / 2, "anti-clockwise");
+        break;
+      case "z":
+        rotateFullCube("z", Math.PI / 2, "anti-clockwise");
+        break;
+      case "u":
+        rotateLayer("y", 1, "clockwise");
+        break;
+      case "d":
+        rotateLayer("y", -1, "clockwise");
+        break;
+      case "l":
+        rotateLayer("x", -1, "clockwise");
+        break;
+      case "r":
+        rotateLayer("x", 1, "clockwise");
+        break;
+      case "f":
+        rotateLayer("z", 1, "clockwise");
+        break;
+      case "b":
+        rotateLayer("z", -1, "clockwise");
+        break;
+    }
+  };
+
   return (
     <div className="flex items-center justify-center w-full h-full position-relative">
       <div className="flex flex-col items-center justify-center gap-4 w-[40%] h-full">

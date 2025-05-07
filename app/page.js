@@ -29,6 +29,7 @@ import target from "three/src/nodes/core/Node";
 export default function Home() {
   //#region 基础设置、变量
   const cubeRef = useRef(null); //cube容器
+
   //盲拧公式表格的列
   const blindColumns = [
     {
@@ -270,6 +271,7 @@ export default function Home() {
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
+    cubeRef.current.rotateCube("x")
   };
   //最后一步
   const lastStep = () => {};
@@ -411,7 +413,7 @@ export default function Home() {
         {/* Right Panel - 70% with Canvas */}
         <div className="w-[70%] flex items-center justify-center rounded-lg">
           <div className="w-full h-full flex items-center justify-center ">
-            <MainCube blindCodeData={blindCode} />
+            <MainCube blindCodeData={blindCode} ref={cubeRef}/>
           </div>
         </div>
       </main>
