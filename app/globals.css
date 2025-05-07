@@ -53,3 +53,4 @@ body {
 .ant-table-tbody > .light-currentRow:hover > td {
   background-color: var(--light-currentRow-bg);
 }
+

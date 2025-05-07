@@ -410,13 +410,7 @@ export default function Home() {
 
         {/* Right Panel - 70% with Canvas */}
         <div className="w-[70%] flex items-center justify-center rounded-lg">
-          <div
-            className="w-full h-full"
-            style={{
-              aspectRatio: "1/1",
-              maxHeight: "calc(100vh - 96px - 16px)",
-            }}
-          >
+          <div className="w-full h-full flex items-center justify-center ">
             <MainCube blindCodeData={blindCode} />
           </div>
         </div>

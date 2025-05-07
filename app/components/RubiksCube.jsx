@@ -1,8 +1,7 @@
 import * as THREE from "three";
 import { useRef, useState, useEffect, createRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Text , RoundedBox } from "@react-three/drei";
-
+import { OrbitControls, Text, RoundedBox } from "@react-three/drei";
 
 // 导入所有魔方旋转相关的函数
 import {
@@ -19,28 +18,28 @@ import {
   rotateUpClockwise,
   rotateUpCounterclockwise,
   rotateFullCubeClockwise,
-  rotateFullCubeCounterclockwise
+  rotateFullCubeCounterclockwise,
 } from "./rotation"; // 从rotation.js导入2D魔方的旋转函数
-let count=1
-const Cube = ({ position, refProp ,blindCode}) => {
+let count = 1;
+const Cube = ({ position, refProp, blindCode }) => {
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
-  count++
-  function GetLabel(position,face,type="code"){
-    let code=""
+  count++;
+  function GetLabel(position, face, type = "code") {
+    let code = "";
 
-    code=blindCode.find(x=>x.id===position && x.面===face)
-    if(code) {
-      code=type==="code"?code.编码:code.面+code.面序号; //code.编码
-    }else{
-      console.log(position,face)
-      code=face
+    code = blindCode.find((x) => x.id === position && x.面 === face);
+    if (code) {
+      code = type === "code" ? code.编码 : code.面 + code.面序号; //code.编码
+    } else {
+      console.log(position, face);
+      code = face;
     }
-    return code
+    return code;
   }
   // 魔方颜色定义 (右、左、上、下、前、后)
-  let colors
+  let colors;
   // colors = ["red", "orange", "white", "yellow", "#90EE90", "#04d9ff"];
-    colors = ['#009E60', '#0051BA', '#FFD500', '#FFFFFF', '#C41E3A', '#FF5800'] // R L U D F B
+  colors = ["#009E60", "#0051BA", "#FFD500", "#FFFFFF", "#C41E3A", "#FF5800"]; // R L U D F B
   return (
     <group ref={refProp} position={position}>
       {/* 渲染圆角方块作为基础 */}
@@ -50,18 +49,48 @@ const Cube = ({ position, refProp ,blindCode}) => {
 
       {/* 渲染6个面的贴纸*/}
       {[
-        { pos: [0, 0, stickerOffset], rot: [0, 0, 0], color:colors[4], face:'F'}, // 前面 0
-        { pos: [0, 0, -stickerOffset], rot: [0, Math.PI, 0],color:colors[5], face:'B'}, // 后面 1
-        { pos: [-stickerOffset, 0, 0], rot: [0, -Math.PI / 2, 0], color:  colors[1] , face:'L'}, // 左面 2
-        { pos: [stickerOffset, 0, 0], rot: [0, Math.PI / 2, 0], color: colors[0] , face:'R'}, // 右面 3
-        { pos: [0, stickerOffset, 0], rot: [-Math.PI / 2, 0, 0], color: colors[2] , face:'U'}, // 上面 4
-        { pos: [0, -stickerOffset, 0], rot: [Math.PI / 2, 0, 0], color: colors[3] , face:'D'}, // 下面 5
-      ].map(({ pos, rot, color,face }, i) => (
+        {
+          pos: [0, 0, stickerOffset],
+          rot: [0, 0, 0],
+          color: colors[4],
+          face: "F",
+        }, // 前面 0
+        {
+          pos: [0, 0, -stickerOffset],
+          rot: [0, Math.PI, 0],
+          color: colors[5],
+          face: "B",
+        }, // 后面 1
+        {
+          pos: [-stickerOffset, 0, 0],
+          rot: [0, -Math.PI / 2, 0],
+          color: colors[1],
+          face: "L",
+        }, // 左面 2
+        {
+          pos: [stickerOffset, 0, 0],
+          rot: [0, Math.PI / 2, 0],
+          color: colors[0],
+          face: "R",
+        }, // 右面 3
+        {
+          pos: [0, stickerOffset, 0],
+          rot: [-Math.PI / 2, 0, 0],
+          color: colors[2],
+          face: "U",
+        }, // 上面 4
+        {
+          pos: [0, -stickerOffset, 0],
+          rot: [Math.PI / 2, 0, 0],
+          color: colors[3],
+          face: "D",
+        }, // 下面 5
+      ].map(({ pos, rot, color, face }, i) => (
         <group key={i} position={pos} rotation={rot}>
           <mesh>
             <planeGeometry args={[0.85, 0.85]} />
-            <meshStandardMaterial 
-              color={color} 
+            <meshStandardMaterial
+              color={color}
               emissive={color}
               emissiveIntensity={0.2}
               metalness={0.1}
@@ -71,7 +100,7 @@ const Cube = ({ position, refProp ,blindCode}) => {
           <Text
             position={[0, 0, 0.01]}
             fontSize={0.2}
-            color={face === "L"? "white" : "black"}
+            color={face === "L" ? "white" : "black"}
             anchorX="center"
             anchorY="middle"
           >
@@ -85,19 +114,17 @@ const Cube = ({ position, refProp ,blindCode}) => {
   );
 };
 
-
 //rendering who cube with it
 const RubiksCube = (blindCodeData) => {
   const [cubeRefs, setCubeRefs] = useState([]);
   const [rotationQueue, setRotationQueue] = useState([]);
-  const [moves, setMoves] = useState([]);
   const [isRotating, setIsRotating] = useState(false);
   const [blindCode, setBlindCode] = useState([]); // 新增状态存储Excel数据
   const rotateStatus = useRef(false);
   useEffect(() => {
     setBlindCode(blindCodeData);
-  })
-  console.log(blindCodeData)
+  });
+  console.log(blindCodeData);
   //inital cube for mapping the 3d cube in 2d
   const initialCube = [
     // Up (Yellow)
@@ -157,18 +184,18 @@ const RubiksCube = (blindCodeData) => {
 
   // Render a single cube cell for 2d mapping
   //渲染单个立方体单元以进行二维映射
-  const renderCell = (color, size, rowIndex , row) => {
-    const titleText=`${row[0]}-${rowIndex}`
+  const renderCell = (color, size, rowIndex, row) => {
+    const titleText = `${row[0]}-${rowIndex}`;
     return (
       <div
-          title={titleText}
+        title={titleText}
         style={{
           border: "1px solid #2d3748",
           backgroundColor: colorMap[color],
           width: size,
           height: size,
-          textAlign: 'center',
-          fontSize: '8px',
+          textAlign: "center",
+          fontSize: "8px",
         }}
       ></div>
     );
@@ -186,8 +213,10 @@ const RubiksCube = (blindCodeData) => {
       >
         {face.map((row, rowIndex) =>
           row.map((cell, cellIndex) => (
-            <div key={`${rowIndex}-${cellIndex}`}>{renderCell(cell, size, rowIndex , row)}</div>
-          ))
+            <div key={`${rowIndex}-${cellIndex}`}>
+              {renderCell(cell, size, rowIndex, row)}
+            </div>
+          )),
         )}
       </div>
     );
@@ -195,7 +224,7 @@ const RubiksCube = (blindCodeData) => {
 
   // Render the cube layout mapping
   const renderCube = () => {
-    const cellSize = "30px";
+    const cellSize = "60px";
 
     return (
       <div
@@ -209,6 +238,7 @@ const RubiksCube = (blindCodeData) => {
         <div style={{ marginBottom: "8px" }}>
           <div style={{ marginLeft: "96px" }}>
             {renderFace(cube[0], cellSize)}
+            aaaaaa
           </div>
         </div>
 
@@ -243,7 +273,7 @@ const RubiksCube = (blindCodeData) => {
       for (let y = -1; y <= 1; y++) {
         for (let z = -1; z <= 1; z++) {
           const ref = createRef();
-          refs.push({ ref, position: [x, y, z,x+''+y+''+z] });
+          refs.push({ ref, position: [x, y, z, x + "" + y + "" + z] });
         }
       }
     }
@@ -253,11 +283,11 @@ const RubiksCube = (blindCodeData) => {
   //handling inputs for rotation via keydown event
   useEffect(() => {
     const handleKeyDown = (event) => {
-      console.log(event)
+      console.log(event);
 
       if (rotateStatus.current) return; // Prevent multiple rotations at once
       const { key, shiftKey } = event;
-      console.log(key,shiftKey)
+      console.log(key, shiftKey);
 
       const keyPressed = key.toLowerCase();
 
@@ -266,10 +296,10 @@ const RubiksCube = (blindCodeData) => {
           rotateFullCube("x", Math.PI / 2, "anti-clockwise");
           break;
         case "ArrowDown":
-          rotateFullCube("x", Math.PI / 2,  "clockwise");
+          rotateFullCube("x", Math.PI / 2, "clockwise");
           break;
         case "ArrowLeft":
-          rotateFullCube("y", Math.PI / 2 , "clockwise");
+          rotateFullCube("y", Math.PI / 2, "clockwise");
           break;
         case "ArrowRight":
           rotateFullCube("y", Math.PI / 2, "anti-clockwise");
@@ -281,38 +311,21 @@ const RubiksCube = (blindCodeData) => {
         switch (keyPressed) {
           case "w":
             rotateLayer("y", 1, "anti-clockwise");
-            moves.push("⬅️ U");
-            // newCube = rotateUpClockwise(cube);
-            // setCube(newCube);
             return;
           case "s":
             rotateLayer("y", -1, "anti-clockwise");
-            moves.push("⬅️ D");
-
             return;
           case "a":
             rotateLayer("x", -1, "anti-clockwise");
-            moves.push("⬆️ L");
-            // newCube = rotateLeftCounterclockwise(cube);
-            // setCube(newCube);
             return;
           case "d":
             rotateLayer("x", 1, "anti-clockwise");
-            moves.push("⬆️ R");
-            // newCube = rotateRightClockwise(cube);
-            // setCube(newCube);
             return;
           case "q":
             rotateLayer("z", 1, "anti-clockwise");
-            moves.push("↻ F");
-            // newCube = rotateFrontClockwise(cube);
-            // setCube(newCube);
             return;
           case "e":
             rotateLayer("z", -1, "anti-clockwise");
-            moves.push("↻ B");
-            // newCube = rotateBackClockwise(cube);
-            // setCube(newCube);
             return;
         }
       }
@@ -321,39 +334,21 @@ const RubiksCube = (blindCodeData) => {
       switch (keyPressed) {
         case "w":
           rotateLayer("y", 1, "clockwise");
-          moves.push("➡️ U");
-          // newCube = rotateUpCounterclockwise(cube);
-          // setCube(newCube);
           break;
         case "s":
           rotateLayer("y", -1, "clockwise");
-          moves.push("➡️ D");
-          // newCube = rotateDownClockwise(cube);
-          // setCube(newCube);
           break;
         case "a":
           rotateLayer("x", -1, "clockwise");
-          moves.push("⬇️ L");
-          // newCube = rotateLeftClockwise(cube);
-          // setCube(newCube);
           break;
         case "d":
           rotateLayer("x", 1, "clockwise");
-          moves.push("⬇️ R");
-          // newCube = rotateRightCounterclockwise(cube);
-          // setCube(newCube);
           break;
         case "q":
           rotateLayer("z", 1, "clockwise");
-          moves.push("↺ F");
-          // newCube = rotateFrontCounterclockwise(cube);
-          // setCube(newCube);
           break;
         case "e":
           rotateLayer("z", -1, "clockwise");
-          moves.push("↺ B");
-          // newCube = rotateBackCounterclockwise(cube);
-          // setCube(newCube);
           break;
       }
     };
@@ -376,12 +371,12 @@ const RubiksCube = (blindCodeData) => {
         ? new THREE.Vector3(
             axis === "x" ? -1 : 0,
             axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0
+            axis === "z" ? -1 : 0,
           )
         : new THREE.Vector3(
             axis === "x" ? 1 : 0,
             axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0
+            axis === "z" ? 1 : 0,
           );
 
     let progress = 0;
@@ -409,15 +404,16 @@ const RubiksCube = (blindCodeData) => {
                 (Math.PI / 2),
               Math.round(ref.current.rotation.y / (Math.PI / 2)) *
                 (Math.PI / 2),
-              Math.round(ref.current.rotation.z / (Math.PI / 2)) * (Math.PI / 2)
+              Math.round(ref.current.rotation.z / (Math.PI / 2)) *
+                (Math.PI / 2),
             );
 
             const matrix = new THREE.Matrix4().makeRotationAxis(
               rotationVector,
-              totalRotation
+              totalRotation,
             );
             const newPosition = new THREE.Vector3(...position).applyMatrix4(
-              matrix
+              matrix,
             );
             // 确保 position 正确更新
             position[0] = Math.round(newPosition.x);
@@ -425,7 +421,9 @@ const RubiksCube = (blindCodeData) => {
             position[2] = Math.round(newPosition.z);
 
             ref.current.position.set(position[0], position[1], position[2]);
-            console.log(`Full cube rotation: Original position ${originalPosition}, New position ${position}`);
+            console.log(
+              `Full cube rotation: Original position ${originalPosition}, New position ${position}`,
+            );
           }
         });
 
@@ -433,11 +431,11 @@ const RubiksCube = (blindCodeData) => {
         rotateStatus.current = false;
 
         setCube((prevState) => {
-          if(axis === "x" && direction === "anti-clockwise"){
+          if (axis === "x" && direction === "anti-clockwise") {
             newCube = rotateFullCubeClockwise(prevState);
             return newCube;
           }
-          if(axis === "x" && direction === "clockwise"){
+          if (axis === "x" && direction === "clockwise") {
             newCube = rotateFullCubeCounterclockwise(prevState);
             return newCube;
           }
@@ -451,61 +449,6 @@ const RubiksCube = (blindCodeData) => {
     rotate();
   };
 
-  //scrambling the cube function
-  const scrambleCube = async () => {
-    const scrambleSequence = [];
-
-    // Generate random sequence first
-    for (let i = 0; i < 20; i++) { // 20 moves is standard for competition scrambles
-      const moveIndex = Math.floor(Math.random() * 12); // 12 possible moves (6 faces, 2 directions)
-      const moves = ["w", "s", "a", "d", "q", "e", "W", "S", "A", "D", "Q", "E"]; // Uppercase for shift variants
-      scrambleSequence.push(moves[moveIndex]);
-    }
-
-    // Execute each move with awaiting for completion
-    for (const move of scrambleSequence) {
-      // Wait until current rotation is complete
-      while (rotateStatus.current) {
-        await new Promise(resolve => setTimeout(resolve, 50));
-      }
-
-      // Execute the move
-      const isShift = move === move.toUpperCase();
-      const key = move.toLowerCase();
-
-      // Apply the appropriate rotation based on the move
-      switch (key) {
-        case "w":
-          rotateLayer("y", 1, isShift ? "anti-clockwise" : "clockwise");
-          moves.push(isShift ? "⬅️ U" : "➡️ U");
-          break;
-        case "s":
-          rotateLayer("y", -1, isShift ? "anti-clockwise" : "clockwise");
-          moves.push(isShift ? "⬅️ D" : "➡️ D");
-          break;
-        case "a":
-          rotateLayer("x", -1, isShift ? "anti-clockwise" : "clockwise");
-          moves.push(isShift ? "⬆️ L" : "⬇️ L");
-          break;
-        case "d":
-          rotateLayer("x", 1, isShift ? "anti-clockwise" : "clockwise");
-          moves.push(isShift ? "⬆️ R" : "⬇️ R");
-          break;
-        case "q":
-          rotateLayer("z", 1, isShift ? "anti-clockwise" : "clockwise");
-          moves.push(isShift ? "↻ F" : "↺ F");
-          break;
-        case "e":
-          rotateLayer("z", -1, isShift ? "anti-clockwise" : "clockwise");
-          moves.push(isShift ? "↻ B" : "↺ B");
-          break;
-      }
-
-      // Wait for animation to complete
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-
-  };
   //rotating the layer selected by moves
   const rotateLayer = (axis, layerValue, direction) => {
     if (rotateStatus.current) return; // Prevent multiple rotations at once
@@ -515,7 +458,7 @@ const RubiksCube = (blindCodeData) => {
 
     const cubesToRotate = cubeRefs.filter(
       ({ position }) =>
-        position[axis === "x" ? 0 : axis === "y" ? 1 : 2] === layerValue
+        position[axis === "x" ? 0 : axis === "y" ? 1 : 2] === layerValue,
     );
 
     const rotationVector =
@@ -523,12 +466,12 @@ const RubiksCube = (blindCodeData) => {
         ? new THREE.Vector3(
             axis === "x" ? -1 : 0,
             axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0
+            axis === "z" ? -1 : 0,
           )
         : new THREE.Vector3(
             axis === "x" ? 1 : 0,
             axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0
+            axis === "z" ? 1 : 0,
           );
 
     let progress = 0;
@@ -551,22 +494,24 @@ const RubiksCube = (blindCodeData) => {
             ref.current.rotation.set(
               Math.round(ref.current.rotation.x / rotationStep) * rotationStep,
               Math.round(ref.current.rotation.y / rotationStep) * rotationStep,
-              Math.round(ref.current.rotation.z / rotationStep) * rotationStep
+              Math.round(ref.current.rotation.z / rotationStep) * rotationStep,
             );
 
             const matrix = new THREE.Matrix4().makeRotationAxis(
               rotationVector,
-              rotationStep
+              rotationStep,
             );
             const newPosition = new THREE.Vector3(...position).applyMatrix4(
-              matrix
+              matrix,
             );
             position[0] = Math.round(newPosition.x);
             position[1] = Math.round(newPosition.y);
             position[2] = Math.round(newPosition.z);
 
             ref.current.position.set(position[0], position[1], position[2]);
-            console.log(`Layer rotation: Original position ${originalPosition}, New position ${position}`);
+            console.log(
+              `Layer rotation: Original position ${originalPosition}, New position ${position}`,
+            );
           }
         });
 
@@ -656,40 +601,37 @@ const RubiksCube = (blindCodeData) => {
     rotate();
   };
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
-      <div className="moves">
-        <div className="layer"> W : moves white layer/clockwise/right</div>
-      <div className="layer"> S : move yellow Layer up/clockwise/right</div>
-      <div className="layer"> A : moves orange</div>
-      <div className="layer"> D : moves red</div>
-      <div className="layer"> E : moves blue layer</div>
-      <div className="layer"> Q : moves green layer</div>
+    <div className="flex items-center justify-center w-full h-full position-relative">
+      <div className="flex flex-col items-center justify-center gap-4 w-[40%] h-full">
+        <div className="moves">
+          <div className="layer"> W : moves white layer/clockwise/right</div>
+          <div className="layer"> S : move yellow Layer up/clockwise/right</div>
+          <div className="layer"> A : moves orange</div>
+          <div className="layer"> D : moves red</div>
+          <div className="layer"> E : moves blue layer</div>
+          <div className="layer"> Q : moves green layer</div>
+        </div>
+        <div className="cube-layout">{renderCube()}</div>
       </div>
-      <Canvas camera={{ position: [5, 5, 5] }}>
-        <ambientLight intensity={1} />
-        <pointLight position={[5, 5, 5]} />
-        <OrbitControls />
-        <group>
-          {cubeRefs.map(({ ref, position }, index) => (
-            <Cube key={index} position={position} refProp={ref} blindCode={blindCode}/>
-          ))}
-        </group>
-      </Canvas>
-      <div className="moves-list">
-        
-          {moves.map((move, index) => (
-            <div className="move" key={index}>{move}</div>
-          ))}
-        
+      <div className="flex-1 w-full h-full ">
+        <Canvas camera={{ position: [5, 5, 5] }}>
+          <ambientLight intensity={1} />
+          <pointLight position={[5, 5, 5]} />
+          <OrbitControls />
+          <group>
+            {cubeRefs.map(({ ref, position }, index) => (
+              <Cube
+                key={index}
+                position={position}
+                refProp={ref}
+                blindCode={blindCode}
+              />
+            ))}
+          </group>
+        </Canvas>
       </div>
-
-      <button className="button-52" onClick={scrambleCube}>
-        click to scramble
-      </button>
-      <div className="cube-layout">{renderCube()}</div>
     </div>
   );
 };
 
 export default RubiksCube;
-
