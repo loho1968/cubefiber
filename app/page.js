@@ -10,12 +10,13 @@ import {
 } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import { EditOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   loadData,
   getReverseFormula,
   parseFormula,
 } from "./components/baseFunction";
+import MainCube from "./components/RubiksCube";
 import target from "three/src/nodes/core/Node";
 //重点参考
 //https://github.com/starkeyyyy/3d-Rubiks-cube
@@ -27,6 +28,7 @@ import target from "three/src/nodes/core/Node";
 
 export default function Home() {
   //#region 基础设置、变量
+  const cubeRef = useRef(null); //cube容器
   //盲拧公式表格的列
   const blindColumns = [
     {
@@ -414,7 +416,9 @@ export default function Home() {
               aspectRatio: "1/1",
               maxHeight: "calc(100vh - 96px - 16px)",
             }}
-          ></div>
+          >
+            <MainCube blindCodeData={blindCode} />
+          </div>
         </div>
       </main>
 
