@@ -421,9 +421,9 @@ export default function Home() {
       {/* Footer */}
       <footer className="h-[48px] shrink-0 bg-gray-800 text-white flex items-center justify-center">
         {currentStep > -1 && (
-          <div className={`flex `}>
+          <div className={`flex items-center justify-center`}>
             <Button className="ml-1 mr-2" type="text" size="large">
-              ({currentStep + 1}/{totalSteps})
+              {currentStep + 1}/{totalSteps}
             </Button>
             <Button
               className="mr-2"
