@@ -17,8 +17,6 @@ import target from "three/src/nodes/core/Node";
 
 export default function Home() {
   //#region 基础设置、变量
-  const [currentFormula, setCurrentFormula] = useState({}); //当前公式，点击表格行，或者直接输入公式后改变
-
   //盲拧公式表格的列
   const blindColumns = [
     {
@@ -42,32 +40,39 @@ export default function Home() {
       align: "center",
     },
   ];
-  const cfopCloumns = [
+  const [cfopGroups, setCfopGroups] = useState([]);
+
+  const cfopColumns = [
     {
       title: "编码",
       dataIndex: "编码",
       align: "center",
-      sortOrder: "ascend",
     },
     {
       title: "名称",
       dataIndex: "名称",
       align: "center",
-      sortOrder: "ascend",
     },
     {
       title: "分组",
       dataIndex: "分组",
       align: "center",
-      sortOrder: "ascend",
+      showSorterTooltip: { target: "full-header" },
+      sorter: (a, b) => a.分组 > b.分组,
+      sortDirections: ["ascend", "descend"],
+      defaultSortOrder: "descend",
+      filters: cfopGroups,
+      onFilter: (value, record) => record.分组.indexOf(value) === 0,
     },
   ];
+
+  const [currentFormula, setCurrentFormula] = useState({}); //当前公式，点击表格行，或者直接输入公式后改变
+
   const [tabColumns, setTabColumns] = useState(blindColumns);
-  //#endregion
-  //#region 加载数据数据
+
   const [blindCode, setBlindCode] = useState([]); //盲拧公式编码
   const [blindFormula, setBlindFormula] = useState([]); //盲拧公式数据
-  const [cropFormula, setCropFormula] = useState([]);
+  const [cfopFormula, setCfopFormula] = useState([]);
   const [specialFormula, setSpecialFormula] = useState([]);
 
   const [cubeFormula, setCubeFormula] = useState([]); //用于表格显示的公式数据,
@@ -76,14 +81,22 @@ export default function Home() {
   const [cfopType, setCfopType] = useState("F2L");
 
   const [formulaType, setFormulaType] = useState("blind");
+  //#endregion
+  //#region 加载数据数据
+
   useEffect(() => {
     document.title = "魔方学习";
 
     async function fetchPosts() {
       const res = await loadData();
+      let tmp = getCFOPGroup(res.cfop);
+      tmp = tmp.map((item) => {
+        return { text: item, value: item };
+      });
+      setCfopGroups(tmp);
       setBlindCode(res.blindCode);
       setBlindFormula(res.blindformula);
-      setCropFormula(res.cfop);
+      setCfopFormula(res.cfop);
       setSpecialFormula(res.special);
     }
     fetchPosts();
@@ -102,37 +115,56 @@ export default function Home() {
   //切换公式数据
   const setCubeFormulaData = (type = "blind") => {
     switch (type) {
+      case "cfop":
+        cfopFormula.forEach((item, index) => {
+          item.id = index;
+        });
+        const tmp = cfopFormula.filter((item) => {
+          return item.类型 === cfopType;
+        });
+        setTabColumns(cfopColumns);
+        setCubeFormula(tmp);
+        break;
+      case "special":
+        setSpecialFormula(specialFormula);
+        break;
       case "blind":
+      default:
         blindFormula.forEach((item, index) => {
           item.id = index;
         });
         setTabColumns(blindColumns);
         setCubeFormula(blindFormula);
         break;
-      case "cfop":
-        cropFormula.forEach((item, index) => {
-          item.id = index;
-        });
-        setTabColumns(cfopCloumns);
-        setCubeFormula(cropFormula);
-        break;
-      case "special":
-        setSpecialFormula(specialFormula);
-        break;
-      default:
-        break;
     }
   };
 
-  //盲拧过滤数据
-  const filterBlindData = (s = "", c) => {
-    const blindType = c ? "edge" : "corner";
-    const data = cubeData?.blind.filter(
+  //获取CFOP公式分组
+  const getCFOPGroup = (data) => {
+    let groups = [];
+    //把cfopFormula按“分组”属性进行分组，获得分组列表
+    data.forEach((item) => {
+      if (!groups.includes(item.分组)) {
+        groups.push(item.分组);
+      }
+    });
+    return groups;
+  };
+  //过滤盲拧公式
+  const filterBlindData = (code = "", type) => {
+    const blindType = type ? "edge" : "corner";
+    const data = blindFormula.filter(
       (item) =>
-        item.Type === blindType &&
-        (s === "" || item.Code.startsWith(s.toUpperCase())),
+        item.类型 === blindType &&
+        (code === "" || item.编码.startsWith(code.toUpperCase())),
     );
-    setBlindData(data);
+    setCubeFormula(data);
+  };
+  //过滤CFOP公式
+  const filterCFOPFormula = (type = "") => {
+    if (type === "") type = "F2L";
+    const data = cfopFormula.filter((item) => item.类型 === type);
+    setCubeFormula(data);
   };
 
   //#region 点击公式行
@@ -147,14 +179,12 @@ export default function Home() {
   const setFormulaTypeValue = ({ target: { value } }) => {
     setFormulaType(value);
     setCubeFormulaData(value);
-
-    // filterCFOPData(value);
   };
 
   //CFOP公式，按公式类型过滤
   const setCfopTypeValue = ({ target: { value } }) => {
     setCfopType(value);
-    // filterCFOPData(value);
+    filterCFOPFormula(value);
   };
 
   const [edgeChecked, setEdgeChecked] = useState(true);
@@ -201,7 +231,7 @@ export default function Home() {
                 options={[
                   { label: "盲拧", value: "blind" },
                   { label: "CFOP", value: "cfop" },
-                  { label: "特殊", value: "speccial" },
+                  { label: "特殊", value: "special" },
                 ]}
                 onChange={setFormulaTypeValue}
                 optionType="button"
@@ -224,6 +254,7 @@ export default function Home() {
                 ></Radio.Group>
               </div>
             )}
+
             {formulaType === "blind" && (
               <div className="flex ml-4">
                 <div className="mr-4">
@@ -289,6 +320,7 @@ export default function Home() {
               rowHoverable={false}
               bordered={true}
               size="small"
+              showSorterTooltip={{ target: "sorter-icon" }}
               pagination={{
                 position: ["bottomLeft"],
                 align: "start",
