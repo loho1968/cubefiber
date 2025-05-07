@@ -23,6 +23,7 @@ import {
 let count = 1;
 const Cube = ({ position, refProp, blindCode }) => {
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
+  const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
   count++;
   function GetLabel(position, face, type = "code") {
     let code = "";
@@ -41,54 +42,54 @@ const Cube = ({ position, refProp, blindCode }) => {
   // colors = ["red", "orange", "white", "yellow", "#90EE90", "#04d9ff"];
   colors = ["#009E60", "#0051BA", "#FFD500", "#FFFFFF", "#C41E3A", "#FF5800"]; // R L U D F B
   return (
-    <group ref={refProp} position={position}>
+    <group ref={refProp} position={[position[0] * cubeScale, position[1] * cubeScale, position[2] * cubeScale]}>
       {/* 渲染圆角方块作为基础 */}
-      <RoundedBox args={[1, 1, 1]} radius={0.15} smoothness={10}>
+      <RoundedBox args={[cubeScale, cubeScale, cubeScale]} radius={0.15 * cubeScale} smoothness={10}>
         <meshStandardMaterial color="black" />
       </RoundedBox>
 
       {/* 渲染6个面的贴纸*/}
       {[
         {
-          pos: [0, 0, stickerOffset],
+          pos: [0, 0, stickerOffset * cubeScale],
           rot: [0, 0, 0],
           color: colors[4],
           face: "F",
-        }, // 前面 0
+        },
         {
-          pos: [0, 0, -stickerOffset],
+          pos: [0, 0, -stickerOffset * cubeScale],
           rot: [0, Math.PI, 0],
           color: colors[5],
           face: "B",
-        }, // 后面 1
+        },
         {
-          pos: [-stickerOffset, 0, 0],
+          pos: [-stickerOffset * cubeScale, 0, 0],
           rot: [0, -Math.PI / 2, 0],
           color: colors[1],
           face: "L",
-        }, // 左面 2
+        },
         {
-          pos: [stickerOffset, 0, 0],
+          pos: [stickerOffset * cubeScale, 0, 0],
           rot: [0, Math.PI / 2, 0],
           color: colors[0],
           face: "R",
-        }, // 右面 3
+        },
         {
-          pos: [0, stickerOffset, 0],
+          pos: [0, stickerOffset * cubeScale, 0],
           rot: [-Math.PI / 2, 0, 0],
           color: colors[2],
           face: "U",
-        }, // 上面 4
+        },
         {
-          pos: [0, -stickerOffset, 0],
+          pos: [0, -stickerOffset * cubeScale, 0],
           rot: [Math.PI / 2, 0, 0],
           color: colors[3],
           face: "D",
-        }, // 下面 5
+        },
       ].map(({ pos, rot, color, face }, i) => (
         <group key={i} position={pos} rotation={rot}>
           <mesh>
-            <planeGeometry args={[0.85, 0.85]} />
+            <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]} />
             <meshStandardMaterial
               color={color}
               emissive={color}
@@ -99,14 +100,12 @@ const Cube = ({ position, refProp, blindCode }) => {
           </mesh>
           <Text
             position={[0, 0, 0.01]}
-            fontSize={0.2}
+            fontSize={0.2 * cubeScale}
             color={face === "L" ? "white" : "black"}
             anchorX="center"
             anchorY="middle"
           >
             {i}
-            {/* {GetLabel(position[3],face,'sequence')} */}
-            {/* {GetLabel(position[3],face)} */}
           </Text>
         </group>
       ))}
