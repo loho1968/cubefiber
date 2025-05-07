@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useRef, useState, useEffect, createRef } from "react";
+import { useRef, useState, useEffect, createRef,forwardRef,useImperativeHandle } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Text, RoundedBox } from "@react-three/drei";
 
@@ -123,19 +123,17 @@ const Cube = ({ position, refProp, blindCode }) => {
     </group>
   );
 };
-
+    
 //rendering who cube with it
-const RubiksCube = (blindCodeData) => {
+const RubiksCube = forwardRef((blindCode,ref) => {
+  
   const cubeScale = 1.5;
   const [cubeRefs, setCubeRefs] = useState([]);
   const [rotationQueue, setRotationQueue] = useState([]);
   const [isRotating, setIsRotating] = useState(false);
-  const [blindCode, setBlindCode] = useState([]); // 新增状态存储Excel数据
+  // const [blindCode, setBlindCode] = useState([]); // 新增状态存储Excel数据
   const rotateStatus = useRef(false);
-  useEffect(() => {
-    setBlindCode(blindCodeData);
-  });
-  console.log(blindCodeData);
+ 
   //inital cube for mapping the 3d cube in 2d
   const initialCube = [
     // Up (Yellow)
@@ -699,6 +697,10 @@ const RubiksCube = (blindCodeData) => {
         rotateLayer("z", -1, "clockwise");
         break;
     }
+      // 把子组件方法暴露出去  一定注意要把组件的第二个参数ref传递进来
+      useImperativeHandle(ref, () => ({
+        rotateCube: rotateCube,
+      }));
   };
 
   return (
@@ -733,6 +735,6 @@ const RubiksCube = (blindCodeData) => {
       </div>
     </div>
   );
-};
+});
 
 export default RubiksCube;

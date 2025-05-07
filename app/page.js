@@ -28,7 +28,7 @@ import target from "three/src/nodes/core/Node";
 
 export default function Home() {
   //#region 基础设置、变量
-  const cubeRef = useRef(null); //cube容器
+  const cubeRef = useRef(); //cube容器
 
   //盲拧公式表格的列
   const blindColumns = [
