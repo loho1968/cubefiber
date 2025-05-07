@@ -42,9 +42,20 @@ const Cube = ({ position, refProp, blindCode }) => {
   // colors = ["red", "orange", "white", "yellow", "#90EE90", "#04d9ff"];
   colors = ["#009E60", "#0051BA", "#FFD500", "#FFFFFF", "#C41E3A", "#FF5800"]; // R L U D F B
   return (
-    <group ref={refProp} position={[position[0] * cubeScale, position[1] * cubeScale, position[2] * cubeScale]}>
+    <group
+      ref={refProp}
+      position={[
+        position[0] * cubeScale,
+        position[1] * cubeScale,
+        position[2] * cubeScale,
+      ]}
+    >
       {/* 渲染圆角方块作为基础 */}
-      <RoundedBox args={[cubeScale, cubeScale, cubeScale]} radius={0.15 * cubeScale} smoothness={10}>
+      <RoundedBox
+        args={[cubeScale, cubeScale, cubeScale]}
+        radius={0.15 * cubeScale}
+        smoothness={10}
+      >
         <meshStandardMaterial color="black" />
       </RoundedBox>
 
@@ -115,7 +126,7 @@ const Cube = ({ position, refProp, blindCode }) => {
 
 //rendering who cube with it
 const RubiksCube = (blindCodeData) => {
-  const cubeScale=1.5
+  const cubeScale = 1.5;
   const [cubeRefs, setCubeRefs] = useState([]);
   const [rotationQueue, setRotationQueue] = useState([]);
   const [isRotating, setIsRotating] = useState(false);
@@ -307,24 +318,24 @@ const RubiksCube = (blindCodeData) => {
       }
 
       if (shiftKey) {
-        // Handle Shift Key Variants (Opposite Direction)
+        // 按Shift键，旋转反向  R L U D F B
         switch (keyPressed) {
-          case "w":
+          case "u":
             rotateLayer("y", 1, "anti-clockwise");
             return;
-          case "s":
+          case "d":
             rotateLayer("y", -1, "anti-clockwise");
             return;
-          case "a":
+          case "l":
             rotateLayer("x", -1, "anti-clockwise");
             return;
-          case "d":
+          case "r":
             rotateLayer("x", 1, "anti-clockwise");
             return;
-          case "q":
+          case "f":
             rotateLayer("z", 1, "anti-clockwise");
             return;
-          case "e":
+          case "b":
             rotateLayer("z", -1, "anti-clockwise");
             return;
         }
@@ -332,22 +343,22 @@ const RubiksCube = (blindCodeData) => {
 
       // Handle Regular Rotations
       switch (keyPressed) {
-        case "w":
+        case "u":
           rotateLayer("y", 1, "clockwise");
           break;
-        case "s":
+        case "d":
           rotateLayer("y", -1, "clockwise");
           break;
-        case "a":
+        case "l":
           rotateLayer("x", -1, "clockwise");
           break;
-        case "d":
+        case "r":
           rotateLayer("x", 1, "clockwise");
           break;
-        case "q":
+        case "f":
           rotateLayer("z", 1, "clockwise");
           break;
-        case "e":
+        case "b":
           rotateLayer("z", -1, "clockwise");
           break;
       }
@@ -369,15 +380,15 @@ const RubiksCube = (blindCodeData) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-          axis === "x" ? -1 : 0,
-          axis === "y" ? -1 : 0,
-          axis === "z" ? -1 : 0,
-        )
+            axis === "x" ? -1 : 0,
+            axis === "y" ? -1 : 0,
+            axis === "z" ? -1 : 0,
+          )
         : new THREE.Vector3(
-          axis === "x" ? 1 : 0,
-          axis === "y" ? 1 : 0,
-          axis === "z" ? 1 : 0,
-        );
+            axis === "x" ? 1 : 0,
+            axis === "y" ? 1 : 0,
+            axis === "z" ? 1 : 0,
+          );
 
     let progress = 0;
     const totalRotation = rotationStep;
@@ -401,11 +412,11 @@ const RubiksCube = (blindCodeData) => {
             const originalPosition = [...position];
             ref.current.rotation.set(
               Math.round(ref.current.rotation.x / (Math.PI / 2)) *
-              (Math.PI / 2),
+                (Math.PI / 2),
               Math.round(ref.current.rotation.y / (Math.PI / 2)) *
-              (Math.PI / 2),
+                (Math.PI / 2),
               Math.round(ref.current.rotation.z / (Math.PI / 2)) *
-              (Math.PI / 2),
+                (Math.PI / 2),
             );
 
             const matrix = new THREE.Matrix4().makeRotationAxis(
@@ -423,7 +434,7 @@ const RubiksCube = (blindCodeData) => {
             ref.current.position.set(
               position[0] * cubeScale,
               position[1] * cubeScale,
-              position[2] * cubeScale
+              position[2] * cubeScale,
             );
             console.log(
               `Full cube rotation: Original position ${originalPosition}, New position ${position}`,
@@ -468,15 +479,15 @@ const RubiksCube = (blindCodeData) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-          axis === "x" ? -1 : 0,
-          axis === "y" ? -1 : 0,
-          axis === "z" ? -1 : 0,
-        )
+            axis === "x" ? -1 : 0,
+            axis === "y" ? -1 : 0,
+            axis === "z" ? -1 : 0,
+          )
         : new THREE.Vector3(
-          axis === "x" ? 1 : 0,
-          axis === "y" ? 1 : 0,
-          axis === "z" ? 1 : 0,
-        );
+            axis === "x" ? 1 : 0,
+            axis === "y" ? 1 : 0,
+            axis === "z" ? 1 : 0,
+          );
 
     let progress = 0;
     const rotationSpeed = rotationStep / 30; // Adjust speed for smooth animation
@@ -515,7 +526,7 @@ const RubiksCube = (blindCodeData) => {
             ref.current.position.set(
               position[0] * cubeScale,
               position[1] * cubeScale,
-              position[2] * cubeScale
+              position[2] * cubeScale,
             );
             console.log(
               `Layer rotation: Original position ${originalPosition}, New position ${position}`,
