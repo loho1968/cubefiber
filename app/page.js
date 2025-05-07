@@ -40,7 +40,20 @@ export default function Home() {
       align: "center",
     },
   ];
+  //特殊公式表格列
+  const specialColumns = [
+    {
+      title: "名称",
+      dataIndex: "名称",
+      align: "center",
+    },
+  ];
   const [cfopGroups, setCfopGroups] = useState([]);
+
+  const [edgeChecked, setEdgeChecked] = useState(true); //盲拧公式的：角块、棱块类型
+  const [search, setSearch] = useState(""); //盲拧搜索编码
+  const [allColorChecked, setAllColorChecked] = useState(true); //颜色显示
+  const [showCodeChecked, setShowCodeChecked] = useState(true);
 
   const cfopColumns = [
     {
@@ -82,6 +95,7 @@ export default function Home() {
 
   const [formulaType, setFormulaType] = useState("blind");
   //#endregion
+
   //#region 加载数据数据
 
   useEffect(() => {
@@ -97,9 +111,14 @@ export default function Home() {
       setBlindCode(res.blindCode);
       setBlindFormula(res.blindformula);
       setCfopFormula(res.cfop);
+      res.special.forEach((item, index) => {
+        item.id = index;
+      });
       setSpecialFormula(res.special);
     }
-    fetchPosts();
+    fetchPosts().then(() => {
+      //console.log(blindCode);
+    });
   }, []);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
@@ -126,7 +145,9 @@ export default function Home() {
         setCubeFormula(tmp);
         break;
       case "special":
-        setSpecialFormula(specialFormula);
+        setTabColumns(specialColumns);
+        setCubeFormula(specialFormula);
+        console.log("aaaa");
         break;
       case "blind":
       default:
@@ -167,58 +188,58 @@ export default function Home() {
     setCubeFormula(data);
   };
 
-  //#region 点击公式行
+  //显示魔方
+  const showCube = () => {};
+  //#endregion
+
+  //#region 界面操作
+  //点击公式行
   const clickRow = (record) => {
     record.逆向公式 = getReverseFormula(record.公式);
     setCurrentFormula(record);
     // showCube(record, allColorChecked, showCodeChecked);
   };
-  //#endregion
-  //#region 界面操作
-  //公式类型
+
+  //切换公式类型
   const setFormulaTypeValue = ({ target: { value } }) => {
     setFormulaType(value);
     setCubeFormulaData(value);
   };
 
-  //CFOP公式，按公式类型过滤
+  //切换CFOP公式类型
   const setCfopTypeValue = ({ target: { value } }) => {
     setCfopType(value);
     filterCFOPFormula(value);
   };
 
-  const [edgeChecked, setEdgeChecked] = useState(true);
-  //盲拧公式时，按角块、棱块类型过滤
+  //盲拧公式切换按角块、棱块类型
   const setEdgeCheckedValue = (checked) => {
     setEdgeChecked(checked);
     filterBlindData(search, checked);
   };
-  //#region 编码搜索
-  const [search, setSearch] = useState("");
+  //盲拧编码搜索
   const setSearchValue = (value) => {
     setSearch(value);
     filterBlindData(value, edgeChecked);
   };
 
+  //临时公式输入后
   const setTmpFormulaValue = (e) => {
     setTmpFormula(e.target.value);
   };
-  //#endregion
-  //#region cube参数
-
   //颜色显示
-  //颜色显示
-  const [allColorChecked, setAllColorChecked] = useState(true);
+  //颜色显示切换
   const setAllColorCheckedValue = (checked) => {
     setAllColorChecked(checked);
     // if (currentRow) showCube(currentRow, checked, showCodeChecked);
   };
-  const [showCodeChecked, setShowCodeChecked] = useState(true);
+  //编码显示切换
   const setShowCodeCheckedValue = (checked) => {
     setShowCodeChecked(checked);
     // if (currentRow) showCube(currentRow, allColorChecked, checked);
   };
   //#endregion
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
@@ -296,14 +317,16 @@ export default function Home() {
                 onChange={setAllColorCheckedValue}
               />
             </div>
-            <div className="ml-4">
-              <Switch
-                checkedChildren="显示编码"
-                unCheckedChildren="不显示编码"
-                checked={showCodeChecked}
-                onChange={setShowCodeCheckedValue}
-              />
-            </div>
+            {formulaType === "blind" && (
+              <div className="ml-4">
+                <Switch
+                  checkedChildren="显示编码"
+                  unCheckedChildren="不显示编码"
+                  checked={showCodeChecked}
+                  onChange={setShowCodeCheckedValue}
+                />
+              </div>
+            )}
           </div>
         </div>
       </HeaderBase>
@@ -312,7 +335,7 @@ export default function Home() {
       <main className="flex flex-1 gap-4 min-h-0">
         {/* Left Panel - 30% */}
         <div className="w-[30%] h-[100%]   overflow-auto border-r-1 border-gray-600">
-          <div className="">
+          <div className="p-4">
             <Table
               dataSource={cubeFormula}
               columns={tabColumns}
