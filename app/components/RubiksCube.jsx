@@ -115,6 +115,7 @@ const Cube = ({ position, refProp, blindCode }) => {
 
 //rendering who cube with it
 const RubiksCube = (blindCodeData) => {
+  const cubeScale=1.5
   const [cubeRefs, setCubeRefs] = useState([]);
   const [rotationQueue, setRotationQueue] = useState([]);
   const [isRotating, setIsRotating] = useState(false);
@@ -368,15 +369,15 @@ const RubiksCube = (blindCodeData) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-            axis === "x" ? -1 : 0,
-            axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0,
-          )
+          axis === "x" ? -1 : 0,
+          axis === "y" ? -1 : 0,
+          axis === "z" ? -1 : 0,
+        )
         : new THREE.Vector3(
-            axis === "x" ? 1 : 0,
-            axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0,
-          );
+          axis === "x" ? 1 : 0,
+          axis === "y" ? 1 : 0,
+          axis === "z" ? 1 : 0,
+        );
 
     let progress = 0;
     const totalRotation = rotationStep;
@@ -400,11 +401,11 @@ const RubiksCube = (blindCodeData) => {
             const originalPosition = [...position];
             ref.current.rotation.set(
               Math.round(ref.current.rotation.x / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
               Math.round(ref.current.rotation.y / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
               Math.round(ref.current.rotation.z / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
             );
 
             const matrix = new THREE.Matrix4().makeRotationAxis(
@@ -419,7 +420,11 @@ const RubiksCube = (blindCodeData) => {
             position[1] = Math.round(newPosition.y);
             position[2] = Math.round(newPosition.z);
 
-            ref.current.position.set(position[0], position[1], position[2]);
+            ref.current.position.set(
+              position[0] * cubeScale,
+              position[1] * cubeScale,
+              position[2] * cubeScale
+            );
             console.log(
               `Full cube rotation: Original position ${originalPosition}, New position ${position}`,
             );
@@ -463,15 +468,15 @@ const RubiksCube = (blindCodeData) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-            axis === "x" ? -1 : 0,
-            axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0,
-          )
+          axis === "x" ? -1 : 0,
+          axis === "y" ? -1 : 0,
+          axis === "z" ? -1 : 0,
+        )
         : new THREE.Vector3(
-            axis === "x" ? 1 : 0,
-            axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0,
-          );
+          axis === "x" ? 1 : 0,
+          axis === "y" ? 1 : 0,
+          axis === "z" ? 1 : 0,
+        );
 
     let progress = 0;
     const rotationSpeed = rotationStep / 30; // Adjust speed for smooth animation
@@ -507,7 +512,11 @@ const RubiksCube = (blindCodeData) => {
             position[1] = Math.round(newPosition.y);
             position[2] = Math.round(newPosition.z);
 
-            ref.current.position.set(position[0], position[1], position[2]);
+            ref.current.position.set(
+              position[0] * cubeScale,
+              position[1] * cubeScale,
+              position[2] * cubeScale
+            );
             console.log(
               `Layer rotation: Original position ${originalPosition}, New position ${position}`,
             );
