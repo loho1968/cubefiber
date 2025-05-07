@@ -342,7 +342,7 @@ export default function Home() {
               rowKey={(record) => record.id}
               rowHoverable={false}
               bordered={true}
-              size="small"
+              size="large"
               showSorterTooltip={{ target: "sorter-icon" }}
               pagination={{
                 position: ["bottomLeft"],
