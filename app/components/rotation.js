@@ -522,7 +522,7 @@ const rotateBackCounterclockwise =  (cube) => {
   return newCube;
 };
 
-// 导出所有旋转函数
+// 导出新函数
 export {
   rotateFrontClockwise,
   rotateFrontCounterclockwise,
@@ -537,5 +537,62 @@ export {
   rotateBackClockwise,
   rotateBackCounterclockwise,
   rotateFullCubeClockwise,
-  rotateFullCubeCounterclockwise
+  rotateFullCubeCounterclockwise,
+  rotateMiddleLayerX,
+  rotateMiddleLayerY,
+  rotateMiddleLayerZ
+};
+
+/**
+ * 顺时针旋转 x 轴中间层（M 层，左向右看为顺时针）
+ * @param {Array} cube - 魔方的当前状态
+ * @returns {Array} - 旋转后的新状态
+ */
+const rotateMiddleLayerX = (cube) => {
+  let newCube = JSON.parse(JSON.stringify(cube));
+  // 只操作中间层（y=1）
+  // 前面中列 -> 上面中列 -> 后面中列 -> 下面中列 -> 前面中列
+  for (let i = 0; i < 3; i++) {
+    newCube[0][i][1] = cube[1][i][1]; // 上 <- 前
+    newCube[3][2 - i][1] = cube[0][i][1]; // 后 <- 上（注意后面顺序反向）
+    newCube[5][i][1] = cube[3][2 - i][1]; // 下 <- 后
+    newCube[1][i][1] = cube[5][i][1]; // 前 <- 下
+  }
+  return newCube;
+};
+
+/**
+ * 顺时针旋转 y 轴中间层（E 层，从上往下看为顺时针）
+ * @param {Array} cube - 魔方的当前状态
+ * @returns {Array} - 旋转后的新状态
+ */
+const rotateMiddleLayerY = (cube) => {
+  let newCube = JSON.parse(JSON.stringify(cube));
+  // 只操作中间层（y=1）
+  // 前面中行 -> 右面中行 -> 后面中行 -> 左面中行 -> 前面中行
+  for (let i = 0; i < 3; i++) {
+    newCube[2][1][i] = cube[1][1][i]; // 右 <- 前
+    newCube[3][1][i] = cube[2][1][i]; // 后 <- 右
+    newCube[4][1][i] = cube[3][1][i]; // 左 <- 后
+    newCube[1][1][i] = cube[4][1][i]; // 前 <- 左
+  }
+  return newCube;
+};
+
+/**
+ * 顺时针旋转 z 轴中间层（S 层，从前往后看为顺时针）
+ * @param {Array} cube - 魔方的当前状态
+ * @returns {Array} - 旋转后的新状态
+ */
+const rotateMiddleLayerZ = (cube) => {
+  let newCube = JSON.parse(JSON.stringify(cube));
+  // 只操作中间层（z=1）
+  // 上面中行 -> 右面中列 -> 下面中行 -> 左面中列 -> 上面中行
+  for (let i = 0; i < 3; i++) {
+    newCube[2][i][1] = cube[0][1][i]; // 右 <- 上
+    newCube[5][1][2 - i] = cube[2][i][1]; // 下 <- 右（下行顺序反向）
+    newCube[4][2 - i][1] = cube[5][1][2 - i]; // 左 <- 下（左列顺序反向）
+    newCube[0][1][i] = cube[4][2 - i][1]; // 上 <- 左
+  }
+  return newCube;
 };

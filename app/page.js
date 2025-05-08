@@ -139,8 +139,7 @@ export default function Home() {
       });
       setSpecialFormula(res.special);
     }
-    fetchPosts().then(() => {
-    });
+    fetchPosts().then(() => {});
   }, []);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
@@ -280,7 +279,7 @@ export default function Home() {
   const moveCube = () => {
     console.log(currentFormula.公式文本);
     // console.log(item.公式文本);
-    rubiksCubeRef.current.rotateCube("E");
+    rubiksCubeRef.current.rotateCube(["E", "M", "S"]);
   };
   //#endregion
   return (
