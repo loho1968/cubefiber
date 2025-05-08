@@ -1,4 +1,18 @@
 import * as XLSX from "xlsx";
+
+export function transform(formula) {
+  let result = [];
+  for (let i = 0; i < formula.length; i++) {
+    let temp = formula[i];
+    if (temp.indexOf("2") > -1) {
+      result.push(temp.substring(0, 1));
+      result.push(temp.substring(0, 1));
+    } else {
+      result.push(temp);
+    }
+    //E y轴中间层,M x轴中间层 S z轴中间层
+  }
+}
 /**
  * 将魔方公式字符串转换为步骤数组
  * @param {string} formula - 魔方公式字符串，支持多种格式：
@@ -19,8 +33,10 @@ export function parseFormula(formula) {
 
   // 3. 用正则匹配所有合法魔方操作（如R, R', R2, U, U', U2等），支持大小写
   // 支持大写/小写字母+可选的2+可选的'
-  const moves = formula.match(/([ESMURFDLBurfdlb][2]?')|([ESMURFDLBurfdlb][2]?)|([xyzXYZ][2]?')|([xyzXYZ][2]?)/g);
-  console.log(moves,formula);
+  const moves = formula.match(
+    /([ESMURFDLBurfdlb][2]?')|([ESMURFDLBurfdlb][2]?)|([xyzXYZ][2]?')|([xyzXYZ][2]?)/g,
+  );
+  console.log(moves, formula);
   return moves || [];
 }
 
