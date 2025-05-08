@@ -30,13 +30,14 @@ import {
   rotateMiddleLayerY,
   rotateMiddleLayerZ,
 } from "./rotation"; // 从rotation.js导入2D魔方的旋转函数
-let count = 1;
 const Cube = ({ position, refProp, blindCode }) => {
+  console.log(blindCode);
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
-  count++;
+
   function GetLabel(position, face, type = "code") {
-    let code = blindCode.find((x) => x.id === position && x.面 === face);
+    console.log(blindCode);
+    let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
 
     if (code) {
       code = type === "code" ? code.编码 : code.面 + code.面序号; //code.编码
@@ -124,7 +125,7 @@ const Cube = ({ position, refProp, blindCode }) => {
             anchorX="center"
             anchorY="middle"
           >
-            {i}
+            {GetLabel(position, face)}
           </Text>
         </group>
       ))}
@@ -138,7 +139,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const [cubeRefs, setCubeRefs] = useState([]);
   const rotateStatus = useRef(false);
 
-  //inital cube for mapping the 3d cube in 2d
+  //用于在二维中映射三维立方体的初始立方体
   const initialCube = [
     // Up (Yellow)
     [
@@ -184,7 +185,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   let newCube;
 
   //读取public目录下的cubecode.xlsx,sheet:blindcode。第一行为列头，生成数据给变量：blindCode
-  //color map for mapping the colors in each div or cell of the 2d cube like whereever there is white render #ffffff
   //颜色映射，用于映射二维立方体的每个div或单元格中的颜色，就像有白色渲染的地方一样#ffffff
   const colorMap = {
     W: "#FFFFFF", // White
@@ -301,22 +301,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
       const keyPressed = key.toLowerCase();
 
-      //x y z 轴旋转
-      switch (key) {
-        case "ArrowUp":
-          rotateFullCube("x", Math.PI / 2, "clockwise");
-          break;
-        case "ArrowDown":
-          rotateFullCube("x", Math.PI / 2, "clockwise");
-          break;
-        case "ArrowLeft":
-          rotateFullCube("y", Math.PI / 2, "clockwise");
-          break;
-        case "ArrowRight":
-          rotateFullCube("y", Math.PI / 2, "anti-clockwise");
-          break;
-      }
-
       if (shiftKey) {
         // 按Shift键，旋转反向  R L U D F B
         switch (keyPressed) {
@@ -386,10 +370,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [cube, cubeRefs]); // Dependency array
+  }, [cube, cubeRefs]); //依赖数组
 
-  //rotation of whole cube on basis of arrow keys
-  //to be implemented in the 2d cube
+  //在二维立方体中实现
   const rotateFullCube = (axis, rotationStep, direction) => {
     if (rotateStatus.current) return;
     rotateStatus.current = true;
@@ -409,7 +392,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
     let progress = 0;
     const totalRotation = rotationStep;
-    const rotationSpeed = Math.PI / 2 / 20; // Smooth animation speed
+    const rotationSpeed = Math.PI / 2 / 20; // 动画速度
 
     const rotate = () => {
       const step = Math.sign(totalRotation) * rotationSpeed;
@@ -760,7 +743,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
                 key={index}
                 position={position}
                 refProp={ref}
-                blindCode={blindCodeData}
+                blindCode={blindCodeData.blindCodeData}
               />
             ))}
           </group>
