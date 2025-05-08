@@ -280,7 +280,7 @@ export default function Home() {
   const moveCube = () => {
     console.log(currentFormula.公式文本);
     // console.log(item.公式文本);
-    // rubiksCubeRef.current.rotateCube("x");
+    rubiksCubeRef.current.rotateCube("E");
   };
   //#endregion
   return (

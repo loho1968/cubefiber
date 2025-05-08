@@ -643,6 +643,23 @@ const RubiksCube = forwardRef((blindCodeData,refProp) => {
     console.log("rotateCube", step);
     // ... existing code ...
     switch (step) {
+      case "E":
+        rotateLayer("y", 0, "clockwise");
+        break;
+      case "E'":
+        rotateLayer("y", 0, "anti-clockwise");
+        break;
+      case "M":
+        rotateLayer("x", 0, "clockwise");
+        break;
+      case "M'":
+        rotateLayer("x", 0, "anti-clockwise");
+        break;
+      case "S":
+        rotateLayer("z", 0, "clockwise");
+        break;
+      case "S'":
+        rotateLayer("z", 0, "anti-clockwise");
       case "x'":
         rotateFullCube("x", Math.PI / 2, "clockwise");
         break;
