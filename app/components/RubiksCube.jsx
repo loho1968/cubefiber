@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useRef, useState, useEffect, createRef,forwardRef,useImperativeHandle } from "react";
+import { useRef, useState, useEffect, createRef, forwardRef, useImperativeHandle } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Text, RoundedBox } from "@react-three/drei";
 
@@ -123,17 +123,17 @@ const Cube = ({ position, refProp, blindCode }) => {
     </group>
   );
 };
-    
+
 //rendering who cube with it
-const RubiksCube = forwardRef((blindCode,ref) => {
-  
+const RubiksCube = forwardRef((blindCodeData,refProp) => {
+
   const cubeScale = 1.5;
   const [cubeRefs, setCubeRefs] = useState([]);
   const [rotationQueue, setRotationQueue] = useState([]);
   const [isRotating, setIsRotating] = useState(false);
   // const [blindCode, setBlindCode] = useState([]); // 新增状态存储Excel数据
   const rotateStatus = useRef(false);
- 
+
   //inital cube for mapping the 3d cube in 2d
   const initialCube = [
     // Up (Yellow)
@@ -640,6 +640,7 @@ const RubiksCube = forwardRef((blindCode,ref) => {
 
   //通过公式选择魔方
   const rotateCube = (step) => {
+    console.log("rotateCube", step);
     // ... existing code ...
     switch (step) {
       case "x'":
@@ -697,12 +698,12 @@ const RubiksCube = forwardRef((blindCode,ref) => {
         rotateLayer("z", -1, "clockwise");
         break;
     }
-      // 把子组件方法暴露出去  一定注意要把组件的第二个参数ref传递进来
-      useImperativeHandle(ref, () => ({
-        rotateCube: rotateCube,
-      }));
-  };
 
+  };
+  // 把子组件方法暴露出去  一定注意要把组件的第二个参数ref传递进来
+  useImperativeHandle(refProp, () => ({
+    rotateCube: rotateCube,
+  }));
   return (
     <div className="flex items-center justify-center w-full h-full position-relative">
       <div className="flex flex-col items-center justify-center gap-4 w-[40%] h-full">
@@ -727,7 +728,7 @@ const RubiksCube = forwardRef((blindCode,ref) => {
                 key={index}
                 position={position}
                 refProp={ref}
-                blindCode={blindCode}
+                blindCode={blindCodeData}
               />
             ))}
           </group>
