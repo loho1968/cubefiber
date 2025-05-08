@@ -169,7 +169,6 @@ export default function Home() {
       case "special":
         setTabColumns(specialColumns);
         setCubeFormula(specialFormula);
-        console.log("aaaa");
         break;
       case "blind":
       default:
@@ -211,7 +210,9 @@ export default function Home() {
   };
 
   //显示魔方
-  const showCube = () => {};
+  const showCube = () => {
+
+  };
   //#endregion
 
   //#region 界面操作
@@ -221,7 +222,7 @@ export default function Home() {
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);
-    // showCube(record, allColorChecked, showCodeChecked);
+    showCube(record, allColorChecked, showCodeChecked);
   };
 
   //切换公式类型
@@ -278,11 +279,9 @@ export default function Home() {
   const lastStep = () => {};
 
   const moveCube = () => {
-    console.log(currentFormula.公式文本);
-    // console.log(item.公式文本);
-    const tmp=transform(["u"])
-    console.log(tmp);
-    rubiksCubeRef.current.rotateCube(tmp);
+    //const tmp=transform(["E","E'"])
+    // rubiksCubeRef.current.rotateCube(tmp,showCodeChecked,"F1");
+    rubiksCubeRef.current.setNewCube()
   };
   //#endregion
   return (

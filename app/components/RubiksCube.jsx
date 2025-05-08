@@ -30,11 +30,24 @@ import {
   rotateMiddleLayerY,
   rotateMiddleLayerZ,
 } from "./rotation"; // 从rotation.js导入2D魔方的旋转函数
-const Cube = ({ position, refProp, blindCode }) => {
+const Cube = ({ position, refProp, blindCode ,showCode,showFaces}) => {
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
+  function GetFaceColor(position,color,face,showFaces){
+    if(!showFaces || showFaces==="") return color
+    const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
+    if(code){
+      if(showFaces.include(code.面ID)){
+    console.log(position,showFaces,face,code.面ID)
+
+        return color
+      }
+    }
+    return "black"
+  }
   function GetLabel(position, face, type = "code") {
+    if(!showCode) return ""
     let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
 
     if (code) {
@@ -110,7 +123,7 @@ const Cube = ({ position, refProp, blindCode }) => {
             <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]} />
             <meshStandardMaterial
               color={color}
-              emissive={color}
+              emissive={GetFaceColor(position,color,showFaces,face)}
               emissiveIntensity={0.2}
               metalness={0.1}
               roughness={0.3}
@@ -135,6 +148,8 @@ const Cube = ({ position, refProp, blindCode }) => {
 const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const cubeScale = 1.5;
   const [cubeRefs, setCubeRefs] = useState([]);
+  const [showCode,setShowCode]=useState(true)
+  const [showFaces,setShowFaces] =useState("")
   const rotateStatus = useRef(false);
 
   //用于在二维中映射三维立方体的初始立方体
@@ -249,7 +264,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         <div style={{ marginBottom: "8px" }}>
           <div style={{ marginLeft: "96px" }}>
             {renderFace(cube[0], cellSize)}
-            aaaaaa
           </div>
         </div>
 
@@ -291,7 +305,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     setCubeRefs(refs);
   }, []);
 
-  //handling inputs for rotation via keydown event
+  //绑定键盘事件
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (rotateStatus.current) return; // Prevent multiple rotations at once
@@ -434,9 +448,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
               position[1] * cubeScale,
               position[2] * cubeScale,
             );
-            console.log(
-              `Full cube rotation: Original position ${originalPosition}, New position ${position}`,
-            );
+            // console.log(
+            //   `Full cube rotation: Original position ${originalPosition}, New position ${position}`,
+            // );
           }
         });
 
@@ -525,9 +539,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
               position[1] * cubeScale,
               position[2] * cubeScale,
             );
-            console.log(
-              `Layer rotation: Original position ${originalPosition}, New position ${position}`,
-            );
+            // console.log(
+            //   `Layer rotation: Original position ${originalPosition}, New position ${position}`,
+            // );
           }
         });
 
@@ -536,6 +550,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         setCube((prevCube) => {
           //y轴中间层
           if (axis === "y" && layerValue === 0 && direction === "clockwise") {
+            newCube = rotateMiddleLayerY(prevCube);
+            return newCube;
+          }
+          if (axis === "y" && layerValue === 0 && direction === "anti-clockwise") {
             newCube = rotateMiddleLayerY(prevCube);
             return newCube;
           }
@@ -552,6 +570,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             newCube = rotateMiddleLayerX(prevCube);
             return newCube;
           }
+          if (axis === "x" && layerValue === 0 && direction === "anti-clockwise") {
+            newCube = rotateMiddleLayerX(prevCube);
+            return newCube;
+          }
           if (axis === "x" && layerValue === 1 && direction === "clockwise") {
             newCube = rotateRightCounterclockwise(prevCube);
             return newCube;
@@ -565,6 +587,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             newCube = rotateMiddleLayerZ(prevCube);
             return newCube;
           }
+          if (axis === "z" && layerValue === 0 && direction === "anti-clockwise") {
+            newCube = rotateMiddleLayerZ(prevCube);
+            return newCube;
+          }
           if (axis === "z" && layerValue === 1 && direction === "clockwise") {
             newCube = rotateFrontCounterclockwise(prevCube);
             return newCube;
@@ -574,7 +600,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             return newCube;
           }
           if (
-            axis === "z" &&
+            axis === "z" && 
             layerValue === 1 &&
             direction === "anti-clockwise"
           ) {
@@ -585,7 +611,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             axis === "z" &&
             layerValue === -1 &&
             direction === "anti-clockwise"
-          ) {
+          ) {""
             newCube = rotateBackClockwise(prevCube);
             return newCube;
           }
@@ -605,6 +631,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             newCube = rotateLeftCounterclockwise(prevCube);
             return newCube;
           }
+          
           if (
             axis === "y" &&
             layerValue === 1 &&
@@ -631,7 +658,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   };
 
   //通过公式选择魔方
-  const rotateCube = async (stepSequence) => {
+  const rotateCube = async (stepSequence,showCode=false,showFaces="") => {
+    setShowCode(showCode)
+    setShowFaces(showFaces)
     for (const step of stepSequence) {
       // 等待上一次选择完成
       while (rotateStatus.current) {
@@ -713,9 +742,37 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       }
     }
   };
+  const setShowCodeValue=(showCode)=>{
+    setShowCode(showCode)
+  }
+  const setShowFacesValue=(faces)=>{
+    setShowFaces(faces)
+  }
+  const setNewCube=()=>{
+    cubeRefs.forEach(({ ref, position }) => {
+      if (ref.current) {
+        // 获取原始坐标（从position数组的第0-2位）
+        const [x, y, z] = position.slice(0, 3).map(Number);
+        
+        // 重置旋转和位置
+        ref.current.rotation.set(0, 0, 0);
+        ref.current.position.set(
+          x * cubeScale,
+          y * cubeScale,
+          z * cubeScale
+        );
+      }
+    });
+
+    // 重置二维状态数组
+    setCube(initialCube);
+  }
   // 把子组件方法暴露出去  一定注意要把组件的第二个参数ref传递进来
   useImperativeHandle(refProp, () => ({
     rotateCube: rotateCube,
+    setNewCube:setNewCube,
+    setShowCodeValue: setShowCodeValue,
+    setShowFacesValue:setShowFacesValue,
   }));
   return (
     <div className="flex items-center justify-center w-full h-full position-relative">
@@ -741,6 +798,8 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
                 key={index}
                 position={position}
                 refProp={ref}
+                showCode={showCode}
+                showFaces={showFaces}
                 blindCode={blindCodeData.blindCodeData}
               />
             ))}
@@ -752,3 +811,5 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 });
 
 export default RubiksCube;
+
+ 
