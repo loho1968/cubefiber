@@ -667,22 +667,22 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         case "z'":
           rotateFullCube("z", Math.PI / 2, "clockwise");
           break;
-        case "u'":
+        case "U'":
           rotateLayer("y", 1, "anti-clockwise");
           break;
-        case "d'":
+        case "D'":
           rotateLayer("y", -1, "anti-clockwise");
           break;
-        case "l'":
+        case "L'":
           rotateLayer("x", -1, "anti-clockwise");
           break;
-        case "r'":
+        case "R'":
           rotateLayer("x", 1, "anti-clockwise");
           break;
-        case "f'":
+        case "F'":
           rotateLayer("z", 1, "anti-clockwise");
           break;
-        case "b'":
+        case "B'":
           rotateLayer("z", -1, "anti-clockwise");
           break;
         case "x":
@@ -694,22 +694,22 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         case "z":
           rotateFullCube("z", Math.PI / 2, "anti-clockwise");
           break;
-        case "u":
+        case "U":
           rotateLayer("y", 1, "clockwise");
           break;
-        case "d":
+        case "D":
           rotateLayer("y", -1, "clockwise");
           break;
-        case "l":
+        case "L":
           rotateLayer("x", -1, "clockwise");
           break;
-        case "r":
+        case "R":
           rotateLayer("x", 1, "clockwise");
           break;
-        case "f":
+        case "F":
           rotateLayer("z", 1, "clockwise");
           break;
-        case "b":
+        case "B":
           rotateLayer("z", -1, "clockwise");
           break;
       }
