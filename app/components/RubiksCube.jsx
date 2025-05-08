@@ -31,12 +31,10 @@ import {
   rotateMiddleLayerZ,
 } from "./rotation"; // 从rotation.js导入2D魔方的旋转函数
 const Cube = ({ position, refProp, blindCode }) => {
-  console.log(blindCode);
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
   function GetLabel(position, face, type = "code") {
-    console.log(blindCode);
     let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
 
     if (code) {

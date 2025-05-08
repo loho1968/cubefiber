@@ -12,6 +12,34 @@ export function transform(formula) {
     }
     //E y轴中间层,M x轴中间层 S z轴中间层
   }
+  formula = result
+  result = []
+  for (let i = 0; i < formula.length; i++) {
+    let temp = formula[i];
+    switch (temp) {
+      case "u":
+        result.push(temp.toUpperCase());
+        result.push("E");
+        break;
+      case "u'":
+        result.push(temp.toUpperCase());
+        result.push("E'");
+        break;
+      case "f":
+         result.push(temp.toUpperCase());
+        result.push("S");
+        break;
+      case "f'":
+        result.push(temp.toUpperCase());5
+        result.push("S'");
+        break;
+      default:
+        result.push(temp);
+        break;
+      //E y轴中间层,M x轴中间层 S z轴中间层
+    }
+  }
+  return result
 }
 /**
  * 将魔方公式字符串转换为步骤数组
@@ -36,7 +64,6 @@ export function parseFormula(formula) {
   const moves = formula.match(
     /([ESMURFDLBurfdlb][2]?')|([ESMURFDLBurfdlb][2]?)|([xyzXYZ][2]?')|([xyzXYZ][2]?)/g,
   );
-  console.log(moves, formula);
   return moves || [];
 }
 

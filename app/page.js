@@ -15,6 +15,7 @@ import {
   loadData,
   getReverseFormula,
   parseFormula,
+  transform,
 } from "./components/baseFunction";
 import MainCube from "./components/RubiksCube";
 import target from "three/src/nodes/core/Node";
@@ -279,7 +280,9 @@ export default function Home() {
   const moveCube = () => {
     console.log(currentFormula.公式文本);
     // console.log(item.公式文本);
-    rubiksCubeRef.current.rotateCube(["M"]);
+    const tmp=transform(["u"])
+    console.log(tmp);
+    rubiksCubeRef.current.rotateCube(tmp);
   };
   //#endregion
   return (
