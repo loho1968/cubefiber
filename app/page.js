@@ -140,7 +140,6 @@ export default function Home() {
       setSpecialFormula(res.special);
     }
     fetchPosts().then(() => {
-      //console.log(blindCode);
     });
   }, []);
 
@@ -409,7 +408,6 @@ export default function Home() {
               onRow={(record) => {
                 return {
                   onClick: () => {
-                    console.log(record);
                     clickRow(record);
                   }, // 点击行
                 };

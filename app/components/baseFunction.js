@@ -17,10 +17,10 @@ export function parseFormula(formula) {
   // 2. 去除多余空格
   formula = formula.replace(/\s+/g, " ").trim();
 
-  // 3. 用正则匹配所有合法魔方操作（如R, R', R2, U, U', U2等）
-  // 支持大写字母+可选的2+可选的'
-  const moves = formula.match(/([URFDLB][2]?')|([URFDLB][2]?)|([xyz][2]?')|([xyz][2]?)/g);
-
+  // 3. 用正则匹配所有合法魔方操作（如R, R', R2, U, U', U2等），支持大小写
+  // 支持大写/小写字母+可选的2+可选的'
+  const moves = formula.match(/([ESMURFDLBurfdlb][2]?')|([ESMURFDLBurfdlb][2]?)|([xyzXYZ][2]?')|([xyzXYZ][2]?)/g);
+  console.log(moves,formula);
   return moves || [];
 }
 
