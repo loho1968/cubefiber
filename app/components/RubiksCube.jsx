@@ -36,9 +36,8 @@ const Cube = ({ position, refProp, blindCode }) => {
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
   count++;
   function GetLabel(position, face, type = "code") {
-    let code = "";
+    let code = blindCode.find((x) => x.id === position && x.面 === face);
 
-    code = blindCode.find((x) => x.id === position && x.面 === face);
     if (code) {
       code = type === "code" ? code.编码 : code.面 + code.面序号; //code.编码
     } else {
@@ -137,9 +136,6 @@ const Cube = ({ position, refProp, blindCode }) => {
 const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const cubeScale = 1.5;
   const [cubeRefs, setCubeRefs] = useState([]);
-  const [rotationQueue, setRotationQueue] = useState([]);
-  const [isRotating, setIsRotating] = useState(false);
-  // const [blindCode, setBlindCode] = useState([]); // 新增状态存储Excel数据
   const rotateStatus = useRef(false);
 
   //inital cube for mapping the 3d cube in 2d
@@ -397,7 +393,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const rotateFullCube = (axis, rotationStep, direction) => {
     if (rotateStatus.current) return;
     rotateStatus.current = true;
-    setIsRotating(true);
 
     const rotationVector =
       direction === "anti-clockwise"
@@ -464,7 +459,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           }
         });
 
-        setIsRotating(false);
         rotateStatus.current = false;
 
         setCube((prevState) => {
@@ -490,7 +484,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const rotateLayer = (axis, layerValue, direction) => {
     if (rotateStatus.current) return; // 防止同时进行多次旋转
     rotateStatus.current = true;
-    setIsRotating(true);
     const rotationStep = Math.PI / 2; // 旋转90度
 
     const cubesToRotate = cubeRefs.filter(
@@ -557,8 +550,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           }
         });
 
-        setRotationQueue((prev) => prev.slice(1));
-        setIsRotating(false);
         rotateStatus.current = false;
 
         setCube((prevCube) => {
@@ -683,6 +674,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           break;
         case "S'":
           rotateLayer("z", 0, "anti-clockwise");
+          break;
         case "x'":
           rotateFullCube("x", Math.PI / 2, "clockwise");
           break;
