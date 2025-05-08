@@ -14,22 +14,14 @@ export function parseFormula(formula) {
   // 1. 先将逗号分隔的格式转换为空格分隔
   formula = formula.replace(/,/g, " ");
 
-  // 2. 将多个空格替换为单个空格
-  formula = formula.replace(/\s+/g, " ");
+  // 2. 去除多余空格
+  formula = formula.replace(/\s+/g, " ").trim();
 
-  // 3. 处理无空格的情况，在以下位置添加空格：
-  // - 在单字母后面（如U、R、F等）
-  // - 在数字前面（如U2）
-  // - 在撇号前面（如R'）
-  formula = formula.replace(/([URFDLB])(?=[URFDLB2'])/g, "$1 ");
-  formula = formula.replace(/([URFDLB])(?=\d)/g, "$1");
-  formula = formula.replace(/(\d)(?=[URFDLB])/g, "$1 ");
+  // 3. 用正则匹配所有合法魔方操作（如R, R', R2, U, U', U2等）
+  // 支持大写字母+可选的2+可选的'
+  const moves = formula.match(/([URFDLB][2]?')|([URFDLB][2]?)|([xyz][2]?')|([xyz][2]?)/g);
 
-  // 4. 去除首尾空格并分割成数组
-  return formula
-    .trim()
-    .split(" ")
-    .filter((step) => step.length > 0);
+  return moves || [];
 }
 
 /**

@@ -127,6 +127,8 @@ export default function Home() {
 
       setBlindCode(res.blindCode);
       res.blindformula.forEach((item) => {
+        item.公式文本 = item.公式;
+
         item.公式 = parseFormula(item.公式);
       });
       setBlindFormula(res.blindformula);
@@ -271,10 +273,16 @@ export default function Home() {
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    rubiksCubeRef.current.rotateCube("x")
+    moveCube();
   };
   //最后一步
   const lastStep = () => {};
+
+  const moveCube = () => {
+    console.log(currentFormula.公式文本);
+    // console.log(item.公式文本);
+    // rubiksCubeRef.current.rotateCube("x");
+  };
   //#endregion
   return (
     <div className="flex flex-col h-screen overflow-hidden">
