@@ -2,9 +2,10 @@ import * as XLSX from "xlsx";
 
 export function transform(formula) {
   let result = [];
+  const doubleFormula="u2d2l2r2f2b2"
   for (let i = 0; i < formula.length; i++) {
     let temp = formula[i];
-    if (temp.indexOf("2") > -1) {
+    if (temp.indexOf("2") > -1 && doubleFormula.indexOf(temp)==-1) {
       result.push(temp.substring(0, 1));
       result.push(temp.substring(0, 1));
     } else {
@@ -25,13 +26,25 @@ export function transform(formula) {
         result.push(temp.toUpperCase());
         result.push("E'");
         break;
+      case "u2":
+        result.push("U");
+        result.push("U");
+        result.push("E");
+        result.push("E");
+        break;
       case "f":
-         result.push(temp.toUpperCase());
+        result.push(temp.toUpperCase());
         result.push("S");
         break;
       case "f'":
-        result.push(temp.toUpperCase());5
+        result.push(temp.toUpperCase()); 5
         result.push("S'");
+        break;
+      case "f2":
+        result.push("F");
+        result.push("F");
+        result.push("S");
+        result.push("S");
         break;
       default:
         result.push(temp);
@@ -182,4 +195,101 @@ export async function loadData() {
     console.error("读取Excel文件失败:", error);
   }
   return result;
+}
+
+export function bindKey() {
+  //绑定键盘事件
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (rotateStatus.current) return; // Prevent multiple rotations at once
+      const { key, shiftKey } = event;
+
+      const keyPressed = key.toLowerCase();
+
+      if (shiftKey) {
+        // 按Shift键，旋转反向  R L U D F B
+        switch (keyPressed) {
+          case "x":
+            rotateFullCube("x", Math.PI / 2, "clockwise");
+            break;
+          case "y":
+            rotateFullCube("y", Math.PI / 2, "clockwise");
+            break;
+          case "z":
+            rotateFullCube("z", Math.PI / 2, "clockwise");
+            break;
+          case "u":
+            rotateLayer("y", 1, "anti-clockwise");
+            break;
+          case "d":
+            rotateLayer("y", -1, "anti-clockwise");
+            break;
+          case "l":
+            rotateLayer("x", -1, "anti-clockwise");
+            break;
+          case "r":
+            rotateLayer("x", 1, "anti-clockwise");
+            break;
+          case "f":
+            rotateLayer("z", 1, "anti-clockwise");
+            break;
+          case "b":
+            rotateLayer("z", -1, "anti-clockwise");
+            break;
+          case "e":
+            rotateLayer("y", 0, "anti-clockwise");
+            break;
+          case "s":
+            rotateLayer("z", 0, "clockwise");
+            break;
+          case "m":
+            rotateLayer("x", 0, "anti-clockwise");
+        }
+      }
+
+      // Handle Regular Rotations
+      switch (keyPressed) {
+        case "x":
+          rotateFullCube("x", Math.PI / 2, "clockwise");
+          break;
+        case "y":
+          rotateFullCube("y", Math.PI / 2, "clockwise");
+          break;
+        case "z":
+          rotateFullCube("z", Math.PI / 2, "clockwise");
+          break;
+        case "u":
+          rotateLayer("y", 1, "clockwise");
+          break;
+        case "d":
+          rotateLayer("y", -1, "clockwise");
+          break;
+        case "l":
+          rotateLayer("x", -1, "clockwise");
+          break;
+        case "r":
+          rotateLayer("x", 1, "clockwise");
+          break;
+        case "f":
+          rotateLayer("z", 1, "clockwise");
+          break;
+        case "b":
+          rotateLayer("z", -1, "clockwise");
+        case "e":
+          rotateLayer("y", 0, "clockwise");
+          break;
+        case "s":
+          rotateLayer("z", 0, "anti-clockwise");
+          break;
+        case "m":
+          rotateLayer("x", 0, "clockwise");
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [cube, cubeRefs]); //依赖数组
 }

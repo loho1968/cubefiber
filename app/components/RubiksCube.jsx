@@ -30,24 +30,25 @@ import {
   rotateMiddleLayerY,
   rotateMiddleLayerZ,
 } from "./rotation"; // 从rotation.js导入2D魔方的旋转函数
-const Cube = ({ position, refProp, blindCode ,showCode,showFaces}) => {
+const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
-  function GetFaceColor(position,color,face,showFaces){
-    if(!showFaces || showFaces==="") return color
+  function GetFaceColor(position, color, face, showFaces) {
+    if (!showFaces || showFaces === "" || showFaces.length===0 ) return color
+    let result="black"
     const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
-    if(code){
-      if(showFaces.include(code.面ID)){
-    console.log(position,showFaces,face,code.面ID)
-
-        return color
+    if (code ) {
+      const faceId=code.面+code.面序号
+      console.log(faceId)
+      if (showFaces.includes(faceId)) {
+        result=color
       }
     }
-    return "black"
+    return result
   }
   function GetLabel(position, face, type = "code") {
-    if(!showCode) return ""
+    if (!showCode) return ""
     let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
 
     if (code) {
@@ -122,8 +123,8 @@ const Cube = ({ position, refProp, blindCode ,showCode,showFaces}) => {
           <mesh>
             <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]} />
             <meshStandardMaterial
-              color={color}
-              emissive={GetFaceColor(position,color,showFaces,face)}
+              color={GetFaceColor(position, color, face,showFaces)}
+              emissive={0.2}
               emissiveIntensity={0.2}
               metalness={0.1}
               roughness={0.3}
@@ -148,8 +149,8 @@ const Cube = ({ position, refProp, blindCode ,showCode,showFaces}) => {
 const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const cubeScale = 1.5;
   const [cubeRefs, setCubeRefs] = useState([]);
-  const [showCode,setShowCode]=useState(true)
-  const [showFaces,setShowFaces] =useState("")
+  const [showCode, setShowCode] = useState(false)
+  const [showFaces, setShowFaces] = useState([])
   const rotateStatus = useRef(false);
 
   //用于在二维中映射三维立方体的初始立方体
@@ -326,7 +327,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             rotateFullCube("z", Math.PI / 2, "clockwise");
             break;
           case "u":
-            rotateLayer("y", 1, "anti-clockwise");
+            rotateLayer("y", 1, "clockwise");
             break;
           case "d":
             rotateLayer("y", -1, "anti-clockwise");
@@ -343,22 +344,30 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           case "b":
             rotateLayer("z", -1, "anti-clockwise");
             break;
+          case "e":
+            rotateLayer("y", 0, "anti-clockwise");
+            break;
+          case "s":
+            rotateLayer("z", 0, "clockwise");
+            break;
+          case "m":
+            rotateLayer("x", 0, "anti-clockwise");
         }
       }
 
       // Handle Regular Rotations
       switch (keyPressed) {
         case "x":
-          rotateFullCube("x", Math.PI / 2, "anti-clockwise");
+          rotateFullCube("x", Math.PI / 2, "clockwise");
           break;
         case "y":
-          rotateFullCube("y", Math.PI / 2, "anti-clockwise");
+          rotateFullCube("y", Math.PI / 2, "clockwise");
           break;
         case "z":
-          rotateFullCube("z", Math.PI / 2, "anti-clockwise");
+          rotateFullCube("z", Math.PI / 2, "clockwise");
           break;
         case "u":
-          rotateLayer("y", 1, "clockwise");
+          rotateLayer("y", 1, "anti-clockwise");
           break;
         case "d":
           rotateLayer("y", -1, "clockwise");
@@ -374,6 +383,14 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           break;
         case "b":
           rotateLayer("z", -1, "clockwise");
+        case "e":
+          rotateLayer("y", 0, "clockwise");
+          break;
+        case "s":
+          rotateLayer("z", 0, "anti-clockwise");
+          break;
+        case "m":
+          rotateLayer("x", 0, "clockwise");
           break;
       }
     };
@@ -392,15 +409,15 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-            axis === "x" ? -1 : 0,
-            axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0,
-          )
+          axis === "x" ? -1 : 0,
+          axis === "y" ? -1 : 0,
+          axis === "z" ? -1 : 0,
+        )
         : new THREE.Vector3(
-            axis === "x" ? 1 : 0,
-            axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0,
-          );
+          axis === "x" ? 1 : 0,
+          axis === "y" ? 1 : 0,
+          axis === "z" ? 1 : 0,
+        );
 
     let progress = 0;
     const totalRotation = rotationStep;
@@ -424,11 +441,11 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             const originalPosition = [...position];
             ref.current.rotation.set(
               Math.round(ref.current.rotation.x / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
               Math.round(ref.current.rotation.y / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
               Math.round(ref.current.rotation.z / (Math.PI / 2)) *
-                (Math.PI / 2),
+              (Math.PI / 2),
             );
 
             const matrix = new THREE.Matrix4().makeRotationAxis(
@@ -489,15 +506,15 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     const rotationVector =
       direction === "anti-clockwise"
         ? new THREE.Vector3(
-            axis === "x" ? -1 : 0,
-            axis === "y" ? -1 : 0,
-            axis === "z" ? -1 : 0,
-          )
+          axis === "x" ? -1 : 0,
+          axis === "y" ? -1 : 0,
+          axis === "z" ? -1 : 0,
+        )
         : new THREE.Vector3(
-            axis === "x" ? 1 : 0,
-            axis === "y" ? 1 : 0,
-            axis === "z" ? 1 : 0,
-          );
+          axis === "x" ? 1 : 0,
+          axis === "y" ? 1 : 0,
+          axis === "z" ? 1 : 0,
+        );
 
     let progress = 0;
     const rotationSpeed = rotationStep / 30; // 调整速度以获得流畅的动画
@@ -600,7 +617,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             return newCube;
           }
           if (
-            axis === "z" && 
+            axis === "z" &&
             layerValue === 1 &&
             direction === "anti-clockwise"
           ) {
@@ -611,7 +628,8 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             axis === "z" &&
             layerValue === -1 &&
             direction === "anti-clockwise"
-          ) {""
+          ) {
+            ""
             newCube = rotateBackClockwise(prevCube);
             return newCube;
           }
@@ -631,7 +649,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             newCube = rotateLeftCounterclockwise(prevCube);
             return newCube;
           }
-          
+
           if (
             axis === "y" &&
             layerValue === 1 &&
@@ -658,9 +676,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   };
 
   //通过公式选择魔方
-  const rotateCube = async (stepSequence,showCode=false,showFaces="") => {
+  const rotateCube = async (stepSequence, showCode = false, showFacesValue = "") => {
     setShowCode(showCode)
-    setShowFaces(showFaces)
+    setShowFaces(showFacesValue)
     for (const step of stepSequence) {
       // 等待上一次选择完成
       while (rotateStatus.current) {
@@ -668,19 +686,19 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       }
       switch (step) {
         case "E":
-          rotateLayer("y", 0, "clockwise");
-          break;
-        case "E'":
           rotateLayer("y", 0, "anti-clockwise");
           break;
-        case "M":
-          rotateLayer("x", 0, "clockwise");
+        case "E'":
+          rotateLayer("y", 0, "clockwise");
           break;
-        case "M'":
+        case "M":
           rotateLayer("x", 0, "anti-clockwise");
           break;
+        case "M'":
+          rotateLayer("x", 0, "clockwise");
+          break;
         case "S":
-          rotateLayer("z", 0, "clockwise");
+          rotateLayer("z", 0, "anti-clockwise");
           break;
         case "S'":
           rotateLayer("z", 0, "anti-clockwise");
@@ -695,22 +713,22 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           rotateFullCube("z", Math.PI / 2, "clockwise");
           break;
         case "U'":
-          rotateLayer("y", 1, "anti-clockwise");
+          rotateLayer("y", 1, "clockwise");
           break;
         case "D'":
-          rotateLayer("y", -1, "anti-clockwise");
+          rotateLayer("y", -1, "clockwise");
           break;
         case "L'":
-          rotateLayer("x", -1, "anti-clockwise");
+          rotateLayer("x", -1, "clockwise");
           break;
         case "R'":
-          rotateLayer("x", 1, "anti-clockwise");
+          rotateLayer("x", 1, "clockwise");
           break;
         case "F'":
-          rotateLayer("z", 1, "anti-clockwise");
+          rotateLayer("z", 1, "clockwise");
           break;
         case "B'":
-          rotateLayer("z", -1, "anti-clockwise");
+          rotateLayer("z", -1, "clockwise");
           break;
         case "x":
           rotateFullCube("x", Math.PI / 2, "anti-clockwise");
@@ -722,38 +740,39 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           rotateFullCube("z", Math.PI / 2, "anti-clockwise");
           break;
         case "U":
-          rotateLayer("y", 1, "clockwise");
+          rotateLayer("y", 1, "anti-clockwise");
           break;
         case "D":
-          rotateLayer("y", -1, "clockwise");
+          rotateLayer("y", -1, "anti-clockwise");
           break;
         case "L":
-          rotateLayer("x", -1, "clockwise");
+          rotateLayer("x", -1, "anti-clockwise");
           break;
         case "R":
-          rotateLayer("x", 1, "clockwise");
+          rotateLayer("x", 1, "anti-clockwise");
           break;
         case "F":
-          rotateLayer("z", 1, "clockwise");
+          rotateLayer("z", 1, "anti-clockwise");
           break;
         case "B":
-          rotateLayer("z", -1, "clockwise");
+          rotateLayer("z", -1, "anti-clockwise");
           break;
       }
     }
   };
-  const setShowCodeValue=(showCode)=>{
+  const setShowCodeValue = (showCode) => {
     setShowCode(showCode)
   }
-  const setShowFacesValue=(faces)=>{
+  const setShowFacesValue = (faces) => {
     setShowFaces(faces)
   }
-  const setNewCube=()=>{
+  const setNewCube = (faces) => {
+    setShowFaces(faces)
     cubeRefs.forEach(({ ref, position }) => {
       if (ref.current) {
         // 获取原始坐标（从position数组的第0-2位）
         const [x, y, z] = position.slice(0, 3).map(Number);
-        
+
         // 重置旋转和位置
         ref.current.rotation.set(0, 0, 0);
         ref.current.position.set(
@@ -770,9 +789,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   // 把子组件方法暴露出去  一定注意要把组件的第二个参数ref传递进来
   useImperativeHandle(refProp, () => ({
     rotateCube: rotateCube,
-    setNewCube:setNewCube,
+    setNewCube: setNewCube,
     setShowCodeValue: setShowCodeValue,
-    setShowFacesValue:setShowFacesValue,
+    setShowFacesValue: setShowFacesValue,
   }));
   return (
     <div className="flex items-center justify-center w-full h-full position-relative">
@@ -784,6 +803,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           <div className="layer"> D : moves red</div>
           <div className="layer"> E : moves blue layer</div>
           <div className="layer"> Q : moves green layer</div>
+          <div>aaaa- {showFaces}</div>
         </div>
         <div className="cube-layout">{renderCube()}</div>
       </div>
@@ -805,6 +825,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             ))}
           </group>
         </Canvas>
+        
       </div>
     </div>
   );
@@ -812,4 +833,3 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
 export default RubiksCube;
 
- 

@@ -140,7 +140,7 @@ export default function Home() {
       });
       setSpecialFormula(res.special);
     }
-    fetchPosts().then(() => {});
+    fetchPosts().then(() => { });
   }, []);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
@@ -149,7 +149,7 @@ export default function Home() {
   }, [blindCode]);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
-  useEffect(() => {}, [blindCode]);
+  useEffect(() => { }, [blindCode]);
   //#endregion
 
   //#region 基础函数  魔方公式，可能是这样：U R U2 R' U R U' R'，或这样：U  R   U2   R'  U  R  U' R'，或者这样：URU2R'URU'R',或者这样：U,R,U2,R',U,R,U',R'。写一个函数，把公式拆分为一个步骤数组['U','R','U2',"R'",'U','R',"U'",'R']
@@ -209,10 +209,6 @@ export default function Home() {
     setCubeFormula(data);
   };
 
-  //显示魔方
-  const showCube = () => {
-
-  };
   //#endregion
 
   //#region 界面操作
@@ -222,7 +218,7 @@ export default function Home() {
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);
-    showCube(record, allColorChecked, showCodeChecked);
+    moveCube(record,true);
   };
 
   //切换公式类型
@@ -267,21 +263,32 @@ export default function Home() {
 
   //#region 公式步骤操作
   //按公式重置
-  const firstStep = () => {};
+  const firstStep = () => { };
   //上一步
-  const previousStep = () => {};
+  const previousStep = () => { };
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
     moveCube();
   };
   //最后一步
-  const lastStep = () => {};
-
-  const moveCube = () => {
-    //const tmp=transform(["E","E'"])
-    // rubiksCubeRef.current.rotateCube(tmp,showCodeChecked,"F1");
-    rubiksCubeRef.current.setNewCube()
+  const lastStep = () => { };
+  
+  const moveCube = (formula,reverse=false) => {
+    const step=transform(reverse?formula.逆向公式:formula.公式[currentStep])
+    // console.log(getReverseFormula(["M2","u","M","u2","M","u","M2"]))
+    console.log(formula.公式)
+    // ["M2", "u", "M'", "u2", "M'", "u", "M2"]  正向
+    //M2 u M' u2 M' u M2
+    // ["M2", "u'", "M", "u2", "M", "u'", "M2"]  逆向
+    //
+    // rubiksCubeRef.current.rotateCube(step, showCodeChecked,showCodeChecked?[]:formula.包含面);
+    //M2 u M' u2 M' u M2
+    //["M2", "u'", "M'", "u2", "M'", "u'", "M2"]
+    //M M U  E  M U U E E M U E M M 
+    //M M U' E' M U U E E M U' E' M M
+    // console.log(step.join(' '))
+    rubiksCubeRef.current.rotateCube(transform(["R"]), showCodeChecked,showCodeChecked?[]:formula.包含面);
   };
   //#endregion
   return (
@@ -418,65 +425,66 @@ export default function Home() {
         </div>
 
         {/* Right Panel - 70% with Canvas */}
-        <div className="w-[70%] flex items-center justify-center rounded-lg">
+        <div className="w-[70%] flex flex-col items-center justify-center rounded-lg">
           <div className="w-full h-full flex items-center justify-center ">
             <MainCube blindCodeData={blindCode} ref={rubiksCubeRef} />
           </div>
+          {/* Footer */}
+          <footer className="h-[48px] shrink-0 bg-gray-800 text-white flex items-center justify-center">
+            {currentStep > -1 && (
+              <div className={`flex items-center justify-center`}>
+                <Button className="ml-1 mr-2" type="text" size="large">
+                  {currentStep + 1}/{totalSteps}
+                </Button>
+                <Button
+                  className="mr-2"
+                  onClick={firstStep}
+                  disabled={currentStep === -1 || totalSteps === 0}
+                >
+                  <VerticalRightOutlined />
+                </Button>
+                <Button
+                  className="mr-2"
+                  onClick={previousStep}
+                  disabled={currentStep === -1 || totalSteps === 0}
+                >
+                  <LeftOutlined />
+                </Button>
+                {currentFormula.公式 &&
+                  currentFormula.公式.map((item, index) => (
+                    <Button
+                      key={index}
+                      className={
+                        currentStep === index + 1 ? "mr-1 mt-[-3]" : "mr-1"
+                      }
+                      color={currentStep === index + 1 ? "primary" : "default"}
+                      size={currentStep === index + 1 ? "large" : "middle"}
+                      variant={currentStep === index + 1 ? "outlined" : "text"}
+                    >
+                      {item}
+                    </Button>
+                  ))}
+                <Button
+                  className="mr-2"
+                  onClick={nextStep}
+                  disabled={currentStep === totalSteps}
+                >
+                  <RightOutlined />
+                </Button>
+                <Button
+                  className="mr-2"
+                  onClick={lastStep}
+                  disabled={currentStep === totalSteps}
+                >
+                  <VerticalLeftOutlined />
+                </Button>
+              </div>
+            )}
+          </footer>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="h-[48px] shrink-0 bg-gray-800 text-white flex items-center justify-center">
-        {currentStep > -1 && (
-          <div className={`flex items-center justify-center`}>
-            <Button className="ml-1 mr-2" type="text" size="large">
-              {currentStep + 1}/{totalSteps}
-            </Button>
-            <Button
-              className="mr-2"
-              onClick={firstStep}
-              disabled={currentStep === -1 || totalSteps === 0}
-            >
-              <VerticalRightOutlined />
-            </Button>
-            <Button
-              className="mr-2"
-              onClick={previousStep}
-              disabled={currentStep === -1 || totalSteps === 0}
-            >
-              <LeftOutlined />
-            </Button>
-            {currentFormula.公式 &&
-              currentFormula.公式.map((item, index) => (
-                <Button
-                  key={index}
-                  className={
-                    currentStep === index + 1 ? "mr-1 mt-[-3]" : "mr-1"
-                  }
-                  color={currentStep === index + 1 ? "primary" : "default"}
-                  size={currentStep === index + 1 ? "large" : "middle"}
-                  variant={currentStep === index + 1 ? "outlined" : "text"}
-                >
-                  {item}
-                </Button>
-              ))}
-            <Button
-              className="mr-2"
-              onClick={nextStep}
-              disabled={currentStep === totalSteps}
-            >
-              <RightOutlined />
-            </Button>
-            <Button
-              className="mr-2"
-              onClick={lastStep}
-              disabled={currentStep === totalSteps}
-            >
-              <VerticalLeftOutlined />
-            </Button>
-          </div>
-        )}
-      </footer>
+
     </div>
   );
 }
