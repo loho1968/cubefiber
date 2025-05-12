@@ -220,7 +220,7 @@ export default function Home() {
     setCurrentStep(0);
     console.log('currentStep', currentStep);
     setTotalSteps(record.公式.length);
-    moveCube(record, true);
+    moveCube(record.逆向公式);
   };
 
   //切换公式类型
@@ -257,11 +257,6 @@ export default function Home() {
     formula.逆向公式 = getReverseFormula(formula.公式);
     console.log('formula.逆向公式', formula.逆向公式);
     initCube(formula.逆向公式);
-    //M2 u M' u2 M' u M2
-
-    //['M2',"u'","M'",'u2',"M'","u'",'M2'] //正确
-    //['M2',"u'",'M','u2','M',"u'",'M2'] //错误
-  
   };
   //颜色显示
   //颜色显示切换
@@ -283,7 +278,8 @@ export default function Home() {
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    moveCube(currentFormula[currentStep + 1]);
+    const step=transform([currentFormula[currentStep]]);
+    moveCube(step);
   };
   //最后一步
   const lastStep = () => { };
