@@ -278,7 +278,7 @@ export default function Home() {
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    const step=transform([currentFormula[currentStep]]);
+    const step=transform([currentFormula.公式[currentStep]]);
     moveCube(step);
   };
   //最后一步
