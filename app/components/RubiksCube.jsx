@@ -395,10 +395,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    // window.addEventListener("keydown", handleKeyDown);
+    // return () => {
+    //   window.removeEventListener("keydown", handleKeyDown);
+    // };
   }, [cube, cubeRefs]); //依赖数组
 
   //在二维立方体中实现
@@ -692,10 +692,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           rotateLayer("y", 0, "clockwise");
           break;
         case "M":
-          rotateLayer("x", 0, "anti-clockwise");
+          rotateLayer("x", 0, "clockwise");
           break;
         case "M'":
-          rotateLayer("x", 0, "clockwise");
+          rotateLayer("x", 0, "anti-clockwise");
           break;
         case "S":
           rotateLayer("z", 0, "anti-clockwise");

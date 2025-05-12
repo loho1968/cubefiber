@@ -106,7 +106,7 @@ export default function Home() {
   const [specialFormula, setSpecialFormula] = useState([]);
 
   const [cubeFormula, setCubeFormula] = useState([]); //用于表格显示的公式数据,
-  const [tmpFormula, setTmpFormula] = useState("");
+  const [tempFormula, setTempFormula] = useState("");
 
   const [cfopType, setCfopType] = useState("F2L");
 
@@ -140,16 +140,17 @@ export default function Home() {
       });
       setSpecialFormula(res.special);
     }
-    fetchPosts().then(() => {});
+    fetchPosts().then(() => { });
   }, []);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
   useEffect(() => {
     setCubeFormulaData();
+    rubiksCubeRef.current.setShowCodeValue(true);
   }, [blindCode]);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
-  useEffect(() => {}, [blindCode]);
+  useEffect(() => { }, [blindCode]);
   //#endregion
 
   //#region 基础函数  魔方公式，可能是这样：U R U2 R' U R U' R'，或这样：U  R   U2   R'  U  R  U' R'，或者这样：URU2R'URU'R',或者这样：U,R,U2,R',U,R,U',R'。写一个函数，把公式拆分为一个步骤数组['U','R','U2',"R'",'U','R',"U'",'R']
@@ -217,6 +218,7 @@ export default function Home() {
     record.逆向公式 = getReverseFormula(record.公式);
     setCurrentFormula(record);
     setCurrentStep(0);
+    console.log('currentStep', currentStep);
     setTotalSteps(record.公式.length);
     moveCube(record, true);
   };
@@ -244,47 +246,62 @@ export default function Home() {
     filterBlindData(value, edgeChecked);
   };
 
-  //临时公式输入后
-  const setTmpFormulaValue = (e) => {
-    setTmpFormula(e.target.value);
+  //临时公式输入后 f
+  const setTempFormulaValue = (value) => {
+    setTempFormula(value);
+    let formula = {}
+    formula.公式 = parseFormula(value);
+    setCurrentStep(0);
+    setTotalSteps(formula.公式.length);
+    setCurrentFormula(formula);
+    formula.逆向公式 = getReverseFormula(formula.公式);
+    console.log('formula.逆向公式', formula.逆向公式);
+    initCube(formula.逆向公式);
+    //M2 u M' u2 M' u M2
+
+    //['M2',"u'","M'",'u2',"M'","u'",'M2'] //正确
+    //['M2',"u'",'M','u2','M',"u'",'M2'] //错误
+  
   };
   //颜色显示
   //颜色显示切换
   const setAllColorCheckedValue = (checked) => {
     setAllColorChecked(checked);
-    // if (currentRow) showCube(currentRow, checked, showCodeChecked);
   };
   //编码显示切换
   const setShowCodeCheckedValue = (checked) => {
     setShowCodeChecked(checked);
-    // if (currentRow) showCube(currentRow, allColorChecked, checked);
+    rubiksCubeRef.current.setShowCodeValue(checked);
   };
   //#endregion
 
   //#region 公式步骤操作
   //按公式重置
-  const firstStep = () => {};
+  const firstStep = () => { };
   //上一步
-  const previousStep = () => {};
+  const previousStep = () => { };
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    moveCube();
+    moveCube(currentFormula[currentStep + 1]);
   };
   //最后一步
-  const lastStep = () => {};
+  const lastStep = () => { };
 
-  const moveCube = (formula, reverse = false) => {
-    const step = transform(
-      reverse ? formula.逆向公式 : formula.公式[currentStep],
-    );
-    console.log(formula.公式);
+  const moveCube = (step) => {
     rubiksCubeRef.current.rotateCube(
       transform(step),
       showCodeChecked,
       showCodeChecked ? [] : formula.包含面,
     );
   };
+  const initCube=(reverseFormula)=>{
+    rubiksCubeRef.current.rotateCube(
+      transform(reverseFormula),
+      showCodeChecked,
+      showCodeChecked ? [] : formula.包含面,
+    );
+  }
   //#endregion
   return (
     <div className="flex flex-col h-screen overflow-hidden">
@@ -336,7 +353,7 @@ export default function Home() {
                   <Search
                     allowClear
                     placeholder="编码搜索"
-                    value={search}
+                    defaultValue={search}
                     maxLength={2}
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
@@ -351,8 +368,8 @@ export default function Home() {
               <Search
                 placeholder="输入公式串，点击显示"
                 allowClear
-                value={tmpFormula}
-                onChange={(e) => setTmpFormulaValue(e.target.value)}
+                defaultValue={tempFormula}
+                onSearch={(e) => setTempFormulaValue(e)}
               />
             </div>
             <div className="ml-4 ">
