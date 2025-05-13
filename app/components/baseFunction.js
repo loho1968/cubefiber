@@ -84,23 +84,23 @@ export function transform(formula) {
         break;
       case "r2":
         result.push("R");
-        result.push("M'");
         result.push("R");
+        result.push("M'");
         result.push("M'");
         break;
       case "l":
         result.push(temp.toUpperCase());
-        result.push("M'");
+        result.push("M");
         break;
       case "l'":
         result.push(temp.toUpperCase());
-        result.push("M");
+        result.push("M'");
         break;
       case "l2":
         result.push("L");
-        result.push("M");
         result.push("L");
-        result.push("M");
+        result.push("M'");
+        result.push("M'");
         break;
       default:
         result.push(temp);

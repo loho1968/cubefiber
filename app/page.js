@@ -317,6 +317,7 @@ export default function Home() {
     rubiksCubeRef.current.rotateCube(transform(step), showCodeChecked, showCodeChecked ? [] : formula.包含面);
   };
   const initCube = (reverseFormula) => {
+   rubiksCubeRef.current.setNewCube()
     rubiksCubeRef.current.rotateCube(transform(reverseFormula), showCodeChecked, showCodeChecked ? [] : formula.包含面);
   };
   //#endregion

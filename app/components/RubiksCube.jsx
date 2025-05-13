@@ -63,7 +63,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
           pos: [stickerOffset * cubeScale, 0, 0],
           rot: [0, Math.PI / 2, 0],
           color: colors[0],
-          face: 'R',
+          face: "R",
         },
         {
           pos: [0, stickerOffset * cubeScale, 0],
@@ -111,9 +111,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
     // Front (Red)
     [
-      ['R', 'R', 'R'],
-      ['R', 'R', 'R'],
-      ['R', 'R', 'R'],
+      ["R", "R", "R"],
+      ["R", "R", "R"],
+      ["R", "R", "R"],
     ],
 
     // Right (Green)
@@ -262,7 +262,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           case 'l':
             rotateLayer('x', -1, 'anti-clockwise');
             break;
-          case 'r':
+          case "R":
             rotateLayer('x', 1, 'anti-clockwise');
             break;
           case 'f':
@@ -302,7 +302,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         case 'l':
           rotateLayer('x', -1, 'clockwise');
           break;
-        case 'r':
+        case "R":
           rotateLayer('x', 1, 'clockwise');
           break;
         case 'f':
@@ -590,7 +590,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         case "R'":
           rotateLayer('x', 1, 'clockwise');
           break;
-        case 'R':
+        case "R":
           rotateLayer('x', 1, 'anti-clockwise');
           break;
         case "F'":
