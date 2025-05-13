@@ -522,26 +522,7 @@ const rotateBackCounterclockwise =  (cube) => {
   return newCube;
 };
 
-// 导出新函数
-export {
-  rotateFrontClockwise,
-  rotateFrontCounterclockwise,
-  rotateRightClockwise,
-  rotateRightCounterclockwise,
-  rotateLeftClockwise,
-  rotateLeftCounterclockwise,
-  rotateUpClockwise,
-  rotateUpCounterclockwise,
-  rotateDownClockwise,
-  rotateDownCounterclockwise,
-  rotateBackClockwise,
-  rotateBackCounterclockwise,
-  rotateFullCubeClockwise,
-  rotateFullCubeCounterclockwise,
-  rotateMiddleLayerX,
-  rotateMiddleLayerY,
-  rotateMiddleLayerZ
-};
+
 
 /**
  * 顺时针旋转 x 轴中间层（M 层，左向右看为顺时针）
@@ -595,4 +576,25 @@ const rotateMiddleLayerZ = (cube) => {
     newCube[0][1][i] = cube[4][2 - i][1]; // 上 <- 左
   }
   return newCube;
+};
+
+// 导出新函数
+export {
+  rotateFrontClockwise,
+  rotateFrontCounterclockwise,
+  rotateRightClockwise,
+  rotateRightCounterclockwise,
+  rotateLeftClockwise,
+  rotateLeftCounterclockwise,
+  rotateUpClockwise,
+  rotateUpCounterclockwise,
+  rotateDownClockwise,
+  rotateDownCounterclockwise,
+  rotateBackClockwise,
+  rotateBackCounterclockwise,
+  rotateFullCubeClockwise,
+  rotateFullCubeCounterclockwise,
+  rotateMiddleLayerX,
+  rotateMiddleLayerY,
+  rotateMiddleLayerZ
 };

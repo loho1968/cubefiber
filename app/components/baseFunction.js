@@ -2,10 +2,10 @@ import * as XLSX from "xlsx";
 
 export function transform(formula) {
   let result = [];
-  const doubleFormula="u2d2l2r2f2b2"
+  const doubleFormula = "u2d2l2r2f2b2"
   for (let i = 0; i < formula.length; i++) {
     let temp = formula[i];
-    if (temp.indexOf("2") > -1 && doubleFormula.indexOf(temp)==-1) {
+    if (temp.indexOf("2") > -1 && doubleFormula.indexOf(temp) == -1) {
       result.push(temp.substring(0, 1));
       result.push(temp.substring(0, 1));
     } else {
@@ -20,15 +20,29 @@ export function transform(formula) {
     switch (temp) {
       case "u":
         result.push(temp.toUpperCase());
-        result.push("E");
+        result.push("E'");
         break;
       case "u'":
         result.push(temp.toUpperCase());
-        result.push("E'");
+        result.push("E");
         break;
       case "u2":
         result.push("U");
         result.push("U");
+        result.push("E");
+        result.push("E");
+        break;
+      case "d":
+        result.push(temp.toUpperCase());
+        result.push("E");
+        break;
+      case "d'":
+        result.push(temp.toUpperCase());
+        result.push("E'");
+        break;
+      case "d2":
+        result.push("D");
+        result.push("D");
         result.push("E");
         result.push("E");
         break;
@@ -37,7 +51,7 @@ export function transform(formula) {
         result.push("S");
         break;
       case "f'":
-        result.push(temp.toUpperCase()); 5
+        result.push(temp.toUpperCase());
         result.push("S'");
         break;
       case "f2":
@@ -45,6 +59,48 @@ export function transform(formula) {
         result.push("F");
         result.push("S");
         result.push("S");
+        break;
+      case "b":
+        result.push(temp.toUpperCase());
+        result.push("S'");
+        break;
+      case "b'":
+        result.push(temp.toUpperCase());
+        result.push("S");
+        break;
+      case "b2":
+        result.push("B");
+        result.push("B");
+        result.push("S");
+        result.push("S");
+        break;
+      case "r":
+        result.push(temp.toUpperCase());
+        result.push("M'");
+        break;
+      case "r'":
+        result.push(temp.toUpperCase());
+        result.push("M");
+        break;
+      case "r2":
+        result.push("R");
+        result.push("R");
+        result.push("M'");
+        result.push("M'");
+        break;
+      case "l":
+        result.push(temp.toUpperCase());
+        result.push("M'");
+        break;
+      case "l'":
+        result.push(temp.toUpperCase());
+        result.push("M");
+        break;
+      case "l2":
+        result.push("L");
+        result.push("L");
+        result.push("M");
+        result.push("M");
         break;
       default:
         result.push(temp);

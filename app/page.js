@@ -210,7 +210,6 @@ export default function Home() {
         break;
       case "special":
         setTabColumns(specialColumns);
-        console.log(specialFormula);
         setCubeFormula(specialFormula);
         break;
       case "blind":

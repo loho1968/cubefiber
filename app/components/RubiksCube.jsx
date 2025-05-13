@@ -35,14 +35,14 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
   function GetFaceColor(position, color, face, showFaces) {
-    if (!showFaces || showFaces === "" || showFaces.length===0 ) return color
-    let result="black"
+    if (!showFaces || showFaces === "" || showFaces.length === 0) return color
+    let result = "black"
     const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
-    if (code ) {
-      const faceId=code.面+code.面序号
+    if (code) {
+      const faceId = code.面 + code.面序号
       console.log(faceId)
       if (showFaces.includes(faceId)) {
-        result=color
+        result = color
       }
     }
     return result
@@ -123,7 +123,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
           <mesh>
             <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]} />
             <meshStandardMaterial
-              color={GetFaceColor(position, color, face,showFaces)}
+              color={GetFaceColor(position, color, face, showFaces)}
               emissive={0.2}
               emissiveIntensity={0.2}
               metalness={0.1}
@@ -393,6 +393,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           break;
       }
     };
+    // window.addEventListener("keydown", handleKeyDown);
+    // return () => {
+    //   window.removeEventListener("keydown", handleKeyDown);
+    // };
   }, [cube, cubeRefs]); //依赖数组
 
   //在二维立方体中实现
@@ -680,10 +684,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       }
       switch (step) {
         case "E":
-          rotateLayer("y", 0, "anti-clockwise");
+          rotateLayer("y", 0, "clockwise");
           break;
         case "E'":
-          rotateLayer("y", 0, "clockwise");
+          rotateLayer("y", 0, "anti-clockwise");
           break;
         case "M":
           rotateLayer("x", 0, "clockwise");
@@ -691,41 +695,20 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         case "M'":
           rotateLayer("x", 0, "anti-clockwise");
           break;
-        case "S":
-          rotateLayer("z", 0, "anti-clockwise");
-          break;
         case "S'":
+          rotateLayer("z", 0, "clockwise");
+          break;
+        case "S":
           rotateLayer("z", 0, "anti-clockwise");
           break;
         case "x'":
           rotateFullCube("x", Math.PI / 2, "clockwise");
           break;
-        case "y'":
-          rotateFullCube("y", Math.PI / 2, "clockwise");
-          break;
-        case "z'":
-          rotateFullCube("z", Math.PI / 2, "clockwise");
-          break;
-        case "U'":
-          rotateLayer("y", 1, "clockwise");
-          break;
-        case "D'":
-          rotateLayer("y", -1, "clockwise");
-          break;
-        case "L'":
-          rotateLayer("x", -1, "clockwise");
-          break;
-        case "R'":
-          rotateLayer("x", 1, "clockwise");
-          break;
-        case "F'":
-          rotateLayer("z", 1, "clockwise");
-          break;
-        case "B'":
-          rotateLayer("z", -1, "clockwise");
-          break;
         case "x":
           rotateFullCube("x", Math.PI / 2, "anti-clockwise");
+          break;
+        case "y'":
+          rotateFullCube("y", Math.PI / 2, "clockwise");
           break;
         case "y":
           rotateFullCube("y", Math.PI / 2, "anti-clockwise");
@@ -733,22 +716,43 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         case "z":
           rotateFullCube("z", Math.PI / 2, "anti-clockwise");
           break;
+        case "z'":
+          rotateFullCube("z", Math.PI / 2, "clockwise");
+          break;
+        case "U'":
+          rotateLayer("y", 1, "clockwise");
+          break;
         case "U":
           rotateLayer("y", 1, "anti-clockwise");
           break;
-        case "D":
+        case "D'":
           rotateLayer("y", -1, "anti-clockwise");
           break;
-        case "L":
+        case "D":
+          rotateLayer("y", -1, "clockwise");
+          break;
+        case "L'":
           rotateLayer("x", -1, "anti-clockwise");
+          break;
+        case "L":
+          rotateLayer("x", -1, "clockwise");
+          break;
+        case "R'":
+          rotateLayer("x", 1, "clockwise");
           break;
         case "R":
           rotateLayer("x", 1, "anti-clockwise");
+          break;
+        case "F'":
+          rotateLayer("z", 1, "clockwise");
           break;
         case "F":
           rotateLayer("z", 1, "anti-clockwise");
           break;
         case "B":
+          rotateLayer("z", -1, "clockwise");
+          break;
+        case "B'":
           rotateLayer("z", -1, "anti-clockwise");
           break;
       }
@@ -789,7 +793,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   }));
   return (
     <div className="flex items-center justify-center w-full h-full position-relative">
-      
+
       <div className="flex-1 w-full h-full ">
         <Canvas camera={{ position: [5, 5, 5] }}>
           <ambientLight intensity={1} />
@@ -808,7 +812,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             ))}
           </group>
         </Canvas>
-        
+
       </div>
     </div>
   );
