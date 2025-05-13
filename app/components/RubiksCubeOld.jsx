@@ -252,6 +252,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   // Render the cube layout mapping
   const renderCube = () => {
     const cellSize = "60px";
+
     return (
       <div
         style={{
@@ -393,6 +394,8 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           break;
       }
     };
+
+    MM
   }, [cube, cubeRefs]); //依赖数组
 
   //在二维立方体中实现
@@ -789,7 +792,18 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   }));
   return (
     <div className="flex items-center justify-center w-full h-full position-relative">
-      
+      <div className="flex flex-col items-center justify-center gap-4 w-[40%] h-full">
+        <div className="moves">
+          <div className="layer"> W : moves white layer/clockwise/right</div>
+          <div className="layer"> S : move yellow Layer up/clockwise/right</div>
+          <div className="layer"> A : moves orange</div>
+          <div className="layer"> D : moves red</div>
+          <div className="layer"> E : moves blue layer</div>
+          <div className="layer"> Q : moves green layer</div>
+          <div>aaaa- {showFaces}</div>
+        </div>
+        <div className="cube-layout">{renderCube()}</div>
+      </div>
       <div className="flex-1 w-full h-full ">
         <Canvas camera={{ position: [5, 5, 5] }}>
           <ambientLight intensity={1} />

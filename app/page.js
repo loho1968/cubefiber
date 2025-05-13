@@ -102,6 +102,9 @@ export default function Home() {
 
   const [blindCode, setBlindCode] = useState([]); //盲拧公式编码
   const [blindFormula, setBlindFormula] = useState([]); //盲拧公式数据
+  const [edgeFormula, setEdgeFormula] = useState([]);
+  const [cornerFormula, setCornerFormula] = useState([]);
+
   const [cfopFormula, setCfopFormula] = useState([]);
   const [specialFormula, setSpecialFormula] = useState([]);
 
@@ -120,23 +123,59 @@ export default function Home() {
 
     async function fetchPosts() {
       const res = await loadData();
+      //#region CFOP
       let tmp = getCFOPGroup(res.cfop);
+      //CFOP分组
       tmp = tmp.map((item) => {
         return { text: item, value: item };
       });
       setCfopGroups(tmp);
+      setCfopFormula(res.cfop);
+      //#endregion
 
+      //盲拧编码
       setBlindCode(res.blindCode);
+
+      //#region 盲拧公式
       res.blindformula.forEach((item) => {
         item.公式文本 = item.公式;
-
         item.公式 = parseFormula(item.公式);
       });
       setBlindFormula(res.blindformula);
-
-      setCfopFormula(res.cfop);
+      //棱块公式
+      tmp = res.blindformula.filter((item) => item.类型 === "edge");
+      tmp.sort((a, b) => {
+        const codeA = a.编码;
+        const codeB = b.编码;
+        if (codeA < codeB) {
+          return -1;
+        }
+        if (codeA > codeB) {
+          return 1;
+        }
+        return 0;
+      });
+      setEdgeFormula(tmp);
+      //角块公式
+      tmp = res.blindformula.filter((item) => item.类型 === "corner");
+      tmp.sort((a, b) => {
+        // 先按类型排序
+        let result = 0
+        if (a.编码 > b.编码) {
+          result = 1;
+        } else {
+          result = -1
+        }
+        return result;
+      })
+      setCornerFormula(tmp);
+      //#endregion
+      
+      //特殊公式
       res.special.forEach((item, index) => {
         item.id = index;
+        item.公式文本 = item.公式;
+        item.公式 = parseFormula(item.公式);
       });
       setSpecialFormula(res.special);
     }
@@ -145,30 +184,33 @@ export default function Home() {
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
   useEffect(() => {
-    setCubeFormulaData();
+    setCubeFormulaData()
+    //  filterBlindData()
     rubiksCubeRef.current.setShowCodeValue(true);
-  }, [blindCode]);
+  }, [blindCode, blindFormula]);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
   useEffect(() => { }, [blindCode]);
   //#endregion
 
-  //#region 基础函数  魔方公式，可能是这样：U R U2 R' U R U' R'，或这样：U  R   U2   R'  U  R  U' R'，或者这样：URU2R'URU'R',或者这样：U,R,U2,R',U,R,U',R'。写一个函数，把公式拆分为一个步骤数组['U','R','U2',"R'",'U','R',"U'",'R']
+  //#region 基础函数  
   //切换公式数据
-  const setCubeFormulaData = (type = "blind") => {
+  const setCubeFormulaData = (type = "blind", formulaType = "") => {
     switch (type) {
       case "cfop":
         cfopFormula.forEach((item, index) => {
           item.id = index;
         });
+        if (formulaType === "") formulaType = "F2L"
         const tmp = cfopFormula.filter((item) => {
-          return item.类型 === cfopType;
+          return item.类型 === formulaType;
         });
         setTabColumns(cfopColumns);
         setCubeFormula(tmp);
         break;
       case "special":
         setTabColumns(specialColumns);
+        console.log(specialFormula);
         setCubeFormula(specialFormula);
         break;
       case "blind":
@@ -177,7 +219,11 @@ export default function Home() {
           item.id = index;
         });
         setTabColumns(blindColumns);
-        setCubeFormula(blindFormula);
+        if (formulaType) {
+          setCubeFormula(edgeFormula);
+        } else {
+          setCubeFormula(cornerFormula);
+        }
         break;
     }
   };
@@ -194,7 +240,7 @@ export default function Home() {
     return groups;
   };
   //过滤盲拧公式
-  const filterBlindData = (code = "", type) => {
+  const filterBlindData = (code = "", type = "edge") => {
     const blindType = type ? "edge" : "corner";
     const data = blindFormula.filter(
       (item) =>
@@ -218,7 +264,6 @@ export default function Home() {
     record.逆向公式 = getReverseFormula(record.公式);
     setCurrentFormula(record);
     setCurrentStep(0);
-    console.log('currentStep', currentStep);
     setTotalSteps(record.公式.length);
     moveCube(record.逆向公式);
   };
@@ -232,7 +277,7 @@ export default function Home() {
   //切换CFOP公式类型
   const setCfopTypeValue = ({ target: { value } }) => {
     setCfopType(value);
-    filterCFOPFormula(value);
+    setCubeFormulaData("cfop", value);
   };
 
   //盲拧公式切换按角块、棱块类型
@@ -246,7 +291,7 @@ export default function Home() {
     filterBlindData(value, edgeChecked);
   };
 
-  //临时公式输入后 f
+  //临时公式输入后 
   const setTempFormulaValue = (value) => {
     setTempFormula(value);
     let formula = {}
@@ -255,7 +300,6 @@ export default function Home() {
     setTotalSteps(formula.公式.length);
     setCurrentFormula(formula);
     formula.逆向公式 = getReverseFormula(formula.公式);
-    console.log('formula.逆向公式', formula.逆向公式);
     initCube(formula.逆向公式);
   };
   //颜色显示
@@ -278,7 +322,7 @@ export default function Home() {
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    const step=transform([currentFormula.公式[currentStep]]);
+    const step = transform([currentFormula.公式[currentStep]]);
     moveCube(step);
   };
   //最后一步
@@ -291,7 +335,7 @@ export default function Home() {
       showCodeChecked ? [] : formula.包含面,
     );
   };
-  const initCube=(reverseFormula)=>{
+  const initCube = (reverseFormula) => {
     rubiksCubeRef.current.rotateCube(
       transform(reverseFormula),
       showCodeChecked,
