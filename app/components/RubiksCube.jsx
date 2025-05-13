@@ -394,20 +394,24 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   //旋转所选图层
   const rotateLayer = (axis, layerValue, direction) => {
     if (rotateStatus.current) return; // 防止同时进行多次旋转
+
     rotateStatus.current = true;
     const rotationStep = Math.PI / 2; // 旋转90度
 
-    const cubesToRotate = cubeRefs.filter(({ position }) => position[axis === 'x' ? 0 : axis === 'y' ? 1 : 2] === layerValue);
+    const cubesToRotate = cubeRefs.filter(({ position }) => position[axis === 'x' ? 0 : axis === 'y' ? 1 : 2] === layerValue); // 筛选出要旋转的立方体
 
-    const rotationVector = direction === 'anti-clockwise' ? new THREE.Vector3(axis === 'x' ? -1 : 0, axis === 'y' ? -1 : 0, axis === 'z' ? -1 : 0) : new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
+    const rotationVector = direction === 'anti-clockwise' ? new THREE.Vector3(axis === 'x' ? -1 : 0, axis === 'y' ? -1 : 0, axis === 'z' ? -1 : 0) : new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0); // 根据方向设置旋转向量
 
     let progress = 0;
     const rotationSpeed = rotationStep / 30; // 调整速度以获得流畅的动画
 
     const rotate = async () => {
+       // 遍历所有需要旋转的立方体小块
       cubesToRotate.forEach(({ ref }) => {
         if (ref.current) {
+            // 让小块围绕指定轴旋转 rotationSpeed 弧度，实现动画效果
           ref.current.rotateOnWorldAxis(rotationVector, rotationSpeed);
+            // 同时更新小块的位置，使其沿旋转轴做圆周运动
           ref.current.position.applyAxisAngle(rotationVector, rotationSpeed);
         }
       });
@@ -415,7 +419,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       progress += rotationSpeed;
       if (progress >= rotationStep) {
         // ✅ 旋转后，消除精度差异，对齐魔方块
-
         cubesToRotate.forEach(({ ref, position }) => {
           if (ref.current) {
             const originalPosition = [...position];
@@ -429,7 +432,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
             ref.current.position.set(position[0] * cubeScale, position[1] * cubeScale, position[2] * cubeScale);
             // console.log(
-            //   `Layer rotation: Original position ${originalPosition}, New position ${position}`,
+            //   `图层旋转：原始位置${originalPosition}，新位置${position}`,
             // );
           }
         });
@@ -437,7 +440,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         rotateStatus.current = false;
 
         setCube((prevCube) => {
-          //y轴中间层
+          // y轴中间层旋转（E层），顺时针和逆时针都调用 rotateMiddleLayerY
           if (axis === 'y' && layerValue === 0 && direction === 'clockwise') {
             newCube = rotateMiddleLayerY(prevCube);
             return newCube;
@@ -446,15 +449,17 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             newCube = rotateMiddleLayerY(prevCube);
             return newCube;
           }
+          // 上层（U面）顺时针旋转
           if (axis === 'y' && layerValue === 1 && direction === 'clockwise') {
             newCube = rotateUpCounterclockwise(prevCube);
             return newCube;
           }
+          // 下层（D面）顺时针旋转
           if (axis === 'y' && layerValue === -1 && direction === 'clockwise') {
             newCube = rotateDownClockwise(prevCube);
             return newCube;
           }
-          //x轴中间层
+          // x轴中间层旋转（M层），顺时针和逆时针都调用 rotateMiddleLayerX
           if (axis === 'x' && layerValue === 0 && direction === 'clockwise') {
             newCube = rotateMiddleLayerX(prevCube);
             return newCube;
@@ -463,15 +468,17 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             newCube = rotateMiddleLayerX(prevCube);
             return newCube;
           }
+          // 右层（R面）顺时针旋转
           if (axis === 'x' && layerValue === 1 && direction === 'clockwise') {
             newCube = rotateRightCounterclockwise(prevCube);
             return newCube;
           }
+          // 左层（L面）顺时针旋转
           if (axis === 'x' && layerValue === -1 && direction === 'clockwise') {
             newCube = rotateLeftClockwise(prevCube);
             return newCube;
           }
-          //z轴中间层
+          // z轴中间层旋转（S层），顺时针和逆时针都调用 rotateMiddleLayerZ
           if (axis === 'z' && layerValue === 0 && direction === 'clockwise') {
             newCube = rotateMiddleLayerZ(prevCube);
             return newCube;
@@ -480,36 +487,43 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             newCube = rotateMiddleLayerZ(prevCube);
             return newCube;
           }
+          // 前层（F面）顺时针旋转
           if (axis === 'z' && layerValue === 1 && direction === 'clockwise') {
             newCube = rotateFrontCounterclockwise(prevCube);
             return newCube;
           }
+          // 后层（B面）顺时针旋转
           if (axis === 'z' && layerValue === -1 && direction === 'clockwise') {
             newCube = rotateBackCounterclockwise(prevCube);
             return newCube;
           }
+          // 前层（F面）逆时针旋转
           if (axis === 'z' && layerValue === 1 && direction === 'anti-clockwise') {
             newCube = rotateFrontClockwise(prevCube);
             return newCube;
           }
+          // 后层（B面）逆时针旋转
           if (axis === 'z' && layerValue === -1 && direction === 'anti-clockwise') {
             ('');
             newCube = rotateBackClockwise(prevCube);
             return newCube;
           }
+          // 右层（R面）逆时针旋转
           if (axis === 'x' && layerValue === 1 && direction === 'anti-clockwise') {
             newCube = rotateRightClockwise(prevCube);
             return newCube;
           }
+          // 左层（L面）逆时针旋转
           if (axis === 'x' && layerValue === -1 && direction === 'anti-clockwise') {
             newCube = rotateLeftCounterclockwise(prevCube);
             return newCube;
           }
-
+          // 上层（U面）逆时针旋转
           if (axis === 'y' && layerValue === 1 && direction === 'anti-clockwise') {
             newCube = rotateUpClockwise(prevCube);
             return newCube;
           }
+          // 下层（D面）逆时针旋转
           if (axis === 'y' && layerValue === -1 && direction === 'anti-clockwise') {
             newCube = rotateDownCounterclockwise(prevCube);
             return newCube;
@@ -519,7 +533,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         requestAnimationFrame(rotate);
       }
     };
-
     rotate();
   };
 

@@ -120,6 +120,11 @@ export default function Home() {
         return { text: item, value: item };
       });
       setCfopGroups(tmp);
+      res.cfop.forEach((item,index) => {
+        item.id = index;
+        item.公式文本 = item.公式;
+        item.公式 = parseFormula(item.公式);
+      });
       setCfopFormula(res.cfop);
       //#endregion
 
@@ -127,14 +132,10 @@ export default function Home() {
       setBlindCode(res.blindCode);
 
       //#region 盲拧公式
-      res.blindformula.forEach((item) => {
-        item.公式文本 = item.公式;
-        item.公式 = parseFormula(item.公式);
-      });
       setBlindFormula(res.blindformula);
       //棱块公式
       tmp = res.blindformula.filter((item) => item.类型 === 'edge');
-      tmp.sort((a, b) => {
+      tmp=tmp.sort((a, b) => {
         const codeA = a.编码;
         const codeB = b.编码;
         if (codeA < codeB) {
@@ -145,10 +146,15 @@ export default function Home() {
         }
         return 0;
       });
+      tmp.forEach((item, index) => {
+        item.id=index;
+        item.公式文本 = item.公式;
+        item.公式 = parseFormula(item.公式);
+      });
       setEdgeFormula(tmp);
       //角块公式
       tmp = res.blindformula.filter((item) => item.类型 === 'corner');
-      tmp.sort((a, b) => {
+      tmp=tmp.sort((a, b) => {
         // 先按类型排序
         let result = 0;
         if (a.编码 > b.编码) {
@@ -158,6 +164,12 @@ export default function Home() {
         }
         return result;
       });
+      tmp.forEach((item, index) => {
+        item.id=index;
+        item.公式文本 = item.公式;
+        item.公式 = parseFormula(item.公式);
+      });
+      console.log(tmp);
       setCornerFormula(tmp);
       //#endregion
 
@@ -188,9 +200,6 @@ export default function Home() {
   const setCubeFormulaData = (type = 'blind', formulaType = '') => {
     switch (type) {
       case 'cfop':
-        cfopFormula.forEach((item, index) => {
-          item.id = index;
-        });
         if (formulaType === '') formulaType = 'F2L';
         const tmp = cfopFormula.filter((item) => {
           return item.类型 === formulaType;
@@ -204,11 +213,8 @@ export default function Home() {
         break;
       case 'blind':
       default:
-        blindFormula.forEach((item, index) => {
-          item.id = index;
-        });
         setTabColumns(blindColumns);
-        if (formulaType) {
+        if (formulaType==="edge" || formulaType==="") {
           setCubeFormula(edgeFormula);
         } else {
           setCubeFormula(cornerFormula);
@@ -268,7 +274,7 @@ export default function Home() {
   //盲拧公式切换按角块、棱块类型
   const setEdgeCheckedValue = (checked) => {
     setEdgeChecked(checked);
-    filterBlindData(search, checked);
+    setCubeFormulaData('blind', checked?'edge':'corner');
   };
   //盲拧编码搜索
   const setSearchValue = (value) => {

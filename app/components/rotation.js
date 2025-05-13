@@ -578,7 +578,45 @@ const rotateMiddleLayerZ = (cube) => {
   return newCube;
 };
 
-// 导出新函数
+/**
+ * 同时顺时针旋转右面(R)和x轴中间层(M)
+ * @param {Array} cube - 魔方的当前状态
+ * @returns {Array} - 旋转后的新状态
+ */
+const rotateRightAndMiddleXClockwise = (cube) => {
+  let newCube = JSON.parse(JSON.stringify(cube));
+
+  // 右面顺时针旋转
+  newCube[2] = rotateFaceClockwise(cube[2]);
+  // Up right column <- Front right column
+  newCube[0][0][2] = cube[1][0][2];
+  newCube[0][1][2] = cube[1][1][2];
+  newCube[0][2][2] = cube[1][2][2];
+  // Front right column <- Down right column
+  newCube[1][0][2] = cube[5][0][2];
+  newCube[1][1][2] = cube[5][1][2];
+  newCube[1][2][2] = cube[5][2][2];
+  // Down right column <- Back left column (reversed)
+  newCube[5][0][2] = cube[3][2][0];
+  newCube[5][1][2] = cube[3][1][0];
+  newCube[5][2][2] = cube[3][0][0];
+  // Back left column <- Up right column (reversed)
+  newCube[3][0][0] = cube[0][2][2];
+  newCube[3][1][0] = cube[0][1][2];
+  newCube[3][2][0] = cube[0][0][2];
+
+  // x轴中间层(M)顺时针旋转
+  for (let i = 0; i < 3; i++) {
+    newCube[0][i][1] = cube[1][i][1]; // 上 <- 前
+    newCube[3][2 - i][1] = cube[0][i][1]; // 后 <- 上（注意后面顺序反向）
+    newCube[5][i][1] = cube[3][2 - i][1]; // 下 <- 后
+    newCube[1][i][1] = cube[5][i][1]; // 前 <- 下
+  }
+
+  return newCube;
+};
+
+// ... existing code ...
 export {
   rotateFrontClockwise,
   rotateFrontCounterclockwise,
@@ -596,5 +634,6 @@ export {
   rotateFullCubeCounterclockwise,
   rotateMiddleLayerX,
   rotateMiddleLayerY,
-  rotateMiddleLayerZ
+  rotateMiddleLayerZ,
+  rotateRightAndMiddleXClockwise
 };
