@@ -333,13 +333,13 @@ export default function Home() {
   //上一步
   const previousStep = () => {
     setCurrentStep(currentStep - 1);
-    const step = transform([currentFormula.公式[currentStep]]);
+    const step = transform([currentFormula.公式[currentStep - 1]]);
     moveCube(step);
   };
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    const step = transform([currentFormula.公式[currentStep]]);
+    const step = transform([currentFormula.公式[currentStep + 1]]);
     moveCube(step);
   };
   //最后一步
@@ -362,40 +362,6 @@ export default function Home() {
     localStorage.setItem("currentFormula", JSON.stringify(formula));
     rubiksCubeRef.current.rotateCube(transform(formula.逆向公式));
   };
-  //#endregion
-
-  //#region 绑定键盘事件
-  const handleKeyDown = (event) => {
-    const { key, shiftKey } = event;
-    console.log(key, rotateStatus.current);
-    if (rotateStatus.current) return; // Prevent multiple rotations at once
-    rotateStatus.current = true;
-    switch (key) {
-      case "ArrowUp":
-        console.log("nextStep");
-        break;
-      case "ArrowDown":
-        console.log("arrowdown");
-        break;
-      case "ArrowLeft":
-        console.log("arrowleft");
-        break;
-      case "ArrowRight":
-        console.log("arrowright");
-        nextStep();
-        break;
-      default:
-        console.log(keyPressed);
-        break;
-    }
-    rotateStatus.current = false;
-  };
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
   //#endregion
 
   return (
