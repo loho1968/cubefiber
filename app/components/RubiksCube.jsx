@@ -42,7 +42,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
   }
 
   function GetFaceColor(position, color, face) {
-    if (showFaceColor) return color;
+    if (showFaceColor || showFaces.length === 0) return color;
     let result = "gray";
     const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
     if (code) {
@@ -63,7 +63,11 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
 
       code = code.编码;
       if (showFaces && showFaces.length > 0) {
-        if (!showFaces.includes(faceId) && !showFaceColor) {
+        if (
+          !showFaces.includes(faceId) &&
+          !showFaceColor &&
+          showFaces.length > 0
+        ) {
           console.log(1111, showFaces, code);
           code = "";
         } else {
