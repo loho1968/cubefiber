@@ -30,7 +30,7 @@ import target from "three/src/nodes/core/Node";
 export default function Home() {
   //#region 基础设置、变量
   const rubiksCubeRef = useRef(); //cube容器
-
+  const rotateStatus = useRef(false);
   //盲拧公式表格的列
   const blindColumns = [
     {
@@ -323,9 +323,19 @@ export default function Home() {
 
   //#region 公式步骤操作
   //按公式重置
-  const firstStep = () => {};
+  const firstStep = () => {
+    record.逆向公式 = getReverseFormula(currentFormula.公式);
+    setCurrentFormula(currentFormula);
+    setCurrentStep(0);
+    setTotalSteps(currentFormula.公式.length);
+    initCube(currentFormula);
+  };
   //上一步
-  const previousStep = () => {};
+  const previousStep = () => {
+    setCurrentStep(currentStep - 1);
+    const step = transform([currentFormula.公式[currentStep]]);
+    moveCube(step);
+  };
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
@@ -333,7 +343,10 @@ export default function Home() {
     moveCube(step);
   };
   //最后一步
-  const lastStep = () => {};
+  const lastStep = () => {
+    setCurrentStep(currentFormula.公式.length);
+    rubiksCubeRef.current.setNewCube();
+  };
 
   const moveCube = (step) => {
     rubiksCubeRef.current.rotateCube(
@@ -350,6 +363,41 @@ export default function Home() {
     rubiksCubeRef.current.rotateCube(transform(formula.逆向公式));
   };
   //#endregion
+
+  //#region 绑定键盘事件
+  const handleKeyDown = (event) => {
+    const { key, shiftKey } = event;
+    console.log(key, rotateStatus.current);
+    if (rotateStatus.current) return; // Prevent multiple rotations at once
+    rotateStatus.current = true;
+    switch (key) {
+      case "ArrowUp":
+        console.log("nextStep");
+        break;
+      case "ArrowDown":
+        console.log("arrowdown");
+        break;
+      case "ArrowLeft":
+        console.log("arrowleft");
+        break;
+      case "ArrowRight":
+        console.log("arrowright");
+        nextStep();
+        break;
+      default:
+        console.log(keyPressed);
+        break;
+    }
+    rotateStatus.current = false;
+  };
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+  //#endregion
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
@@ -489,7 +537,7 @@ export default function Home() {
             <MainCube blindCodeData={blindCode} ref={rubiksCubeRef} />
           </div>
           {/* Footer */}
-          <footer className="h-[64px] shrink-0 mb-64 bg-gray-800 text-white flex items-center justify-center">
+          <footer className="h-[64px] shrink-0 mb-32 bg-gray-800 text-white flex items-center justify-center">
             {currentStep > -1 && (
               <div className={`flex items-center justify-center`}>
                 <Button className="ml-1 mr-2" type="text" size="large">

@@ -68,10 +68,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
           !showFaceColor &&
           showFaces.length > 0
         ) {
-          console.log(1111, showFaces, code);
           code = "";
-        } else {
-          console.log(2222, code);
         }
       }
     } else {
