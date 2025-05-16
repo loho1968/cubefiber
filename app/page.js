@@ -324,6 +324,7 @@ export default function Home() {
   //#region 公式步骤操作
   //按公式重置
   const firstStep = () => {
+    if (currentStep === 0) return;
     setCurrentFormula(currentFormula);
     setCurrentStep(0);
     setTotalSteps(currentFormula.公式.length);
@@ -331,14 +332,16 @@ export default function Home() {
   };
   //上一步
   const previousStep = () => {
+    if (currentStep === 0) return;
     setCurrentStep(currentStep - 1);
-    const step = transform([currentFormula.公式[currentStep - 1]]);
+    const step = transform([currentFormula.公式[currentStep]]);
     moveCube(step);
   };
   //下一步
   const nextStep = () => {
+    if (currentStep === currentFormula.公式.length) return;
     setCurrentStep(currentStep + 1);
-    const step = transform([currentFormula.公式[currentStep + 1]]);
+    const step = transform([currentFormula.公式[currentStep]]);
     moveCube(step);
   };
   //最后一步
@@ -511,14 +514,14 @@ export default function Home() {
                 <Button
                   className="mr-2"
                   onClick={firstStep}
-                  disabled={currentStep === -1 || totalSteps === 0}
+                  disabled={currentStep <= 0 || totalSteps === 0}
                 >
                   <VerticalRightOutlined />
                 </Button>
                 <Button
                   className="mr-2"
                   onClick={previousStep}
-                  disabled={currentStep === -1 || totalSteps === 0}
+                  disabled={currentStep <= 0 || totalSteps === 0}
                 >
                   <LeftOutlined />
                 </Button>
