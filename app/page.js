@@ -489,7 +489,7 @@ export default function Home() {
             <MainCube blindCodeData={blindCode} ref={rubiksCubeRef} />
           </div>
           {/* Footer */}
-          <footer className="h-[48px] shrink-0 bg-gray-800 text-white flex items-center justify-center">
+          <footer className="h-[64px] shrink-0 mb-64 bg-gray-800 text-white flex items-center justify-center">
             {currentStep > -1 && (
               <div className={`flex items-center justify-center`}>
                 <Button className="ml-1 mr-2" type="text" size="large">
