@@ -1,17 +1,42 @@
-import * as THREE from 'three';
-import { useRef, useState, useEffect, createRef, forwardRef, useImperativeHandle } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Text, RoundedBox } from '@react-three/drei';
+import * as THREE from "three";
+import {
+  useRef,
+  useState,
+  useEffect,
+  createRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Text, RoundedBox } from "@react-three/drei";
 
 // 导入所有魔方旋转相关的函数
-import { rotateBackClockwise, rotateBackCounterclockwise, rotateFrontClockwise, rotateFrontCounterclockwise, rotateDownClockwise, rotateDownCounterclockwise, rotateLeftClockwise, rotateLeftCounterclockwise, rotateRightClockwise, rotateRightCounterclockwise, rotateUpClockwise, rotateUpCounterclockwise, rotateFullCubeClockwise, rotateFullCubeCounterclockwise, rotateMiddleLayerX, rotateMiddleLayerY, rotateMiddleLayerZ } from './rotation'; // 从rotation.js导入2D魔方的旋转函数
+import {
+  rotateBackClockwise,
+  rotateBackCounterclockwise,
+  rotateFrontClockwise,
+  rotateFrontCounterclockwise,
+  rotateDownClockwise,
+  rotateDownCounterclockwise,
+  rotateLeftClockwise,
+  rotateLeftCounterclockwise,
+  rotateRightClockwise,
+  rotateRightCounterclockwise,
+  rotateUpClockwise,
+  rotateUpCounterclockwise,
+  rotateFullCubeClockwise,
+  rotateFullCubeCounterclockwise,
+  rotateMiddleLayerX,
+  rotateMiddleLayerY,
+  rotateMiddleLayerZ,
+} from "./rotation"; // 从rotation.js导入2D魔方的旋转函数
 const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
   function GetFaceColor(position, color, face, showFaces) {
-    if (!showFaces || showFaces === '' || showFaces.length === 0) return color;
-    let result = 'black';
+    if (!showFaces || showFaces === "" || showFaces.length === 0) return color;
+    let result = "black";
     const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
     if (code) {
       const faceId = code.面 + code.面序号;
@@ -22,26 +47,37 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
     }
     return result;
   }
-  function GetLabel(position, face, type = 'code') {
-    if (!showCode) return '';
+  function GetLabel(position, face, type = "code", showFaces) {
+    if (!showCode) return "";
     let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
 
     if (code) {
-      code = type === 'code' ? code.编码 : code.面 + code.面序号; //code.编码
+      code = type === "code" ? code.编码 : code.面 + code.面序号; //code.编码
     } else {
       code = face;
     }
-    return code;
+    return face === "L" ? showFaces : code;
   }
   // 魔方颜色定义 (右、左、上、下、前、后)
   let colors;
   // colors = ["red", "orange", "white", "yellow", "#90EE90", "#04d9ff"];
-  colors = ['#009E60', '#0051BA', '#FFD500', '#FFFFFF', '#C41E3A', '#FF5800']; // R L U D F B
+  colors = ["#009E60", "#0051BA", "#FFD500", "#FFFFFF", "#C41E3A", "#FF5800"]; // R L U D F B
   return (
-    <group ref={refProp} position={[position[0] * cubeScale, position[1] * cubeScale, position[2] * cubeScale]}>
+    <group
+      ref={refProp}
+      position={[
+        position[0] * cubeScale,
+        position[1] * cubeScale,
+        position[2] * cubeScale,
+      ]}
+    >
       {/* 渲染圆角方块作为基础 */}
-      <RoundedBox args={[cubeScale, cubeScale, cubeScale]} radius={0.15 * cubeScale} smoothness={10}>
-        <meshStandardMaterial color='black' />
+      <RoundedBox
+        args={[cubeScale, cubeScale, cubeScale]}
+        radius={0.15 * cubeScale}
+        smoothness={10}
+      >
+        <meshStandardMaterial color="black" />
       </RoundedBox>
 
       {/* 渲染6个面的贴纸*/}
@@ -50,15 +86,20 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
           pos: [0, 0, stickerOffset * cubeScale],
           rot: [0, 0, 0],
           color: colors[4],
-          face: 'F',
+          face: "F",
         },
         {
           pos: [0, 0, -stickerOffset * cubeScale],
           rot: [0, Math.PI, 0],
           color: colors[5],
-          face: 'B',
+          face: "B",
         },
-        { pos: [-stickerOffset * cubeScale, 0, 0], rot: [0, -Math.PI / 2, 0], color: colors[1], face: 'L' },
+        {
+          pos: [-stickerOffset * cubeScale, 0, 0],
+          rot: [0, -Math.PI / 2, 0],
+          color: colors[1],
+          face: "L",
+        },
         {
           pos: [stickerOffset * cubeScale, 0, 0],
           rot: [0, Math.PI / 2, 0],
@@ -69,22 +110,34 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
           pos: [0, stickerOffset * cubeScale, 0],
           rot: [-Math.PI / 2, 0, 0],
           color: colors[2],
-          face: 'U',
+          face: "U",
         },
         {
           pos: [0, -stickerOffset * cubeScale, 0],
           rot: [Math.PI / 2, 0, 0],
           color: colors[3],
-          face: 'D',
+          face: "D",
         },
       ].map(({ pos, rot, color, face }, i) => (
         <group key={i} position={pos} rotation={rot}>
           <mesh>
             <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]} />
-            <meshStandardMaterial color={GetFaceColor(position, color, face, showFaces)} emissive={0.2} emissiveIntensity={0.2} metalness={0.1} roughness={0.3} />
+            <meshStandardMaterial
+              color={GetFaceColor(position, color, face, showFaces)}
+              emissive={0.2}
+              emissiveIntensity={0.2}
+              metalness={0.1}
+              roughness={0.3}
+            />
           </mesh>
-          <Text position={[0, 0, 0.01]} fontSize={0.2 * cubeScale} color={face === 'L' ? 'white' : 'black'} anchorX='center' anchorY='middle'>
-            {GetLabel(position, face)}
+          <Text
+            position={[0, 0, 0.01]}
+            fontSize={0.2 * cubeScale}
+            color={face === "L" ? "white" : "black"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {GetLabel(position, face, showFaces)}
           </Text>
         </group>
       ))}
@@ -104,9 +157,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const initialCube = [
     // Up (Yellow)
     [
-      ['Y', 'Y', 'Y'],
-      ['Y', 'Y', 'Y'],
-      ['Y', 'Y', 'Y'],
+      ["Y", "Y", "Y"],
+      ["Y", "Y", "Y"],
+      ["Y", "Y", "Y"],
     ],
 
     // Front (Red)
@@ -118,27 +171,27 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
     // Right (Green)
     [
-      ['G', 'G', 'G'],
-      ['G', 'G', 'G'],
-      ['G', 'G', 'G'],
+      ["G", "G", "G"],
+      ["G", "G", "G"],
+      ["G", "G", "G"],
     ],
     // Back (Orange)
     [
-      ['O', 'O', 'O'],
-      ['O', 'O', 'O'],
-      ['O', 'O', 'O'],
+      ["O", "O", "O"],
+      ["O", "O", "O"],
+      ["O", "O", "O"],
     ],
     // Left (Blue)
     [
-      ['B', 'B', 'B'],
-      ['B', 'B', 'B'],
-      ['B', 'B', 'B'],
+      ["B", "B", "B"],
+      ["B", "B", "B"],
+      ["B", "B", "B"],
     ],
     // Down (White)
     [
-      ['W', 'W', 'W'],
-      ['W', 'W', 'W'],
-      ['W', 'W', 'W'],
+      ["W", "W", "W"],
+      ["W", "W", "W"],
+      ["W", "W", "W"],
     ],
   ];
 
@@ -148,12 +201,12 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   //读取public目录下的cubecode.xlsx,sheet:blindcode。第一行为列头，生成数据给变量：blindCode
   //颜色映射，用于映射二维立方体的每个div或单元格中的颜色，就像有白色渲染的地方一样#ffffff
   const colorMap = {
-    W: '#FFFFFF', // White
-    G: '#00FF00', // Green
-    R: '#FF0000', // Red
-    B: '#0000FF', // Blue
-    O: '#FFA500', // Orange
-    Y: '#FFFF00', // Yellow
+    W: "#FFFFFF", // White
+    G: "#00FF00", // Green
+    R: "#FF0000", // Red
+    B: "#0000FF", // Blue
+    O: "#FFA500", // Orange
+    Y: "#FFFF00", // Yellow
   };
 
   // Render a single cube cell for 2d mapping
@@ -164,13 +217,14 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       <div
         title={titleText}
         style={{
-          border: '1px solid #2d3748',
+          border: "1px solid #2d3748",
           backgroundColor: colorMap[color],
           width: size,
           height: size,
-          textAlign: 'center',
-          fontSize: '8px',
-        }}></div>
+          textAlign: "center",
+          fontSize: "8px",
+        }}
+      ></div>
     );
   };
 
@@ -179,41 +233,59 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     return (
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '0',
-        }}>
-        {face.map((row, rowIndex) => row.map((cell, cellIndex) => <div key={`${rowIndex}-${cellIndex}`}>{renderCell(cell, size, rowIndex, row)}</div>))}
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "0",
+        }}
+      >
+        {face.map((row, rowIndex) =>
+          row.map((cell, cellIndex) => (
+            <div key={`${rowIndex}-${cellIndex}`}>
+              {renderCell(cell, size, rowIndex, row)}
+            </div>
+          )),
+        )}
       </div>
     );
   };
 
   // Render the cube layout mapping
   const renderCube = () => {
-    const cellSize = '60px';
+    const cellSize = "60px";
     return (
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}>
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         {/* Up face */}
-        <div style={{ marginBottom: '8px' }}>
-          <div style={{ marginLeft: '96px' }}>{renderFace(cube[0], cellSize)}</div>
+        <div style={{ marginBottom: "8px" }}>
+          <div style={{ marginLeft: "96px" }}>
+            {renderFace(cube[0], cellSize)}
+          </div>
         </div>
 
         {/* Middle row: Left, Front, Right, Back */}
-        <div style={{ display: 'flex' }}>
-          <div style={{ marginRight: '8px' }}>{renderFace(cube[4], cellSize)}</div>
-          <div style={{ marginRight: '8px' }}>{renderFace(cube[1], cellSize)}</div>
-          <div style={{ marginRight: '8px' }}>{renderFace(cube[2], cellSize)}</div>
+        <div style={{ display: "flex" }}>
+          <div style={{ marginRight: "8px" }}>
+            {renderFace(cube[4], cellSize)}
+          </div>
+          <div style={{ marginRight: "8px" }}>
+            {renderFace(cube[1], cellSize)}
+          </div>
+          <div style={{ marginRight: "8px" }}>
+            {renderFace(cube[2], cellSize)}
+          </div>
           <div>{renderFace(cube[3], cellSize)}</div>
         </div>
 
         {/* Down face */}
-        <div style={{ marginTop: '8px' }}>
-          <div style={{ marginLeft: '96px' }}>{renderFace(cube[5], cellSize)}</div>
+        <div style={{ marginTop: "8px" }}>
+          <div style={{ marginLeft: "96px" }}>
+            {renderFace(cube[5], cellSize)}
+          </div>
         </div>
       </div>
     );
@@ -226,7 +298,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       for (let y = -1; y <= 1; y++) {
         for (let z = -1; z <= 1; z++) {
           const ref = createRef();
-          refs.push({ ref, position: [x, y, z, x + '' + y + '' + z] });
+          refs.push({ ref, position: [x, y, z, x + "" + y + "" + z] });
         }
       }
     }
@@ -244,80 +316,80 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
       if (shiftKey) {
         // 按Shift键，旋转反向  R L U D F B
         switch (keyPressed) {
-          case 'x':
-            rotateFullCube('x', Math.PI / 2, 'clockwise');
+          case "x":
+            rotateFullCube("x", Math.PI / 2, "clockwise");
             break;
-          case 'y':
-            rotateFullCube('y', Math.PI / 2, 'clockwise');
+          case "y":
+            rotateFullCube("y", Math.PI / 2, "clockwise");
             break;
-          case 'z':
-            rotateFullCube('z', Math.PI / 2, 'clockwise');
+          case "z":
+            rotateFullCube("z", Math.PI / 2, "clockwise");
             break;
-          case 'u':
-            rotateLayer('y', 1, 'clockwise');
+          case "u":
+            rotateLayer("y", 1, "clockwise");
             break;
-          case 'd':
-            rotateLayer('y', -1, 'anti-clockwise');
+          case "d":
+            rotateLayer("y", -1, "anti-clockwise");
             break;
-          case 'l':
-            rotateLayer('x', -1, 'anti-clockwise');
+          case "l":
+            rotateLayer("x", -1, "anti-clockwise");
             break;
           case "R":
-            rotateLayer('x', 1, 'anti-clockwise');
+            rotateLayer("x", 1, "anti-clockwise");
             break;
-          case 'f':
-            rotateLayer('z', 1, 'anti-clockwise');
+          case "f":
+            rotateLayer("z", 1, "anti-clockwise");
             break;
-          case 'b':
-            rotateLayer('z', -1, 'anti-clockwise');
+          case "b":
+            rotateLayer("z", -1, "anti-clockwise");
             break;
-          case 'e':
-            rotateLayer('y', 0, 'anti-clockwise');
+          case "e":
+            rotateLayer("y", 0, "anti-clockwise");
             break;
-          case 's':
-            rotateLayer('z', 0, 'clockwise');
+          case "s":
+            rotateLayer("z", 0, "clockwise");
             break;
-          case 'm':
-            rotateLayer('x', 0, 'anti-clockwise');
+          case "m":
+            rotateLayer("x", 0, "anti-clockwise");
         }
       }
 
       // Handle Regular Rotations
       switch (keyPressed) {
-        case 'x':
-          rotateFullCube('x', Math.PI / 2, 'clockwise');
+        case "x":
+          rotateFullCube("x", Math.PI / 2, "clockwise");
           break;
-        case 'y':
-          rotateFullCube('y', Math.PI / 2, 'clockwise');
+        case "y":
+          rotateFullCube("y", Math.PI / 2, "clockwise");
           break;
-        case 'z':
-          rotateFullCube('z', Math.PI / 2, 'clockwise');
+        case "z":
+          rotateFullCube("z", Math.PI / 2, "clockwise");
           break;
-        case 'u':
-          rotateLayer('y', 1, 'anti-clockwise');
+        case "u":
+          rotateLayer("y", 1, "anti-clockwise");
           break;
-        case 'd':
-          rotateLayer('y', -1, 'clockwise');
+        case "d":
+          rotateLayer("y", -1, "clockwise");
           break;
-        case 'l':
-          rotateLayer('x', -1, 'clockwise');
+        case "l":
+          rotateLayer("x", -1, "clockwise");
           break;
         case "R":
-          rotateLayer('x', 1, 'clockwise');
+          rotateLayer("x", 1, "clockwise");
           break;
-        case 'f':
-          rotateLayer('z', 1, 'clockwise');
+        case "f":
+          rotateLayer("z", 1, "clockwise");
           break;
-        case 'b':
-          rotateLayer('z', -1, 'clockwise');
-        case 'e':
-          rotateLayer('y', 0, 'clockwise');
+        case "b":
+          rotateLayer("z", -1, "clockwise");
+        case "e":
+          rotateLayer("y", 0, "clockwise");
           break;
-        case 's':
-          rotateLayer('z', 0, 'anti-clockwise');
+        case "s":
+          rotateLayer("z", 0, "anti-clockwise");
           break;
-        case 'm':
-          rotateLayer('x', 0, 'clockwise');
+        case "m":
+          rotateLayer("x", 0, "clockwise");
           break;
       }
     };
@@ -332,7 +404,18 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     if (rotateStatus.current) return;
     rotateStatus.current = true;
 
-    const rotationVector = direction === 'anti-clockwise' ? new THREE.Vector3(axis === 'x' ? -1 : 0, axis === 'y' ? -1 : 0, axis === 'z' ? -1 : 0) : new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
+    const rotationVector =
+      direction === "anti-clockwise"
+        ? new THREE.Vector3(
+            axis === "x" ? -1 : 0,
+            axis === "y" ? -1 : 0,
+            axis === "z" ? -1 : 0,
+          )
+        : new THREE.Vector3(
+            axis === "x" ? 1 : 0,
+            axis === "y" ? 1 : 0,
+            axis === "z" ? 1 : 0,
+          );
 
     let progress = 0;
     const totalRotation = rotationStep;
@@ -354,16 +437,32 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         cubeRefs.forEach(({ ref, position }) => {
           if (ref.current) {
             const originalPosition = [...position];
-            ref.current.rotation.set(Math.round(ref.current.rotation.x / (Math.PI / 2)) * (Math.PI / 2), Math.round(ref.current.rotation.y / (Math.PI / 2)) * (Math.PI / 2), Math.round(ref.current.rotation.z / (Math.PI / 2)) * (Math.PI / 2));
+            ref.current.rotation.set(
+              Math.round(ref.current.rotation.x / (Math.PI / 2)) *
+                (Math.PI / 2),
+              Math.round(ref.current.rotation.y / (Math.PI / 2)) *
+                (Math.PI / 2),
+              Math.round(ref.current.rotation.z / (Math.PI / 2)) *
+                (Math.PI / 2),
+            );
 
-            const matrix = new THREE.Matrix4().makeRotationAxis(rotationVector, totalRotation);
-            const newPosition = new THREE.Vector3(...position).applyMatrix4(matrix);
+            const matrix = new THREE.Matrix4().makeRotationAxis(
+              rotationVector,
+              totalRotation,
+            );
+            const newPosition = new THREE.Vector3(...position).applyMatrix4(
+              matrix,
+            );
             // 确保 position 正确更新
             position[0] = Math.round(newPosition.x);
             position[1] = Math.round(newPosition.y);
             position[2] = Math.round(newPosition.z);
 
-            ref.current.position.set(position[0] * cubeScale, position[1] * cubeScale, position[2] * cubeScale);
+            ref.current.position.set(
+              position[0] * cubeScale,
+              position[1] * cubeScale,
+              position[2] * cubeScale,
+            );
             // console.log(
             //   `Full cube rotation: Original position ${originalPosition}, New position ${position}`,
             // );
@@ -373,11 +472,11 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         rotateStatus.current = false;
 
         setCube((prevState) => {
-          if (axis === 'x' && direction === 'anti-clockwise') {
+          if (axis === "x" && direction === "anti-clockwise") {
             newCube = rotateFullCubeClockwise(prevState);
             return newCube;
           }
-          if (axis === 'x' && direction === 'clockwise') {
+          if (axis === "x" && direction === "clockwise") {
             newCube = rotateFullCubeCounterclockwise(prevState);
             return newCube;
           }
@@ -398,20 +497,34 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     rotateStatus.current = true;
     const rotationStep = Math.PI / 2; // 旋转90度
 
-    const cubesToRotate = cubeRefs.filter(({ position }) => position[axis === 'x' ? 0 : axis === 'y' ? 1 : 2] === layerValue); // 筛选出要旋转的立方体
+    const cubesToRotate = cubeRefs.filter(
+      ({ position }) =>
+        position[axis === "x" ? 0 : axis === "y" ? 1 : 2] === layerValue,
+    ); // 筛选出要旋转的立方体
 
-    const rotationVector = direction === 'anti-clockwise' ? new THREE.Vector3(axis === 'x' ? -1 : 0, axis === 'y' ? -1 : 0, axis === 'z' ? -1 : 0) : new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0); // 根据方向设置旋转向量
+    const rotationVector =
+      direction === "anti-clockwise"
+        ? new THREE.Vector3(
+            axis === "x" ? -1 : 0,
+            axis === "y" ? -1 : 0,
+            axis === "z" ? -1 : 0,
+          )
+        : new THREE.Vector3(
+            axis === "x" ? 1 : 0,
+            axis === "y" ? 1 : 0,
+            axis === "z" ? 1 : 0,
+          ); // 根据方向设置旋转向量
 
     let progress = 0;
     const rotationSpeed = rotationStep / 30; // 调整速度以获得流畅的动画
 
     const rotate = async () => {
-       // 遍历所有需要旋转的立方体小块
+      // 遍历所有需要旋转的立方体小块
       cubesToRotate.forEach(({ ref }) => {
         if (ref.current) {
-            // 让小块围绕指定轴旋转 rotationSpeed 弧度，实现动画效果
+          // 让小块围绕指定轴旋转 rotationSpeed 弧度，实现动画效果
           ref.current.rotateOnWorldAxis(rotationVector, rotationSpeed);
-            // 同时更新小块的位置，使其沿旋转轴做圆周运动
+          // 同时更新小块的位置，使其沿旋转轴做圆周运动
           ref.current.position.applyAxisAngle(rotationVector, rotationSpeed);
         }
       });
@@ -422,15 +535,28 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         cubesToRotate.forEach(({ ref, position }) => {
           if (ref.current) {
             const originalPosition = [...position];
-            ref.current.rotation.set(Math.round(ref.current.rotation.x / rotationStep) * rotationStep, Math.round(ref.current.rotation.y / rotationStep) * rotationStep, Math.round(ref.current.rotation.z / rotationStep) * rotationStep);
+            ref.current.rotation.set(
+              Math.round(ref.current.rotation.x / rotationStep) * rotationStep,
+              Math.round(ref.current.rotation.y / rotationStep) * rotationStep,
+              Math.round(ref.current.rotation.z / rotationStep) * rotationStep,
+            );
 
-            const matrix = new THREE.Matrix4().makeRotationAxis(rotationVector, rotationStep);
-            const newPosition = new THREE.Vector3(...position).applyMatrix4(matrix);
+            const matrix = new THREE.Matrix4().makeRotationAxis(
+              rotationVector,
+              rotationStep,
+            );
+            const newPosition = new THREE.Vector3(...position).applyMatrix4(
+              matrix,
+            );
             position[0] = Math.round(newPosition.x);
             position[1] = Math.round(newPosition.y);
             position[2] = Math.round(newPosition.z);
 
-            ref.current.position.set(position[0] * cubeScale, position[1] * cubeScale, position[2] * cubeScale);
+            ref.current.position.set(
+              position[0] * cubeScale,
+              position[1] * cubeScale,
+              position[2] * cubeScale,
+            );
             // console.log(
             //   `图层旋转：原始位置${originalPosition}，新位置${position}`,
             // );
@@ -441,90 +567,126 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
         setCube((prevCube) => {
           // y轴中间层旋转（E层），顺时针和逆时针都调用 rotateMiddleLayerY
-          if (axis === 'y' && layerValue === 0 && direction === 'clockwise') {
+          if (axis === "y" && layerValue === 0 && direction === "clockwise") {
             newCube = rotateMiddleLayerY(prevCube);
             return newCube;
           }
-          if (axis === 'y' && layerValue === 0 && direction === 'anti-clockwise') {
+          if (
+            axis === "y" &&
+            layerValue === 0 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateMiddleLayerY(prevCube);
             return newCube;
           }
           // 上层（U面）顺时针旋转
-          if (axis === 'y' && layerValue === 1 && direction === 'clockwise') {
+          if (axis === "y" && layerValue === 1 && direction === "clockwise") {
             newCube = rotateUpCounterclockwise(prevCube);
             return newCube;
           }
           // 下层（D面）顺时针旋转
-          if (axis === 'y' && layerValue === -1 && direction === 'clockwise') {
+          if (axis === "y" && layerValue === -1 && direction === "clockwise") {
             newCube = rotateDownClockwise(prevCube);
             return newCube;
           }
           // x轴中间层旋转（M层），顺时针和逆时针都调用 rotateMiddleLayerX
-          if (axis === 'x' && layerValue === 0 && direction === 'clockwise') {
+          if (axis === "x" && layerValue === 0 && direction === "clockwise") {
             newCube = rotateMiddleLayerX(prevCube);
             return newCube;
           }
-          if (axis === 'x' && layerValue === 0 && direction === 'anti-clockwise') {
+          if (
+            axis === "x" &&
+            layerValue === 0 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateMiddleLayerX(prevCube);
             return newCube;
           }
           // 右层（R面）顺时针旋转
-          if (axis === 'x' && layerValue === 1 && direction === 'clockwise') {
+          if (axis === "x" && layerValue === 1 && direction === "clockwise") {
             newCube = rotateRightCounterclockwise(prevCube);
             return newCube;
           }
           // 左层（L面）顺时针旋转
-          if (axis === 'x' && layerValue === -1 && direction === 'clockwise') {
+          if (axis === "x" && layerValue === -1 && direction === "clockwise") {
             newCube = rotateLeftClockwise(prevCube);
             return newCube;
           }
           // z轴中间层旋转（S层），顺时针和逆时针都调用 rotateMiddleLayerZ
-          if (axis === 'z' && layerValue === 0 && direction === 'clockwise') {
+          if (axis === "z" && layerValue === 0 && direction === "clockwise") {
             newCube = rotateMiddleLayerZ(prevCube);
             return newCube;
           }
-          if (axis === 'z' && layerValue === 0 && direction === 'anti-clockwise') {
+          if (
+            axis === "z" &&
+            layerValue === 0 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateMiddleLayerZ(prevCube);
             return newCube;
           }
           // 前层（F面）顺时针旋转
-          if (axis === 'z' && layerValue === 1 && direction === 'clockwise') {
+          if (axis === "z" && layerValue === 1 && direction === "clockwise") {
             newCube = rotateFrontCounterclockwise(prevCube);
             return newCube;
           }
           // 后层（B面）顺时针旋转
-          if (axis === 'z' && layerValue === -1 && direction === 'clockwise') {
+          if (axis === "z" && layerValue === -1 && direction === "clockwise") {
             newCube = rotateBackCounterclockwise(prevCube);
             return newCube;
           }
           // 前层（F面）逆时针旋转
-          if (axis === 'z' && layerValue === 1 && direction === 'anti-clockwise') {
+          if (
+            axis === "z" &&
+            layerValue === 1 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateFrontClockwise(prevCube);
             return newCube;
           }
           // 后层（B面）逆时针旋转
-          if (axis === 'z' && layerValue === -1 && direction === 'anti-clockwise') {
-            ('');
+          if (
+            axis === "z" &&
+            layerValue === -1 &&
+            direction === "anti-clockwise"
+          ) {
+            ("");
             newCube = rotateBackClockwise(prevCube);
             return newCube;
           }
           // 右层（R面）逆时针旋转
-          if (axis === 'x' && layerValue === 1 && direction === 'anti-clockwise') {
+          if (
+            axis === "x" &&
+            layerValue === 1 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateRightClockwise(prevCube);
             return newCube;
           }
           // 左层（L面）逆时针旋转
-          if (axis === 'x' && layerValue === -1 && direction === 'anti-clockwise') {
+          if (
+            axis === "x" &&
+            layerValue === -1 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateLeftCounterclockwise(prevCube);
             return newCube;
           }
           // 上层（U面）逆时针旋转
-          if (axis === 'y' && layerValue === 1 && direction === 'anti-clockwise') {
+          if (
+            axis === "y" &&
+            layerValue === 1 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateUpClockwise(prevCube);
             return newCube;
           }
           // 下层（D面）逆时针旋转
-          if (axis === 'y' && layerValue === -1 && direction === 'anti-clockwise') {
+          if (
+            axis === "y" &&
+            layerValue === -1 &&
+            direction === "anti-clockwise"
+          ) {
             newCube = rotateDownCounterclockwise(prevCube);
             return newCube;
           }
@@ -537,86 +699,84 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   };
 
   //通过公式选择魔方
-  const rotateCube = async (stepSequence, showCode = false, showFacesValue = '') => {
-    setShowCode(showCode);
-    setShowFaces(showFacesValue);
+  const rotateCube = async (stepSequence) => {
     for (const step of stepSequence) {
       // 等待上一次选择完成
       while (rotateStatus.current) {
         await new Promise((resolve) => setTimeout(resolve, 50));
       }
       switch (step) {
-        case 'E':
-          rotateLayer('y', 0, 'clockwise');
+        case "E":
+          rotateLayer("y", 0, "clockwise");
           break;
         case "E'":
-          rotateLayer('y', 0, 'anti-clockwise');
+          rotateLayer("y", 0, "anti-clockwise");
           break;
-        case 'M':
-          rotateLayer('x', 0, 'clockwise');
+        case "M":
+          rotateLayer("x", 0, "clockwise");
           break;
         case "M'":
-          rotateLayer('x', 0, 'anti-clockwise');
+          rotateLayer("x", 0, "anti-clockwise");
           break;
         case "S'":
-          rotateLayer('z', 0, 'clockwise');
+          rotateLayer("z", 0, "clockwise");
           break;
-        case 'S':
-          rotateLayer('z', 0, 'anti-clockwise');
+        case "S":
+          rotateLayer("z", 0, "anti-clockwise");
           break;
         case "x'":
-          rotateFullCube('x', Math.PI / 2, 'clockwise');
+          rotateFullCube("x", Math.PI / 2, "clockwise");
           break;
-        case 'x':
-          rotateFullCube('x', Math.PI / 2, 'anti-clockwise');
+        case "x":
+          rotateFullCube("x", Math.PI / 2, "anti-clockwise");
           break;
         case "y'":
-          rotateFullCube('y', Math.PI / 2, 'clockwise');
+          rotateFullCube("y", Math.PI / 2, "clockwise");
           break;
-        case 'y':
-          rotateFullCube('y', Math.PI / 2, 'anti-clockwise');
+        case "y":
+          rotateFullCube("y", Math.PI / 2, "anti-clockwise");
           break;
-        case 'z':
-          rotateFullCube('z', Math.PI / 2, 'anti-clockwise');
+        case "z":
+          rotateFullCube("z", Math.PI / 2, "anti-clockwise");
           break;
         case "z'":
-          rotateFullCube('z', Math.PI / 2, 'clockwise');
+          rotateFullCube("z", Math.PI / 2, "clockwise");
           break;
         case "U'":
-          rotateLayer('y', 1, 'clockwise');
+          rotateLayer("y", 1, "clockwise");
           break;
-        case 'U':
-          rotateLayer('y', 1, 'anti-clockwise');
+        case "U":
+          rotateLayer("y", 1, "anti-clockwise");
           break;
         case "D'":
-          rotateLayer('y', -1, 'anti-clockwise');
+          rotateLayer("y", -1, "anti-clockwise");
           break;
-        case 'D':
-          rotateLayer('y', -1, 'clockwise');
+        case "D":
+          rotateLayer("y", -1, "clockwise");
           break;
         case "L'":
-          rotateLayer('x', -1, 'anti-clockwise');
+          rotateLayer("x", -1, "anti-clockwise");
           break;
-        case 'L':
-          rotateLayer('x', -1, 'clockwise');
+        case "L":
+          rotateLayer("x", -1, "clockwise");
           break;
         case "R'":
-          rotateLayer('x', 1, 'clockwise');
+          rotateLayer("x", 1, "clockwise");
           break;
         case "R":
-          rotateLayer('x', 1, 'anti-clockwise');
+          rotateLayer("x", 1, "anti-clockwise");
           break;
         case "F'":
-          rotateLayer('z', 1, 'clockwise');
+          rotateLayer("z", 1, "clockwise");
           break;
-        case 'F':
-          rotateLayer('z', 1, 'anti-clockwise');
+        case "F":
+          rotateLayer("z", 1, "anti-clockwise");
           break;
-        case 'B':
-          rotateLayer('z', -1, 'clockwise');
+        case "B":
+          rotateLayer("z", -1, "clockwise");
           break;
         case "B'":
-          rotateLayer('z', -1, 'anti-clockwise');
+          rotateLayer("z", -1, "anti-clockwise");
           break;
       }
     }
@@ -626,6 +786,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   };
   const setShowFacesValue = (faces) => {
     setShowFaces(faces);
+    console.log(faces);
   };
   const setNewCube = (faces) => {
     setShowFaces(faces);
@@ -651,15 +812,22 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     setShowFacesValue: setShowFacesValue,
   }));
   return (
-    <div className='flex items-center justify-center w-full h-full position-relative'>
-      <div className='flex-1 w-full h-full '>
+    <div className="flex items-center justify-center w-full h-full position-relative">
+      <div className="flex-1 w-full h-full ">
         <Canvas camera={{ position: [5, 5, 5] }}>
           <ambientLight intensity={1} />
           <pointLight position={[5, 5, 5]} />
           <OrbitControls />
           <group>
             {cubeRefs.map(({ ref, position }, index) => (
-              <Cube key={index} position={position} refProp={ref} showCode={showCode} showFaces={showFaces} blindCode={blindCodeData.blindCodeData} />
+              <Cube
+                key={index}
+                position={position}
+                refProp={ref}
+                showCode={showCode}
+                showFaces={showFaces}
+                blindCode={blindCodeData.blindCodeData}
+              />
             ))}
           </group>
         </Canvas>

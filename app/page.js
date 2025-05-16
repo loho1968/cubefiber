@@ -1,14 +1,24 @@
-'use client';
-import HeaderBase from './components/HeaderBase.js';
-import Link from 'next/link';
-import { Button, Flex, Radio, Switch, Table, TableColumnsType } from 'antd';
-import { LeftOutlined, RightOutlined, VerticalLeftOutlined, VerticalRightOutlined } from '@ant-design/icons';
-import Search from 'antd/es/input/Search';
-import { EditOutlined } from '@ant-design/icons';
-import { useEffect, useRef, useState } from 'react';
-import { loadData, getReverseFormula, parseFormula, transform } from './components/baseFunction';
-import MainCube from './components/RubiksCube';
-import target from 'three/src/nodes/core/Node';
+"use client";
+import HeaderBase from "./components/HeaderBase.js";
+import Link from "next/link";
+import { Button, Flex, Radio, Switch, Table, TableColumnsType } from "antd";
+import {
+  LeftOutlined,
+  RightOutlined,
+  VerticalLeftOutlined,
+  VerticalRightOutlined,
+} from "@ant-design/icons";
+import Search from "antd/es/input/Search";
+import { EditOutlined } from "@ant-design/icons";
+import { useEffect, useRef, useState } from "react";
+import {
+  loadData,
+  getReverseFormula,
+  parseFormula,
+  transform,
+} from "./components/baseFunction";
+import MainCube from "./components/RubiksCube";
+import target from "three/src/nodes/core/Node";
 //重点参考
 //https://github.com/starkeyyyy/3d-Rubiks-cube
 
@@ -24,32 +34,32 @@ export default function Home() {
   //盲拧公式表格的列
   const blindColumns = [
     {
-      title: '编码',
-      key: '编码',
-      dataIndex: '编码',
+      title: "编码",
+      key: "编码",
+      dataIndex: "编码",
       width: 70,
-      align: 'center',
+      align: "center",
     },
     {
-      title: '助记码',
-      key: '助记码',
-      dataIndex: '助记码',
-      align: 'center',
+      title: "助记码",
+      key: "助记码",
+      dataIndex: "助记码",
+      align: "center",
     },
     {
-      title: '镜向',
-      key: '镜像公式编码',
-      dataIndex: '镜像公式编码',
+      title: "镜向",
+      key: "镜像公式编码",
+      dataIndex: "镜像公式编码",
       width: 65,
-      align: 'center',
+      align: "center",
     },
   ];
   //特殊公式表格列
   const specialColumns = [
     {
-      title: '名称',
-      dataIndex: '名称',
-      align: 'center',
+      title: "名称",
+      dataIndex: "名称",
+      align: "center",
     },
   ];
   const [currentStep, setCurrentStep] = useState(-1); //公式当前步数
@@ -58,29 +68,29 @@ export default function Home() {
   const [cfopGroups, setCfopGroups] = useState([]);
 
   const [edgeChecked, setEdgeChecked] = useState(true); //盲拧公式的：角块、棱块类型
-  const [search, setSearch] = useState(''); //盲拧搜索编码
+  const [search, setSearch] = useState(""); //盲拧搜索编码
   const [allColorChecked, setAllColorChecked] = useState(true); //颜色显示
   const [showCodeChecked, setShowCodeChecked] = useState(true);
 
   const cfopColumns = [
     {
-      title: '编码',
-      dataIndex: '编码',
-      align: 'center',
+      title: "编码",
+      dataIndex: "编码",
+      align: "center",
     },
     {
-      title: '名称',
-      dataIndex: '名称',
-      align: 'center',
+      title: "名称",
+      dataIndex: "名称",
+      align: "center",
     },
     {
-      title: '分组',
-      dataIndex: '分组',
-      align: 'center',
-      showSorterTooltip: { target: 'full-header' },
+      title: "分组",
+      dataIndex: "分组",
+      align: "center",
+      showSorterTooltip: { target: "full-header" },
       sorter: (a, b) => a.分组 > b.分组,
-      sortDirections: ['ascend', 'descend'],
-      defaultSortOrder: 'descend',
+      sortDirections: ["ascend", "descend"],
+      defaultSortOrder: "descend",
       filters: cfopGroups,
       onFilter: (value, record) => record.分组.indexOf(value) === 0,
     },
@@ -99,17 +109,17 @@ export default function Home() {
   const [specialFormula, setSpecialFormula] = useState([]);
 
   const [cubeFormula, setCubeFormula] = useState([]); //用于表格显示的公式数据,
-  const [tempFormula, setTempFormula] = useState('');
+  const [tempFormula, setTempFormula] = useState("");
 
-  const [cfopType, setCfopType] = useState('F2L');
+  const [cfopType, setCfopType] = useState("F2L");
 
-  const [formulaType, setFormulaType] = useState('blind');
+  const [formulaType, setFormulaType] = useState("blind");
   //#endregion
 
   //#region 加载数据数据
 
   useEffect(() => {
-    document.title = '魔方学习';
+    document.title = "魔方学习";
 
     async function fetchPosts() {
       const res = await loadData();
@@ -120,7 +130,7 @@ export default function Home() {
         return { text: item, value: item };
       });
       setCfopGroups(tmp);
-      res.cfop.forEach((item,index) => {
+      res.cfop.forEach((item, index) => {
         item.id = index;
         item.公式文本 = item.公式;
         item.公式 = parseFormula(item.公式);
@@ -134,8 +144,8 @@ export default function Home() {
       //#region 盲拧公式
       setBlindFormula(res.blindformula);
       //棱块公式
-      tmp = res.blindformula.filter((item) => item.类型 === 'edge');
-      tmp=tmp.sort((a, b) => {
+      tmp = res.blindformula.filter((item) => item.类型 === "edge");
+      tmp = tmp.sort((a, b) => {
         const codeA = a.编码;
         const codeB = b.编码;
         if (codeA < codeB) {
@@ -147,14 +157,14 @@ export default function Home() {
         return 0;
       });
       tmp.forEach((item, index) => {
-        item.id=index;
+        item.id = index;
         item.公式文本 = item.公式;
         item.公式 = parseFormula(item.公式);
       });
       setEdgeFormula(tmp);
       //角块公式
-      tmp = res.blindformula.filter((item) => item.类型 === 'corner');
-      tmp=tmp.sort((a, b) => {
+      tmp = res.blindformula.filter((item) => item.类型 === "corner");
+      tmp = tmp.sort((a, b) => {
         // 先按类型排序
         let result = 0;
         if (a.编码 > b.编码) {
@@ -165,11 +175,10 @@ export default function Home() {
         return result;
       });
       tmp.forEach((item, index) => {
-        item.id=index;
+        item.id = index;
         item.公式文本 = item.公式;
         item.公式 = parseFormula(item.公式);
       });
-      console.log(tmp);
       setCornerFormula(tmp);
       //#endregion
 
@@ -181,7 +190,7 @@ export default function Home() {
       });
       setSpecialFormula(res.special);
     }
-    fetchPosts().then(() => { });
+    fetchPosts().then(() => {});
   }, []);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
@@ -192,29 +201,29 @@ export default function Home() {
   }, [blindCode, blindFormula]);
 
   //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
-  useEffect(() => { }, [blindCode]);
+  useEffect(() => {}, [blindCode]);
   //#endregion
 
   //#region 基础函数
   //切换公式数据
-  const setCubeFormulaData = (type = 'blind', formulaType = '') => {
+  const setCubeFormulaData = (type = "blind", formulaType = "") => {
     switch (type) {
-      case 'cfop':
-        if (formulaType === '') formulaType = 'F2L';
+      case "cfop":
+        if (formulaType === "") formulaType = "F2L";
         const tmp = cfopFormula.filter((item) => {
           return item.类型 === formulaType;
         });
         setTabColumns(cfopColumns);
         setCubeFormula(tmp);
         break;
-      case 'special':
+      case "special":
         setTabColumns(specialColumns);
         setCubeFormula(specialFormula);
         break;
-      case 'blind':
+      case "blind":
       default:
         setTabColumns(blindColumns);
-        if (formulaType==="edge" || formulaType==="") {
+        if (formulaType === "edge" || formulaType === "") {
           setCubeFormula(edgeFormula);
         } else {
           setCubeFormula(cornerFormula);
@@ -235,14 +244,18 @@ export default function Home() {
     return groups;
   };
   //过滤盲拧公式
-  const filterBlindData = (code = '', type = 'edge') => {
-    const blindType = type ? 'edge' : 'corner';
-    const data = blindFormula.filter((item) => item.类型 === blindType && (code === '' || item.编码.startsWith(code.toUpperCase())));
+  const filterBlindData = (code = "", type = "edge") => {
+    const blindType = type ? "edge" : "corner";
+    const data = blindFormula.filter(
+      (item) =>
+        item.类型 === blindType &&
+        (code === "" || item.编码.startsWith(code.toUpperCase())),
+    );
     setCubeFormula(data);
   };
   //过滤CFOP公式
-  const filterCFOPFormula = (type = '') => {
-    if (type === '') type = 'F2L';
+  const filterCFOPFormula = (type = "") => {
+    if (type === "") type = "F2L";
     const data = cfopFormula.filter((item) => item.类型 === type);
     setCubeFormula(data);
   };
@@ -256,7 +269,7 @@ export default function Home() {
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);
-    moveCube(record.逆向公式);
+    initCube(record);
   };
 
   //切换公式类型
@@ -268,13 +281,13 @@ export default function Home() {
   //切换CFOP公式类型
   const setCfopTypeValue = ({ target: { value } }) => {
     setCfopType(value);
-    setCubeFormulaData('cfop', value);
+    setCubeFormulaData("cfop", value);
   };
 
   //盲拧公式切换按角块、棱块类型
   const setEdgeCheckedValue = (checked) => {
     setEdgeChecked(checked);
-    setCubeFormulaData('blind', checked?'edge':'corner');
+    setCubeFormulaData("blind", checked ? "edge" : "corner");
   };
   //盲拧编码搜索
   const setSearchValue = (value) => {
@@ -291,12 +304,16 @@ export default function Home() {
     setTotalSteps(formula.公式.length);
     setCurrentFormula(formula);
     formula.逆向公式 = getReverseFormula(formula.公式);
-    initCube(formula.逆向公式);
+    formula.包含面 = ["F2"];
+    initCube(formula);
   };
   //颜色显示
   //颜色显示切换
   const setAllColorCheckedValue = (checked) => {
     setAllColorChecked(checked);
+    rubiksCubeRef.current.setShowFacesValue(
+      checked ? [] : currentFormula.包含面,
+    );
   };
   //编码显示切换
   const setShowCodeCheckedValue = (checked) => {
@@ -307,9 +324,9 @@ export default function Home() {
 
   //#region 公式步骤操作
   //按公式重置
-  const firstStep = () => { };
+  const firstStep = () => {};
   //上一步
-  const previousStep = () => { };
+  const previousStep = () => {};
   //下一步
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
@@ -317,73 +334,109 @@ export default function Home() {
     moveCube(step);
   };
   //最后一步
-  const lastStep = () => { };
+  const lastStep = () => {};
 
   const moveCube = (step) => {
-    rubiksCubeRef.current.rotateCube(transform(step), showCodeChecked, showCodeChecked ? [] : formula.包含面);
+    rubiksCubeRef.current.rotateCube(
+      transform(step),
+      showCodeChecked,
+      showCodeChecked ? [] : formula.包含面,
+    );
   };
-  const initCube = (reverseFormula) => {
-   rubiksCubeRef.current.setNewCube()
-    rubiksCubeRef.current.rotateCube(transform(reverseFormula), showCodeChecked, showCodeChecked ? [] : formula.包含面);
+  const initCube = (formula) => {
+    rubiksCubeRef.current.setNewCube();
+    rubiksCubeRef.current.setShowCodeValue(showCodeChecked);
+    rubiksCubeRef.current.setShowFacesValue(
+      allColorChecked ? [] : formula.包含面,
+    );
+    rubiksCubeRef.current.rotateCube(transform(formula.逆向公式));
   };
   //#endregion
   return (
-    <div className='flex flex-col h-screen overflow-hidden'>
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <HeaderBase>
-        <div className='flex-auto items-center  flex  '>
-          <div className='flex-none items-center justify-center flex '>
-            <div className='mt-[-4px] mr-4'>
+        <div className="flex-auto items-center  flex  ">
+          <div className="flex-none items-center justify-center flex ">
+            <div className="mt-[-4px] mr-4">
               <Radio.Group
                 value={formulaType}
                 options={[
-                  { label: '盲拧', value: 'blind' },
-                  { label: 'CFOP', value: 'cfop' },
-                  { label: '特殊', value: 'special' },
+                  { label: "盲拧", value: "blind" },
+                  { label: "CFOP", value: "cfop" },
+                  { label: "特殊", value: "special" },
                 ]}
                 onChange={setFormulaTypeValue}
-                optionType='button'
-                buttonStyle='solid'></Radio.Group>
+                optionType="button"
+                buttonStyle="solid"
+              ></Radio.Group>
             </div>
-            {formulaType === 'cfop' && (
-              <div className='mt-[-4px]'>
+            {formulaType === "cfop" && (
+              <div className="mt-[-4px]">
                 <Radio.Group
                   value={cfopType}
                   options={[
-                    { label: 'CROSS', value: 'CROSS' },
-                    { label: 'F2L', value: 'F2L' },
-                    { label: 'PLL', value: 'PLL' },
-                    { label: 'OLL', value: 'OLL' },
+                    { label: "CROSS", value: "CROSS" },
+                    { label: "F2L", value: "F2L" },
+                    { label: "PLL", value: "PLL" },
+                    { label: "OLL", value: "OLL" },
                   ]}
                   onChange={setCfopTypeValue}
-                  optionType='button'
-                  buttonStyle='solid'></Radio.Group>
+                  optionType="button"
+                  buttonStyle="solid"
+                ></Radio.Group>
               </div>
             )}
 
-            {formulaType === 'blind' && (
-              <div className='flex ml-4'>
-                <div className='mr-4'>
-                  <Switch checkedChildren='棱块' unCheckedChildren='角块' checked={edgeChecked} onChange={setEdgeCheckedValue} />
+            {formulaType === "blind" && (
+              <div className="flex ml-4">
+                <div className="mr-4">
+                  <Switch
+                    checkedChildren="棱块"
+                    unCheckedChildren="角块"
+                    checked={edgeChecked}
+                    onChange={setEdgeCheckedValue}
+                  />
                 </div>
-                <div className='flex ml-4 w-[100px]'>
-                  <Search allowClear placeholder='编码搜索' defaultValue={search} maxLength={2} onChange={(e) => setSearchValue(e.target.value)} />
+                <div className="flex ml-4 w-[100px]">
+                  <Search
+                    allowClear
+                    placeholder="编码搜索"
+                    defaultValue={search}
+                    maxLength={2}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                  />
                 </div>
               </div>
             )}
             {/*竖线分割线*/}
-            <div className='flex-none ml-4 w-[1px] h-[30px] bg-gray-300'></div>
+            <div className="flex-none ml-4 w-[1px] h-[30px] bg-gray-300"></div>
           </div>
-          <div className='flex items-center justify-center '>
-            <div className='ml-4 w-[400px] flex-1'>
-              <Search placeholder='输入公式串，点击显示' allowClear defaultValue={tempFormula} onSearch={(e) => setTempFormulaValue(e)} />
+          <div className="flex items-center justify-center ">
+            <div className="ml-4 w-[400px] flex-1">
+              <Search
+                placeholder="输入公式串，点击显示"
+                allowClear
+                defaultValue={tempFormula}
+                onSearch={(e) => setTempFormulaValue(e)}
+              />
             </div>
-            <div className='ml-4 '>
-              <Switch checkedChildren='所有块颜色' unCheckedChildren='公式块颜色' checked={allColorChecked} onChange={setAllColorCheckedValue} />
+            <div className="ml-4 ">
+              <Switch
+                checkedChildren="所有块颜色"
+                unCheckedChildren="公式块颜色"
+                checked={allColorChecked}
+                onChange={setAllColorCheckedValue}
+              />
             </div>
-            {formulaType === 'blind' && (
-              <div className='ml-4'>
-                <Switch checkedChildren='显示编码' unCheckedChildren='不显示编码' checked={showCodeChecked} onChange={setShowCodeCheckedValue} />
+            {formulaType === "blind" && (
+              <div className="ml-4">
+                <Switch
+                  checkedChildren="显示编码"
+                  unCheckedChildren="不显示编码"
+                  checked={showCodeChecked}
+                  onChange={setShowCodeCheckedValue}
+                />
               </div>
             )}
           </div>
@@ -391,34 +444,34 @@ export default function Home() {
       </HeaderBase>
 
       {/* Main Content */}
-      <main className='flex flex-1 gap-4 min-h-0'>
+      <main className="flex flex-1 gap-4 min-h-0">
         {/* Left Panel - 30% */}
-        <div className='w-[30%] h-[100%]   overflow-auto border-r-1 border-gray-600'>
-          <div className='p-4'>
+        <div className="w-[30%] h-[100%]   overflow-auto border-r-1 border-gray-600">
+          <div className="p-4">
             <Table
               dataSource={cubeFormula}
               columns={tabColumns}
               rowKey={(record) => record.id}
               rowHoverable={false}
               bordered={true}
-              size='large'
-              showSorterTooltip={{ target: 'sorter-icon' }}
+              size="large"
+              showSorterTooltip={{ target: "sorter-icon" }}
               pagination={{
-                position: ['bottomLeft'],
-                align: 'start',
+                position: ["bottomLeft"],
+                align: "start",
                 pageSize: 20,
                 hideOnSinglePage: true,
                 showSizeChanger: false,
                 showLessItems: true,
-                size: 'small',
+                size: "small",
                 showQuickJumper: true,
               }}
               rowClassName={(record, index) => {
-                let className = '';
+                let className = "";
                 if (record.id === currentFormula?.id) {
-                  className = 'dark-' + 'currentRow ';
+                  className = "dark-" + "currentRow ";
                 }
-                className += 'dark-' + (index % 2 !== 0 ? 'oddRow' : 'evenRow');
+                className += "dark-" + (index % 2 !== 0 ? "oddRow" : "evenRow");
                 return className;
               }}
               onRow={(record) => {
@@ -433,33 +486,57 @@ export default function Home() {
         </div>
 
         {/* Right Panel - 70% with Canvas */}
-        <div className='w-[70%] flex flex-col items-center justify-center rounded-lg'>
-          <div className='w-full h-full flex items-center justify-center '>
+        <div className="w-[70%] flex flex-col items-center justify-center rounded-lg">
+          <div className="w-full h-full flex items-center justify-center ">
             <MainCube blindCodeData={blindCode} ref={rubiksCubeRef} />
           </div>
           {/* Footer */}
-          <footer className='h-[48px] shrink-0 bg-gray-800 text-white flex items-center justify-center'>
+          <footer className="h-[48px] shrink-0 bg-gray-800 text-white flex items-center justify-center">
             {currentStep > -1 && (
               <div className={`flex items-center justify-center`}>
-                <Button className='ml-1 mr-2' type='text' size='large'>
+                <Button className="ml-1 mr-2" type="text" size="large">
                   {currentStep + 1}/{totalSteps}
                 </Button>
-                <Button className='mr-2' onClick={firstStep} disabled={currentStep === -1 || totalSteps === 0}>
+                <Button
+                  className="mr-2"
+                  onClick={firstStep}
+                  disabled={currentStep === -1 || totalSteps === 0}
+                >
                   <VerticalRightOutlined />
                 </Button>
-                <Button className='mr-2' onClick={previousStep} disabled={currentStep === -1 || totalSteps === 0}>
+                <Button
+                  className="mr-2"
+                  onClick={previousStep}
+                  disabled={currentStep === -1 || totalSteps === 0}
+                >
                   <LeftOutlined />
                 </Button>
                 {currentFormula.公式 &&
                   currentFormula.公式.map((item, index) => (
-                    <Button key={index} className={currentStep === index + 1 ? 'mr-1 mt-[-3]' : 'mr-1'} color={currentStep === index + 1 ? 'primary' : 'default'} size={currentStep === index + 1 ? 'large' : 'middle'} variant={currentStep === index + 1 ? 'outlined' : 'text'}>
+                    <Button
+                      key={index}
+                      className={
+                        currentStep === index + 1 ? "mr-1 mt-[-3]" : "mr-1"
+                      }
+                      color={currentStep === index + 1 ? "primary" : "default"}
+                      size={currentStep === index + 1 ? "large" : "middle"}
+                      variant={currentStep === index + 1 ? "outlined" : "text"}
+                    >
                       {item}
                     </Button>
                   ))}
-                <Button className='mr-2' onClick={nextStep} disabled={currentStep === totalSteps}>
+                <Button
+                  className="mr-2"
+                  onClick={nextStep}
+                  disabled={currentStep === totalSteps}
+                >
                   <RightOutlined />
                 </Button>
-                <Button className='mr-2' onClick={lastStep} disabled={currentStep === totalSteps}>
+                <Button
+                  className="mr-2"
+                  onClick={lastStep}
+                  disabled={currentStep === totalSteps}
+                >
                   <VerticalLeftOutlined />
                 </Button>
               </div>
