@@ -324,7 +324,6 @@ export default function Home() {
   //#region 公式步骤操作
   //按公式重置
   const firstStep = () => {
-    record.逆向公式 = getReverseFormula(currentFormula.公式);
     setCurrentFormula(currentFormula);
     setCurrentStep(0);
     setTotalSteps(currentFormula.公式.length);

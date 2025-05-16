@@ -437,7 +437,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
     let progress = 0;
     const totalRotation = rotationStep;
-    const rotationSpeed = Math.PI / 2 / 20; // 动画速度
+    const rotationSpeed = Math.PI / 2 / 10; // 动画速度
 
     const rotate = () => {
       const step = Math.sign(totalRotation) * rotationSpeed;
@@ -531,7 +531,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           ); // 根据方向设置旋转向量
 
     let progress = 0;
-    const rotationSpeed = rotationStep / 30; // 调整速度以获得流畅的动画
+    const rotationSpeed = rotationStep / 10; // 调整速度以获得流畅的动画
 
     const rotate = async () => {
       // 遍历所有需要旋转的立方体小块
