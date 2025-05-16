@@ -120,6 +120,7 @@ export default function Home() {
 
   useEffect(() => {
     document.title = "魔方学习";
+    localStorage.removeItem("currentFormula");
 
     async function fetchPosts() {
       const res = await loadData();
@@ -311,9 +312,7 @@ export default function Home() {
   //颜色显示切换
   const setAllColorCheckedValue = (checked) => {
     setAllColorChecked(checked);
-    rubiksCubeRef.current.setShowFacesValue(
-      checked ? [] : currentFormula.包含面,
-    );
+    rubiksCubeRef.current.setShowFacesValue(checked);
   };
   //编码显示切换
   const setShowCodeCheckedValue = (checked) => {
@@ -346,9 +345,8 @@ export default function Home() {
   const initCube = (formula) => {
     rubiksCubeRef.current.setNewCube();
     rubiksCubeRef.current.setShowCodeValue(showCodeChecked);
-    rubiksCubeRef.current.setShowFacesValue(
-      allColorChecked ? [] : formula.包含面,
-    );
+    rubiksCubeRef.current.setShowFacesValue(allColorChecked);
+    localStorage.setItem("currentFormula", JSON.stringify(formula));
     rubiksCubeRef.current.rotateCube(transform(formula.逆向公式));
   };
   //#endregion

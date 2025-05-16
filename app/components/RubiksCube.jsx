@@ -30,33 +30,50 @@ import {
   rotateMiddleLayerY,
   rotateMiddleLayerZ,
 } from "./rotation"; // 从rotation.js导入2D魔方的旋转函数
-const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
+const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
   const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
   const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
-  function GetFaceColor(position, color, face, showFaces) {
-    if (!showFaces || showFaces === "" || showFaces.length === 0) return color;
-    let result = "black";
+  let formula = localStorage.getItem("currentFormula");
+  let showFaces = [];
+  if (formula !== null) {
+    formula = JSON.parse(formula);
+    showFaces = formula.包含面 ? formula.包含面.split(",") : [];
+  }
+
+  function GetFaceColor(position, color, face) {
+    if (showFaceColor) return color;
+    let result = "gray";
     const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
     if (code) {
       const faceId = code.面 + code.面序号;
-      console.log(faceId);
       if (showFaces.includes(faceId)) {
         result = color;
       }
     }
     return result;
   }
-  function GetLabel(position, face, type = "code", showFaces) {
+  function GetLabel(position, face, type = "code") {
     if (!showCode) return "";
-    let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
 
+    let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
+    type = "code";
     if (code) {
-      code = type === "code" ? code.编码 : code.面 + code.面序号; //code.编码
+      let faceId = code.面 + code.面序号;
+
+      code = code.编码;
+      if (showFaces && showFaces.length > 0) {
+        if (!showFaces.includes(faceId) && !showFaceColor) {
+          console.log(1111, showFaces, code);
+          code = "";
+        } else {
+          console.log(2222, code);
+        }
+      }
     } else {
       code = face;
     }
-    return face === "L" ? showFaces : code;
+    return code;
   }
   // 魔方颜色定义 (右、左、上、下、前、后)
   let colors;
@@ -123,7 +140,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
           <mesh>
             <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]} />
             <meshStandardMaterial
-              color={GetFaceColor(position, color, face, showFaces)}
+              color={GetFaceColor(position, color, face, showFaceColor)}
               emissive={0.2}
               emissiveIntensity={0.2}
               metalness={0.1}
@@ -137,7 +154,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaces }) => {
             anchorX="center"
             anchorY="middle"
           >
-            {GetLabel(position, face, showFaces)}
+            {GetLabel(position, face)}
           </Text>
         </group>
       ))}
@@ -150,7 +167,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const cubeScale = 1.5;
   const [cubeRefs, setCubeRefs] = useState([]);
   const [showCode, setShowCode] = useState(false);
-  const [showFaces, setShowFaces] = useState([]);
+  const [showFaceColor, setShowFaceColor] = useState([]);
   const rotateStatus = useRef(false);
 
   //用于在二维中映射三维立方体的初始立方体
@@ -463,9 +480,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
               position[1] * cubeScale,
               position[2] * cubeScale,
             );
-            // console.log(
-            //   `Full cube rotation: Original position ${originalPosition}, New position ${position}`,
-            // );
           }
         });
 
@@ -557,9 +571,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
               position[1] * cubeScale,
               position[2] * cubeScale,
             );
-            // console.log(
-            //   `图层旋转：原始位置${originalPosition}，新位置${position}`,
-            // );
           }
         });
 
@@ -784,12 +795,10 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const setShowCodeValue = (showCode) => {
     setShowCode(showCode);
   };
-  const setShowFacesValue = (faces) => {
-    setShowFaces(faces);
-    console.log(faces);
+  const setShowFacesValue = (showFaceColor) => {
+    setShowFaceColor(showFaceColor);
   };
   const setNewCube = (faces) => {
-    setShowFaces(faces);
     cubeRefs.forEach(({ ref, position }) => {
       if (ref.current) {
         // 获取原始坐标（从position数组的第0-2位）
@@ -825,7 +834,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
                 position={position}
                 refProp={ref}
                 showCode={showCode}
-                showFaces={showFaces}
+                showFaceColor={showFaceColor}
                 blindCode={blindCodeData.blindCodeData}
               />
             ))}
