@@ -270,6 +270,7 @@ export default function Home() {
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);
+    console.log(record);
     initCube(record);
   };
 
@@ -359,7 +360,9 @@ export default function Home() {
   };
   const initCube = (formula) => {
     rubiksCubeRef.current.setNewCube();
-    rubiksCubeRef.current.setShowCodeValue(showCodeChecked);
+    rubiksCubeRef.current.setShowCodeValue(
+      formulaType === "blind" ? showCodeChecked : false,
+    );
     rubiksCubeRef.current.setShowFacesValue(allColorChecked);
     localStorage.setItem("currentFormula", JSON.stringify(formula));
     rubiksCubeRef.current.rotateCube(transform(formula.逆向公式));
