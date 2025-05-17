@@ -267,6 +267,7 @@ export default function Home() {
   //点击公式行
   const clickRow = (record) => {
     record.逆向公式 = getReverseFormula(record.公式);
+    record.包含面 = record.包含面 ? record.包含面.split(" ") : [];
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);
@@ -335,7 +336,7 @@ export default function Home() {
   const previousStep = () => {
     if (currentStep === 0) return;
     setCurrentStep(currentStep - 1);
-    const step = transform([currentFormula.公式[currentStep]]);
+    const step = transform([currentFormula.公式[currentStep - 1]]);
     moveCube(step);
   };
   //下一步

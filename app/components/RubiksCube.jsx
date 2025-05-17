@@ -38,7 +38,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
   let showFaces = [];
   if (formula !== null) {
     formula = JSON.parse(formula);
-    showFaces = formula.包含面 ? formula.包含面.split(",") : [];
+    showFaces = formula.包含面 ? formula.包含面 : [];
   }
 
   function GetFaceColor(position, color, face) {
