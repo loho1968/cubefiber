@@ -99,6 +99,16 @@ export default function Home() {
       onFilter: (value, record) => record.分组.indexOf(value) === 0,
     },
   ];
+  const referenceColumns = [
+    {
+      title: "文章",
+      dataIndex: "文章",
+      align: "center",
+      render: (value, record, index) => {
+        return <a href={record.链接} target={"_blank"} >${record.文章}{value}</a>
+      },
+    },
+  ];
 
   const [currentFormula, setCurrentFormula] = useState({}); //当前公式，点击表格行，或者直接输入公式后改变
 
@@ -111,6 +121,7 @@ export default function Home() {
 
   const [cfopFormula, setCfopFormula] = useState([]);
   const [specialFormula, setSpecialFormula] = useState([]);
+  const [referenceFormula, setReferenceFormula] = useState([]);
 
   const [cubeFormula, setCubeFormula] = useState([]); //用于表格显示的公式数据,
   const [tempFormula, setTempFormula] = useState("");
@@ -194,6 +205,12 @@ export default function Home() {
         item.公式 = parseFormula(item.公式);
       });
       setSpecialFormula(res.special);
+
+      //参考文章
+      res.reference.forEach((item, index) => {
+        item.id = index;
+      });
+      setReferenceFormula(res.reference);
     }
     fetchPosts().then(() => {});
   }, []);
@@ -224,6 +241,10 @@ export default function Home() {
       case "special":
         setTabColumns(specialColumns);
         setCubeFormula(specialFormula);
+        break;
+      case "reference":
+        setTabColumns(referenceColumns);
+        setCubeFormula(referenceFormula);
         break;
       case "blind":
       default:
@@ -270,6 +291,7 @@ export default function Home() {
   //#region 界面操作
   //点击公式行
   const clickRow = (record) => {
+    if(formulaType==="reference") return;
     record.逆向公式 = getReverseFormula(record.公式);
     const faces = record.包含面 ? record.包含面.split(" ") : [];
     if (formulaType === "cfop") {
@@ -356,7 +378,8 @@ export default function Home() {
   const previousStep = () => {
     if (currentStep === 0) return;
     setCurrentStep(currentStep - 1);
-    const step = transform([currentFormula.公式[currentStep - 1]]);
+    console.log(currentFormula.逆向公式,currentStep)
+    const step = transform([currentFormula.逆向公式[currentFormula.逆向公式.length-currentStep]]);
     moveCube(step);
   };
   //下一步
@@ -392,6 +415,7 @@ export default function Home() {
       <HeaderBase>
         <div className="flex-auto items-center  flex  ">
           <div className="flex-none items-center justify-center flex ">
+
             <div className="mt-[-4px] mr-4">
               <Radio.Group
                 value={formulaType}
@@ -399,6 +423,7 @@ export default function Home() {
                   { label: "盲拧", value: "blind" },
                   { label: "CFOP", value: "cfop" },
                   { label: "特殊", value: "special" },
+                  { label: "参考", value: "reference" },
                 ]}
                 onChange={setFormulaTypeValue}
                 optionType="button"

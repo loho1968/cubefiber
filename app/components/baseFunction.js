@@ -264,6 +264,26 @@ export async function loadData() {
     });
     result.special = data;
     //#endregion
+
+    //#region 获取reference工作表
+    worksheet = workbook.Sheets["reference"];
+
+    // 将工作表转换为JSON数据，使用header: 1获取原始数组格式
+    rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+    // 获取表头（第一行）
+    headers = rawData[0];
+
+    // 将数据转换为对象数组，使用表头作为属性名
+    data = rawData.slice(1).map((row) => {
+      const obj = {};
+      headers.forEach((header, index) => {
+        obj[header] = row[index];
+      });
+      return obj;
+    });
+    result.reference = data;
+    //#endregion
   } catch (error) {
     console.error("读取Excel文件失败:", error);
   }
