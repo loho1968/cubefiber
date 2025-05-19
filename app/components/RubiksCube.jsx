@@ -53,11 +53,10 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
     }
     return result;
   }
-  function GetLabel(position, face, type = "code") {
+  function GetLabel(position, face) {
     if (!showCode) return "";
 
     let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
-    type = "code";
     if (code) {
       let faceId = code.面 + code.面序号;
 
@@ -400,6 +399,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
           break;
         case "b":
           rotateLayer("z", -1, "clockwise");
+          break
         case "e":
           rotateLayer("y", 0, "clockwise");
           break;
@@ -454,7 +454,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         // Snap to final rotation to avoid floating-point issues
         cubeRefs.forEach(({ ref, position }) => {
           if (ref.current) {
-            const originalPosition = [...position];
             ref.current.rotation.set(
               Math.round(ref.current.rotation.x / (Math.PI / 2)) *
                 (Math.PI / 2),
@@ -549,7 +548,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         // ✅ 旋转后，消除精度差异，对齐魔方块
         cubesToRotate.forEach(({ ref, position }) => {
           if (ref.current) {
-            const originalPosition = [...position];
             ref.current.rotation.set(
               Math.round(ref.current.rotation.x / rotationStep) * rotationStep,
               Math.round(ref.current.rotation.y / rotationStep) * rotationStep,
@@ -662,7 +660,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             layerValue === -1 &&
             direction === "anti-clockwise"
           ) {
-            ("");
             newCube = rotateBackClockwise(prevCube);
             return newCube;
           }
@@ -799,7 +796,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
   const setShowFacesValue = (showFaceColor) => {
     setShowFaceColor(showFaceColor);
   };
-  const setNewCube = (faces) => {
+  const setNewCube = () => {
     cubeRefs.forEach(({ ref, position }) => {
       if (ref.current) {
         // 获取原始坐标（从position数组的第0-2位）
