@@ -113,11 +113,6 @@ export function transform(formula) {
 /**
  * 将魔方公式字符串转换为步骤数组
  * @param {string} formula - 魔方公式字符串，支持多种格式：
- * 1. 空格分隔: "U R U2 R' U R U' R'"
- * 2. 多空格分隔: "U  R   U2   R'  U  R  U' R'"
- * 3. 无分隔: "URU2R'URU'R'"
- * 4. 逗号分隔: "U,R,U2,R',U,R,U',R'"
- * @returns {string[]} 标准化的步骤数组，如 ['U','R','U2',"R'",'U','R',"U'",'R']
  */
 export function parseFormula(formula) {
   if (!formula) return [];
@@ -142,7 +137,7 @@ export function parseFormula(formula) {
 export function GetCFOPFaces(type) {
   switch (type) {
     case "F2L":
-      return "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9".split(" ");
+      return "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ");
     case "PLL":
       return "U1 U2 U3 U4 U5 U6 U7 U8 U9".split(" ");
     case "OLL":
@@ -155,7 +150,7 @@ export function GetCFOPFaces(type) {
 }
 /**
  * 公式反转
- * @param formula
+ * @param arr
  * @returns
  */
 export function getReverseFormula(arr) {
@@ -163,12 +158,12 @@ export function getReverseFormula(arr) {
   let reverseFormula = "";
   for (let i = arr.length - 1; i >= 0; i--) {
     arr[i] = arr[i].replace(" ", "");
-    if (arr[i] == "") continue;
+    if (arr[i] === "") continue;
     if (arr[i].indexOf("2") > -1) {
       reverseFormula += " " + arr[i];
       continue;
     }
-    if (arr[i].indexOf("'") == -1) {
+    if (arr[i].indexOf("'") === -1) {
       reverseFormula += " " + arr[i] + "'";
     } else {
       reverseFormula += " " + arr[i].replace("'", "");
