@@ -282,6 +282,19 @@ export default function Home() {
   //切换公式类型
   const setFormulaTypeValue = ({ target: { value } }) => {
     setFormulaType(value);
+    switch (value) {
+      case "cfop":
+        setShowCodeCheckedValue(false);
+        break;
+      case "special":
+        setShowCodeCheckedValue(false);
+        setAllColorCheckedValue(false);
+        break;
+      default:
+        setShowCodeCheckedValue(true);
+        setAllColorCheckedValue(true);
+        break;
+    }
     setCubeFormulaData(value);
   };
 
@@ -311,7 +324,7 @@ export default function Home() {
     setTotalSteps(formula.公式.length);
     setCurrentFormula(formula);
     formula.逆向公式 = getReverseFormula(formula.公式);
-    formula.包含面 = ["F2"];
+    formula.包含面 = formulaType !== "cfop" ? [] : GetCFOPFaces(cfopType);
     initCube(formula);
   };
   //颜色显示

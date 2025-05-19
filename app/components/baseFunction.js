@@ -143,6 +143,10 @@ export function GetCFOPFaces(type) {
   switch (type) {
     case "F2L":
       return "F7 F9 B7 B8 L7 L9 R7 R9 F4 F6 B4 B6 L4 L6 R4 R6".split(" ");
+    case "PLL":
+      return "U1 U2 U3 U4 U5 U6 U7 U8 U9";
+    case "OLL":
+      return "U1 U2 U3 U4 U5 U6 U7 U8 U9 F1 F2 F3 L1 F2 L3 B1 B2 B3 R1 R2 R3";
     default:
       return type;
   }
