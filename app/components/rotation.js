@@ -4,6 +4,20 @@
  * 顺时针旋转一个面
  * @param {Array} faceMatrix - 3x3的面矩阵
  * @returns {Array} - 旋转后的新矩阵
+ * 函数通过手动重新排列 faceMatrix 中的元素来实现顺时针旋转 90 度。具体规则如下：
+ * 原矩阵的第一列元素按逆序成为新矩阵的第一行。
+ * 原矩阵的第二列元素按逆序成为新矩阵的第二行。
+ * 原矩阵的第三列元素按逆序成为新矩阵的第三行。
+ * const faceMatrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6],
+ *   [7, 8, 9]
+ * ];
+ * [
+ *   [7, 4, 1],
+ *   [8, 5, 2],
+ *   [9, 6, 3]
+ * ]
  */
 const rotateFaceClockwise = (faceMatrix) => {
   return [
@@ -17,6 +31,21 @@ const rotateFaceClockwise = (faceMatrix) => {
  * 逆时针旋转一个面
  * @param {Array} faceMatrix - 3x3的面矩阵
  * @returns {Array} - 旋转后的新矩阵
+ * 函数通过手动重新排列 faceMatrix 中的元素来实现逆时针旋转 90 度，具体规则如下：
+ *
+ * 原矩阵的第一行元素按逆序成为新矩阵的第一列。
+ * 原矩阵的第二行元素按逆序成为新矩阵的第二列。
+ * 原矩阵的第三行元素按逆序成为新矩阵的第三列。
+ * const faceMatrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6],
+ *   [7, 8, 9]
+ * ];
+ * [
+ *   [3, 6, 9],
+ *   [2, 5, 8],
+ *   [1, 4, 7]
+ * ]
  */
 const rotateFaceCounterclockwise = (faceMatrix) => {
   return [
@@ -59,7 +88,6 @@ const rotateFullCubeClockwise = (cube) => {
   newCube[0][1] = cube[1][1]; // Up takes Front
   newCube[0][2] = cube[1][2]; // Up takes Front
 
-  console.log(newCube);
   return newCube;
 };
 
