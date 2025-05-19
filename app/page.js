@@ -75,14 +75,17 @@ export default function Home() {
 
   const cfopColumns = [
     {
-      title: "编码",
-      dataIndex: "编码",
-      align: "center",
-    },
-    {
       title: "名称",
       dataIndex: "名称",
       align: "center",
+    },
+    {
+      title: "公式",
+      dataIndex: "公式",
+      align: "center",
+      render: (value, record, index) => {
+        return value.join(",");
+      },
     },
     {
       title: "分组",
