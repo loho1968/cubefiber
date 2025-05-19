@@ -357,11 +357,7 @@ export default function Home() {
   };
 
   const moveCube = (step) => {
-    rubiksCubeRef.current.rotateCube(
-      transform(step),
-      showCodeChecked,
-      showCodeChecked ? [] : formula.包含面,
-    );
+    rubiksCubeRef.current.rotateCube(transform(step));
   };
   const initCube = (formula) => {
     rubiksCubeRef.current.setNewCube();
