@@ -16,6 +16,7 @@ import {
   getReverseFormula,
   parseFormula,
   transform,
+  GetCFOPFaces,
 } from "./components/baseFunction";
 import MainCube from "./components/RubiksCube";
 import target from "three/src/nodes/core/Node";
@@ -267,7 +268,10 @@ export default function Home() {
   //点击公式行
   const clickRow = (record) => {
     record.逆向公式 = getReverseFormula(record.公式);
-    record.包含面 = record.包含面 ? record.包含面.split(" ") : [];
+    const faces = record.包含面 ? record.包含面.split(" ") : [];
+    if (formulaType === "cfop") {
+      record.包含面 = GetCFOPFaces(cfopType);
+    }
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);

@@ -2,7 +2,7 @@ import * as XLSX from "xlsx";
 
 export function transform(formula) {
   let result = [];
-  const doubleFormula = "u2d2l2r2f2b2"
+  const doubleFormula = "u2d2l2r2f2b2";
   for (let i = 0; i < formula.length; i++) {
     let temp = formula[i];
     if (temp.indexOf("2") > -1 && doubleFormula.indexOf(temp) == -1) {
@@ -13,8 +13,8 @@ export function transform(formula) {
     }
     //E y轴中间层,M x轴中间层 S z轴中间层
   }
-  formula = result
-  result = []
+  formula = result;
+  result = [];
   for (let i = 0; i < formula.length; i++) {
     let temp = formula[i];
     switch (temp) {
@@ -108,7 +108,7 @@ export function transform(formula) {
       //E y轴中间层,M x轴中间层 S z轴中间层
     }
   }
-  return result
+  return result;
 }
 /**
  * 将魔方公式字符串转换为步骤数组
@@ -136,6 +136,17 @@ export function parseFormula(formula) {
   return moves || [];
 }
 
+/*
+ * CFOP公式包含面
+ * */
+export function GetCFOPFaces(type) {
+  switch (type) {
+    case "F2L":
+      return "F7 F9 B7 B8 L7 L9 R7 R9 F4 F6 B4 B6 L4 L6 R4 R6".split(" ");
+    default:
+      return type;
+  }
+}
 /**
  * 公式反转
  * @param formula

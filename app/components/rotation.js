@@ -9,7 +9,7 @@ const rotateFaceClockwise = (faceMatrix) => {
   return [
     [faceMatrix[2][0], faceMatrix[1][0], faceMatrix[0][0]],
     [faceMatrix[2][1], faceMatrix[1][1], faceMatrix[0][1]],
-    [faceMatrix[2][2], faceMatrix[1][2], faceMatrix[0][2]]
+    [faceMatrix[2][2], faceMatrix[1][2], faceMatrix[0][2]],
   ];
 };
 
@@ -22,7 +22,7 @@ const rotateFaceCounterclockwise = (faceMatrix) => {
   return [
     [faceMatrix[0][2], faceMatrix[1][2], faceMatrix[2][2]],
     [faceMatrix[0][1], faceMatrix[1][1], faceMatrix[2][1]],
-    [faceMatrix[0][0], faceMatrix[1][0], faceMatrix[2][0]]
+    [faceMatrix[0][0], faceMatrix[1][0], faceMatrix[2][0]],
   ];
 };
 
@@ -36,14 +36,13 @@ const rotateFaceCounterclockwise = (faceMatrix) => {
  */
 const rotateFullCubeClockwise = (cube) => {
   let newCube = JSON.parse(JSON.stringify(cube));
-  
 
   // Rotate Right (2) clockwise and Left (4) counterclockwise
   newCube[2] = rotateFaceClockwise(cube[2]);
   newCube[4] = rotateFaceCounterclockwise(cube[4]);
 
   // Swap Front, Up, Back, and Down faces
- 
+
   newCube[1][0] = cube[5][0]; // Front takes Down
   newCube[1][1] = cube[5][1]; // Front takes Down
   newCube[1][2] = cube[5][2]; // Front takes Down
@@ -52,15 +51,13 @@ const rotateFullCubeClockwise = (cube) => {
   newCube[5][1] = cube[3][1]; // Down takes Back
   newCube[5][2] = cube[3][0]; // Down takes Back
 
-
-  newCube[3][0] = cube[0][2]; // back takes up 
-  newCube[3][1] = cube[0][1]; // back takes up 
-  newCube[3][2] = cube[0][0]; // back takes up 
+  newCube[3][0] = cube[0][2]; // back takes up
+  newCube[3][1] = cube[0][1]; // back takes up
+  newCube[3][2] = cube[0][0]; // back takes up
 
   newCube[0][0] = cube[1][0]; // Up takes Front
   newCube[0][1] = cube[1][1]; // Up takes Front
   newCube[0][2] = cube[1][2]; // Up takes Front
-
 
   console.log(newCube);
   return newCube;
@@ -81,7 +78,7 @@ const rotateFullCubeCounterclockwise = (cube) => {
   // Swap Front, Up, Back, and Down faces in reverse order
   newCube[1][0] = cube[0][0]; // Front takes Up
   newCube[1][1] = cube[0][1]; // Front takes Up
-  newCube[1][2] = cube[0][2]; // Front takes Up 
+  newCube[1][2] = cube[0][2]; // Front takes Up
 
   newCube[5][0] = cube[1][0]; // Down takes Front
   newCube[5][1] = cube[1][1]; // Down takes Front
@@ -95,11 +92,8 @@ const rotateFullCubeCounterclockwise = (cube) => {
   newCube[0][1] = cube[3][1]; // Up takes Back
   newCube[0][2] = cube[3][0]; // Up takes Back
 
-  
-
   return newCube;
 };
-
 
 /**
  * 顺时针旋转前面(F)
@@ -119,7 +113,7 @@ const rotateFrontClockwise = (cube) => {
   newCube[0][2][0] = cube[4][2][2];
   newCube[0][2][1] = cube[4][1][2];
   newCube[0][2][2] = cube[4][0][2];
-  
+
   // Left right column takes Down top row
   newCube[4][0][2] = cube[5][0][0];
   newCube[4][1][2] = cube[5][0][1];
@@ -144,7 +138,6 @@ const rotateFrontClockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateFrontCounterclockwise = (cube) => {
-
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[1] = rotateFaceCounterclockwise(cube[1]);
@@ -169,7 +162,6 @@ const rotateFrontCounterclockwise = (cube) => {
   newCube[4][1][2] = cube[0][2][1];
   newCube[4][2][2] = cube[0][2][0];
 
-
   return newCube;
 };
 
@@ -182,7 +174,6 @@ const rotateFrontCounterclockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateRightClockwise = (cube) => {
-  
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[2] = rotateFaceClockwise(cube[2]);
@@ -206,7 +197,6 @@ const rotateRightClockwise = (cube) => {
   newCube[3][0][0] = cube[0][2][2];
   newCube[3][1][0] = cube[0][1][2];
   newCube[3][2][0] = cube[0][0][2];
-  
 
   return newCube;
 };
@@ -217,7 +207,6 @@ const rotateRightClockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateRightCounterclockwise = (cube) => {
-  
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[2] = rotateFaceCounterclockwise(cube[2]);
@@ -241,7 +230,6 @@ const rotateRightCounterclockwise = (cube) => {
   newCube[1][0][2] = cube[0][0][2];
   newCube[1][1][2] = cube[0][1][2];
   newCube[1][2][2] = cube[0][2][2];
-  
 
   return newCube;
 };
@@ -255,7 +243,6 @@ const rotateRightCounterclockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateLeftClockwise = (cube) => {
-  
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[4] = rotateFaceClockwise(cube[4]);
@@ -279,7 +266,6 @@ const rotateLeftClockwise = (cube) => {
   newCube[1][0][0] = cube[0][0][0];
   newCube[1][1][0] = cube[0][1][0];
   newCube[1][2][0] = cube[0][2][0];
-  
 
   return newCube;
 };
@@ -290,7 +276,6 @@ const rotateLeftClockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateLeftCounterclockwise = (cube) => {
-  
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[4] = rotateFaceCounterclockwise(cube[4]);
@@ -314,7 +299,6 @@ const rotateLeftCounterclockwise = (cube) => {
   newCube[3][0][2] = cube[0][2][0];
   newCube[3][1][2] = cube[0][1][0];
   newCube[3][2][2] = cube[0][0][0];
-  
 
   return newCube;
 };
@@ -328,7 +312,6 @@ const rotateLeftCounterclockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateUpClockwise = (cube) => {
-  
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[0] = rotateFaceClockwise(cube[0]);
@@ -347,7 +330,6 @@ const rotateUpClockwise = (cube) => {
   newCube[3][0] = leftTopRow;
   // Left top row takes Front top row
   newCube[4][0] = frontTopRow;
-  
 
   return newCube;
 };
@@ -358,7 +340,6 @@ const rotateUpClockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateUpCounterclockwise = (cube) => {
-  
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[0] = rotateFaceCounterclockwise(cube[0]);
@@ -377,7 +358,6 @@ const rotateUpCounterclockwise = (cube) => {
   newCube[3][0] = rightTopRow;
   // Right top row takes Front top row
   newCube[2][0] = frontTopRow;
-  
 
   return newCube;
 };
@@ -391,7 +371,6 @@ const rotateUpCounterclockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateDownClockwise = (cube) => {
-
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[5] = rotateFaceClockwise(cube[5]);
@@ -410,7 +389,6 @@ const rotateDownClockwise = (cube) => {
   newCube[3][2] = rightBottomRow;
   // Right bottom row takes Front bottom row
   newCube[2][2] = frontBottomRow;
-  
 
   return newCube;
 };
@@ -421,7 +399,6 @@ const rotateDownClockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateDownCounterclockwise = (cube) => {
-
   let newCube = JSON.parse(JSON.stringify(cube));
 
   newCube[5] = rotateFaceCounterclockwise(cube[5]);
@@ -440,7 +417,6 @@ const rotateDownCounterclockwise = (cube) => {
   newCube[3][2] = leftBottomRow;
   // Left bottom row takes Front bottom row
   newCube[4][2] = frontBottomRow;
-  
 
   return newCube;
 };
@@ -454,33 +430,30 @@ const rotateDownCounterclockwise = (cube) => {
  * @returns {Array} - 旋转后的新状态
  */
 const rotateBackClockwise = (cube) => {
-
   let newCube = JSON.parse(JSON.stringify(cube));
 
-  // For the Back face, rotating clockwise in the cube's frame is 
-  // actually counterclockwise from the solver's perspective
+  //对于背面，从解算器的角度来看，在立方体的框架中顺时针旋转实际上是逆时针旋转
   newCube[3] = rotateFaceCounterclockwise(cube[3]);
 
-  // Up top row takes Left left column (reversed)
+  //上顶行取左左列（反向）
   newCube[0][0][0] = cube[4][2][0];
   newCube[0][0][1] = cube[4][1][0];
   newCube[0][0][2] = cube[4][0][0];
 
-  // Left left column takes Down bottom row (reversed)
+  // 左-左列取下最下面一行（反向）
   newCube[4][0][0] = cube[5][2][0];
   newCube[4][1][0] = cube[5][2][1];
   newCube[4][2][0] = cube[5][2][2];
 
-  // Down bottom row takes Right right column
+  // 下一行为右列
   newCube[5][2][0] = cube[2][2][2];
   newCube[5][2][1] = cube[2][1][2];
   newCube[5][2][2] = cube[2][0][2];
 
-  // Right right column takes Up top row (reversed)
+  // 右列占据顶行（反向）
   newCube[2][0][2] = cube[0][0][0];
   newCube[2][1][2] = cube[0][0][1];
   newCube[2][2][2] = cube[0][0][2];
-  
 
   return newCube;
 };
@@ -490,9 +463,8 @@ const rotateBackClockwise = (cube) => {
  * @param {Array} cube - 魔方的当前状态
  * @returns {Array} - 旋转后的新状态
  */
-const rotateBackCounterclockwise =  (cube) => {
-
-  let newCube =  JSON.parse(JSON.stringify(cube));
+const rotateBackCounterclockwise = (cube) => {
+  let newCube = JSON.parse(JSON.stringify(cube));
 
   // For the Back face, rotating counterclockwise in the cube's frame
   // is actually clockwise from the solver's perspective
@@ -517,12 +489,9 @@ const rotateBackCounterclockwise =  (cube) => {
   newCube[4][0][0] = cube[0][0][2];
   newCube[4][1][0] = cube[0][0][1];
   newCube[4][2][0] = cube[0][0][0];
-  
 
   return newCube;
 };
-
-
 
 /**
  * 顺时针旋转 x 轴中间层（M 层，左向右看为顺时针）
@@ -635,5 +604,5 @@ export {
   rotateMiddleLayerX,
   rotateMiddleLayerY,
   rotateMiddleLayerZ,
-  rotateRightAndMiddleXClockwise
+  rotateRightAndMiddleXClockwise,
 };
