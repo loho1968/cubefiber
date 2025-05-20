@@ -1,21 +1,10 @@
 "use client";
 import HeaderBase from "./components/HeaderBase.js";
 import {Button, Radio, Switch, Table} from "antd";
-import {
-    LeftOutlined,
-    RightOutlined,
-    VerticalLeftOutlined,
-    VerticalRightOutlined,
-} from "@ant-design/icons";
+import {LeftOutlined, RightOutlined, VerticalLeftOutlined, VerticalRightOutlined,} from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import {useEffect, useRef, useState} from "react";
-import {
-    loadData,
-    getReverseFormula,
-    parseFormula,
-    transform,
-    GetCFOPFaces,
-} from "./components/baseFunction";
+import {GetCFOPFaces, getReverseFormula, loadData, parseFormula, transform,} from "./components/baseFunction";
 import MainCube from "./components/RubiksCube";
 
 export default function Home() {
@@ -128,6 +117,7 @@ export default function Home() {
         setFormulaType("blind")
         setShowCodeCheckedValue(true)
         setAllColorCheckedValue(true)
+
         async function fetchPosts() {
             const res = await loadData();
             //#region CFOP
@@ -282,7 +272,7 @@ export default function Home() {
     const clickRow = (record) => {
         if (formulaType === "reference") return;
         record.逆向公式 = getReverseFormula(record.公式);
-        record.包含面= record.包含面 ?typeof(record.包含面)==="object"?record.包含面:record.包含面.split(" ") : [];
+        record.包含面 = record.包含面 ? typeof (record.包含面) === "object" ? record.包含面 : record.包含面.split(" ") : [];
         if (formulaType === "cfop") {
             record.包含面 = GetCFOPFaces(cfopType);
         }
@@ -337,7 +327,7 @@ export default function Home() {
         setTotalSteps(formula.公式.length);
         setCurrentFormula(formula);
         formula.逆向公式 = getReverseFormula(formula.公式);
-        formula.包含面 = formulaType !== "cfop" ? [] : GetCFOPFaces(cfopType);
+        formula.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ") //GetCFOPFaces(cfopType);
         initCube(formula);
     };
     //颜色显示
