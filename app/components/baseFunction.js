@@ -111,6 +111,8 @@ export function transform(formula) {
     return result;
 }
 
+export const cfopFaces = "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9"
+
 /**
  * 将魔方公式字符串转换为步骤数组
  * @param {string} formula - 魔方公式字符串，支持多种格式：
@@ -249,7 +251,7 @@ export async function loadData() {
                 return a.分组.localeCompare(b.分组);
             }
             // 分组相同时比较名称
-            return a.名称.localeCompare(b.名称);
+            return a.排序 ? a.排序 > b.排序 : a.名称.localeCompare(b.名称);
         });
         result.cfop = data;
         //#endregion
