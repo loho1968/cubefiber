@@ -1,4 +1,17 @@
 {
   "prettier.printWidth": 1000,
-  "prettier.bracketSameLine": true
+  "prettier.bracketSameLine": true,
+  "piny.project_settings": {
+    "open-pages": ["pinyfakepage.html"],
+    "app-routes": {
+      "routes": ["/", "/demo"],
+      "current_route": "/"
+    },
+    "tw-external-config": {
+      "external_source_url": "app/globals.css"
+    },
+    "source-folders": ["app"],
+    "preview-url": "http://localhost:3000",
+    "ai-project-brief": null
+  }
 }

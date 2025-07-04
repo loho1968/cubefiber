@@ -3,6 +3,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { App, ConfigProvider, theme } from "antd";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Script from 'next/script';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,11 @@ export default function RootLayout({ children }) {
             </App>
           </ConfigProvider>
         </AntdRegistry>
+        {process.env.NODE_ENV === 'development' && process.env.PINY_VISUAL_SELECT === 'true' && (
+          <Script
+            src="/_piny/piny.phone.js"
+            strategy="beforeInteractive"
+          />)} { /* <-- conditionally include the Piny script */}
       </body>
     </html>
   );
