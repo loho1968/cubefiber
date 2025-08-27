@@ -22,7 +22,15 @@ import {
     rotateUpClockwise,
     rotateUpCounterclockwise,
 } from "./rotation";
-
+/**
+ * 
+ * 前面(F)中心块：z=1, x=0, y=0，即 position 为 0, 0, 1
+后面(B)中心块：z=-1, x=0, y=0，即 position 为 0, 0, -1
+上面(U)中心块：y=1, x=0, z=0，即 position 为 0, 1, 0
+下面(D)中心块：y=-1, x=0, z=0，即 position 为 0, -1, 0
+右面(R)中心块：x=1, y=0, z=0，即 position 为 1, 0, 0
+左面(L)中心块：x=-1, y=0, z=0，即 position 为 -1, 0, 0
+ */
 const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
     const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
     const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
@@ -43,7 +51,11 @@ const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
             if (showFaces.includes(faceId)) {
                 result = color;
             } else {
-                // if (cfopFaces.split(" ").includes(faceId)) console.log(faceId)
+                 //如果是中心块，固定显示颜色
+                if(code.面序号==5) {
+                    result=color;
+                    console.log(face,position)
+                }
             }
         }
         return result;
