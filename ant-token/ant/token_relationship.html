@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Relationship Graph (ECharts)</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+            background-color: #fafafa;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+        .legend {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .legend h3 { font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="legend">
+        <h3 style="margin: 0 0 10px 0; font-size: 16px;">Token Types</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ECE8FF; border-color: #722ED1;"></div>
+            <span>Domain (Color/Font/Motion...)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #E6F7FF; border-color: #1890FF;"></div>
+            <span>Seed Token</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #F6FFED; border-color: #52C41A;"></div>
+            <span>Map Token</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #FFF7E6; border-color: #FA8C16;"></div>
+            <span>Alias Token</span>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px; color: #888;">
+            * Hover over nodes for details
+        </div>
+    </div>
+    <div id="container"></div>
+
+    <script>
+        const csvContent = `"SeedToken 名称","MapToken 名称","AliasToken 名称","继承说明"
+"colorPrimary","colorPrimaryBg","colorLink","继承自 colorPrimary（原色），映射为链接色"
+"colorPrimary","colorPrimaryBgHover","colorLinkHover","继承自 colorPrimary（原色），映射为链接色 Hover"
+"colorPrimary","colorPrimaryHover","colorLinkHover","继承自 colorPrimary（原色），映射为链接色 Hover"
+"colorPrimary","colorPrimaryActive","colorLinkActive","继承自 colorPrimary（原色），映射为链接色 Active"
+"colorPrimary","colorPrimaryBorder","colorLinkBorder","继承自 colorPrimary（原色），映射为链接色 Border"
+"colorPrimary","colorPrimaryText","colorLinkText","继承自 colorPrimary（原色），映射为链接色文本"
+"colorSuccess","colorSuccessBg","colorSuccessBg","继承自 colorSuccess（成功色），映射为成功色背景"
+"colorSuccess","colorSuccessHover","colorSuccessHover","继承自 colorSuccess（成功色），映射为成功色 Hover"
+"colorWarning","colorWarningBg","colorWarningBg","继承自 colorWarning（警告色），映射为警告色背景"
+"colorError","colorErrorBg","colorErrorBg","继承自 colorError（错误色），映射为错误色背景"
+"colorText","colorTextBase","colorText","继承自 colorText（基础文本色），映射为组件通用文本色"
+"colorTextSecondary","colorTextSecondary","colorTextSecondary","继承自 colorTextSecondary（次级文本色），直接用作 Alias"
+"colorTextQuaternary","colorTextDisabled","colorTextDisabled","继承自 colorTextQuaternary（失效文本色），映射为禁用文本色"
+"colorBgBase","colorBgBase","colorBackground","继承自 colorBgBase（背景色），映射为基础背景色"
+"colorBgContainer","colorBgContainer","colorComponentBg","继承自 colorBgContainer（组件背景色），映射为组件背景色"
+"colorBgContainer","colorBgLayout","colorBackgroundSecondary","继承自 colorBgContainer（组件背景色），映射为次级背景色"
+"colorBgBase","colorBgLayout","colorBackgroundHover","继承自 colorBgLayout（页面背景色），映射为 hover 状态背景色"
+"fontSize","fontSizeSM","fontSizeBase","继承自 fontSize（字体大小），映射为基础字体大小"
+"fontSizeSM","fontSizeSM","fontSizeSmall","继承自 fontSizeSM（小号字体），直接映射为小号字体"
+"fontSize","fontSizeLG","fontSizeLarge","继承自 fontSize（字体大小），映射为大号字体"
+"fontSizeHeading1","fontSizeHeading1","fontSizeHeading1","继承自 fontSizeHeading1（标题字体），直接映射为标题1字号"
+"fontSizeHeading2","fontSizeHeading2","fontSizeHeading2","继承自 fontSizeHeading2（标题字体），直接映射为标题2字号"
+"fontSizeHeading3","fontSizeHeading3","fontSizeHeading3","继承自 fontSizeHeading3（标题字体），直接映射为标题3字号"
+"fontSizeHeading5","fontSizeHeading5","fontSizeHeading5","继承自 fontSizeHeading5（标题字体），直接映射为标题5字号"
+"lineHeight","lineHeight","lineHeightBase","继承自 lineHeight（行高），映射为基础行高"
+"lineHeightSM","lineHeightSM","lineHeightSmall","继承自 lineHeightSM（小行高），映射为小号行高"
+"lineHeightLG","lineHeightLG","lineHeightLarge","继承自 lineHeightLG（大行高），映射为大号行高"
+"controlHeightSM","controlHeightSM","controlHeightSmall","继承自 controlHeightSM（控件高度小），映射为小控件"
+"controlHeight","controlHeight","controlHeightDefault","继承自 controlHeight（控件高度），映射为默认控件"
+"controlHeightLG","controlHeightLG","controlHeightLarge","继承自 controlHeightLG（控件高度大），映射为大控件"
+"controlFontSize","controlFontSize","controlFontSizeBase","继承自 controlFontSize（控件字体大小），映射为基础控件字体"
+"controlFontSizeSM","controlFontSizeSM","controlFontSizeSmall","继承自 controlFontSizeSM（控件字体小），映射为小号控件字体"
+"controlFontSizeLG","controlFontSizeLG","controlFontSizeLarge","继承自 controlFontSizeLG（控件字体大），映射为大号控件字体"
+"controlPaddingVertical","controlPaddingVertical","controlPaddingVerticalDefault","继承自 controlPaddingVertical（控件垂直内边距），映射为默认控件垂直内边距"
+"borderRadius","borderRadius","borderRadiusBase","继承自 borderRadius（圆角），映射为默认圆角"
+"borderRadiusSM","borderRadiusSM","borderRadiusSmall","继承自 borderRadiusSM（小号圆角），映射为小圆角"
+"borderRadiusLG","borderRadiusLG","borderRadiusLarge","继承自 borderRadiusLG（大号圆角），映射为大圆角"
+"borderRadiusOuter","borderRadiusOuter","borderRadiusOuter","继承自 borderRadiusOuter（外部圆角），直接映射为外部圆角"
+"lineWidth","lineWidth","borderWidth","继承自 lineWidth（线宽），映射为默认线宽"
+"lineWidthBold","lineWidthBold","borderWidthBold","继承自 lineWidthBold（粗线宽），映射为粗线宽"
+"motionDurationFast","motionDurationFast","motionDurationFast","继承自 motionDurationFast（快速动画），直接映射为快速动画时长"
+"motionDurationMid","motionDurationMid","motionDurationMedium","继承自 motionDurationMid（中速动画），映射为中等动画时长"
+"motionEaseInOut","motionEaseInOut","motionEaseInOut","继承自 motionEaseInOut（标准缓动），直接映射为标准缓动"
+"motionEaseOutBack","motionEaseOutBack","motionEaseOutBack","继承自 motionEaseOutBack（回弹缓动），直接映射为回弹缓动"
+"motionEaseInBack","motionEaseInBack","motionEaseInBack","继承自 motionEaseInBack（进场缓动），直接映射为进场缓动"
+"motionEaseOut","motionEaseOut","motionEaseOut","继承自 motionEaseOut（离场缓动），直接映射为离场缓动"
+"zIndexBase","zIndexBase","zIndexBase","继承自 zIndexBase（基础 zIndex），直接映射为基础 zIndex"
+"zIndexPopupBase","zIndexPopupBase","zIndexPopup","继承自 zIndexPopupBase（弹层 zIndex zIndex"`;
+
+        const lines = csvContent.trim().split('\n');
+        const nodesMap = new Map();
+        const links = [];
+
+        function formatLabel(name) {
+            if (!name) return '';
+            let s = name.trim();
+            s = s.replace(/zIndex/g, 'ZINDEX');
+            s = s.replace(/[-_]+/g, ' ');
+            s = s.replace(/([a-z])([A-Z])/g, '$1 $2');
+            s = s.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
+            let words = s.split(/\s+/).filter(Boolean);
+            words = words.map(w => (w === 'ZINDEX' ? 'zIndex' : w));
+            return words.join('\n');
+        }
+
+        const categories = [
+            { name: 'Color' },
+            { name: 'Font' },
+            { name: 'Motion' },
+            { name: 'zIndex' },
+            { name: 'Border' },
+            { name: 'Line' },
+            { name: 'Control' },
+            { name: 'Other' },
+        ];
+
+        const typeColor = {
+            Domain: { color: '#ECE8FF', border: '#722ED1' },
+            SeedToken: { color: '#E6F7FF', border: '#1890FF' },
+            MapToken: { color: '#F6FFED', border: '#52C41A' },
+            AliasToken: { color: '#FFF7E6', border: '#FA8C16' },
+        };
+
+        const getCategoryIndex = (domain) => ({
+            Color: 0,
+            Font: 1,
+            Motion: 2,
+            zIndex: 3,
+            Border: 4,
+            Line: 5,
+            Control: 6,
+            Other: 7,
+        }[domain]);
+
+        function getDomain(name) {
+            if (!name) return 'Domain';
+            if (/^color/i.test(name)) return 'Color';
+            if (/^(fontSize|lineHeight|controlFontSize)/i.test(name)) return 'Font';
+            if (/^(motion)/i.test(name)) return 'Motion';
+            if (/^(zIndex)/i.test(name)) return 'zIndex';
+            if (/^(borderRadius)/i.test(name)) return 'Border';
+            if (/^(lineWidth)/i.test(name)) return 'Line';
+            if (/^(controlHeight|controlPadding)/i.test(name)) return 'Control';
+            return 'Other';
+        }
+
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i];
+            if (!line) continue;
+            const parts = line.match(/"([^"]*)"/g).map(s => s.replace(/"/g, ''));
+            if (parts.length < 3) continue;
+
+            const seed = parts[0];
+            const mapT = parts[1];
+            const alias = parts[2];
+            const desc = parts[3] || '';
+
+            const ensureNode = (name, type) => {
+                if (!nodesMap.has(name)) {
+                    const domain = getDomain(name);
+                    nodesMap.set(name, {
+                        id: name,
+                        name: name,
+                        category: getCategoryIndex(domain),
+                        value: type,
+                        symbol: 'circle',
+                        symbolSize: 90,
+                        draggable: true,
+                        itemStyle: {
+                            color: typeColor[type].color,
+                            borderColor: typeColor[type].border,
+                            borderWidth: 2,
+                        },
+                        label: {
+                            show: true,
+                            color: '#000',
+                            fontSize: 12,
+                            position: 'inside',
+                            lineHeight: 16,
+                            backgroundColor: typeColor[type].color,
+                            padding: 6,
+                            // borderRadius: 4,
+                            // borderColor: typeColor[type].border,
+                            // borderWidth: 1,
+                        },
+                        tooltip: { formatter: () => `${name}<br/>${type}${desc ? '<br/>' + desc : ''}` },
+                        desc: desc,
+                        type,
+                    });
+                } else {
+                    const n = nodesMap.get(name);
+                    if (desc && !n.desc) n.desc = desc;
+                }
+            };
+
+            ensureNode(seed, 'SeedToken');
+            ensureNode(mapT, 'MapToken');
+            ensureNode(alias, 'AliasToken');
+
+            const domainName = getDomain(seed);
+            const domainNodeId = `domain:${domainName}`;
+            if (!nodesMap.has(domainNodeId)) {
+                nodesMap.set(domainNodeId, {
+                    id: domainNodeId,
+                    name: domainName,
+                    category: getCategoryIndex(domainName),
+                    value: 'Domain',
+                    symbol: 'circle',
+                    symbolSize: 110,
+                    draggable: true,
+                    itemStyle: {
+                        color: '#ECE8FF',
+                        borderColor: '#722ED1',
+                        borderWidth: 2,
+                    },
+                    label: {
+                        show: true,
+                        color: '#000',
+                        fontSize: 13,
+                        position: 'inside',
+                        lineHeight: 18,
+                        backgroundColor: '#ECE8FF',
+                        padding: 6,
+                        borderRadius: 6,
+                        borderColor: '#722ED1',
+                        // borderWidth: 1,
+                    },
+                    tooltip: { formatter: () => `${domainName}<br/>Domain` },
+                    type: 'Domain',
+                });
+            }
+
+            links.push({ source: domainNodeId, target: seed });
+
+            links.push({ source: seed, target: mapT });
+            links.push({ source: mapT, target: alias });
+        }
+
+        const seen = new Set();
+        const uniqLinks = [];
+        for (const e of links) {
+            if (e.source === e.target) continue;
+            const k = e.source + '->' + e.target;
+            if (!seen.has(k)) { seen.add(k); uniqLinks.push(e); }
+        }
+
+        const container = document.getElementById('container');
+        const data = Array.from(nodesMap.values());
+        const chart = echarts.init(container);
+        const option = {
+            backgroundColor: '#fafafa',
+            tooltip: { trigger: 'item' },
+            legend: [{ data: categories.map(c => c.name), top: 20, left: 180 }],
+            series: [{
+                name: 'Token Graph',
+                type: 'graph',
+                layout: 'force',
+                roam: true,
+                focusNodeAdjacency: true,
+                selectedMode: 'multiple',
+                categories: categories,
+                data: data,
+                links: uniqLinks,
+                force: { repulsion: 600, gravity: 0.08, edgeLength: [90, 180], friction: 0.2 },
+                edgeSymbol: ['circle', 'arrow'],
+                edgeSymbolSize: [2, 8],
+                lineStyle: { color: '#A3B1BF', width: 1.5, curveness: 0.2 },
+                emphasis: { lineStyle: { width: 2.5 } },
+                label: {
+                    show: true,
+                    position: 'inside',
+                    color: '#000',
+                    fontSize: 12,
+                    lineHeight: 16,
+                    formatter: (params) => formatLabel(params.data.name)
+                },
+            }]
+        };
+
+        chart.setOption(option);
+        window.addEventListener('resize', () => { chart.resize(); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>同色系色阶（S/B 11 点）生成</title>
+  <link rel="stylesheet" href="../base.css" />
+  <style>
+    :root { --chip-size: 56px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif; padding: 20px; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .controls { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .controls input[type="text"] { width: 140px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; }
+    .controls button { padding: 6px 12px; border: none; background: #1677ff; color: #fff; border-radius: 6px; cursor: pointer; }
+    .controls button:hover { background: #165dcc; }
+    .chip { width: var(--chip-size); height: var(--chip-size); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
+    .chip-label { font-size: 11px; font-weight: 600; }
+    .grid { display: grid; grid-template-columns: repeat(11, var(--chip-size)); gap: 8px; }
+    .note { font-size: 12px; color: #555; margin-top: 6px; }
+    .kv { font-size: 12px; color: #333; }
+    .kv code { background: #f5f5f7; padding: 2px 6px; border-radius: 4px; }
+    .section-title { font-size: 16px; margin: 18px 0 8px; }
+    table.data { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    table.data th, table.data td { border: 1px solid #e5e6eb; padding: 6px 8px; font-size: 12px; text-align: left; }
+    table.data thead th { background: #f7f8fa; }
+    .table-actions { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+    .btn { padding: 6px 12px; border: none; background: #1677ff; color: #fff; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #165dcc; }
+  </style>
+</head>
+<body>
+  <h1>根据主色（HSB）生成同色系色阶（11 点）</h1>
+  <div class="controls">
+    <input id="hexInput" type="text" value="#1890ff" placeholder="#RRGGBB" />
+    <button id="genBtn">生成</button>
+    <div class="kv" id="brandKV"></div>
+  </div>
+
+  <section aria-labelledby="title-scale">
+    <h2 class="section-title" id="title-scale">同色系色阶</h2>
+    <div class="note">规则：保持 Hue 不变，沿 S/B 平面分别向左上（S↓，B↑）与右下（S↑，B↓）均分 5 个点，加品牌色，共 11 点。</div>
+    <div class="grid" id="chips"></div>
+    <div class="note" id="explain"></div>
+  </section>
+
+  <section aria-labelledby="title-table">
+    <h2 class="section-title" id="title-table">数值表</h2>
+    <div class="note">展示 11 点的 H/S/B 与 HEX，支持复制为 CSV。</div>
+    <div class="table-actions">
+      <button class="btn" id="copyCsvBtn">复制 CSV</button>
+    </div>
+    <table class="data" id="dataTable">
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>HEX</th>
+          <th>H</th>
+          <th>S</th>
+          <th>B</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <script src="./BandColor-scale.js"></script>
+  <script>
+    function createChip(label, hex){
+      const el = document.createElement('div'); el.className = 'chip'; el.style.background = hex;
+      const s = document.createElement('span'); s.className = 'chip-label'; s.textContent = label;
+      el.appendChild(s); return el;
+    }
+
+    function render(hex){
+      let hsv; try { hsv = window.hexToHsv(hex); } catch(e){ alert('请输入合法的 6 位 HEX'); return; }
+      const brandKV = document.getElementById('brandKV');
+      brandKV.innerHTML = `H=${hsv.h.toFixed(1)}° S=${hsv.s.toFixed(1)} B=${hsv.b.toFixed(1)}`;
+
+      const chips = document.getElementById('chips'); chips.innerHTML = '';
+      const full = window.generateSBScale11(hex);
+      // 选择子集：丢弃 L5；将 D3 作为最右端（丢弃 D4、D5）
+      const list = [full[1], full[2], full[3], full[4], full[5], full[6], full[7], full[8]];
+      const labels = ['L4','L3','L2','L1','Brand','D1','D2','D3'];
+      // 设置网格列数与标签颜色（左侧黑色，右侧白色）
+      document.getElementById('chips').style.gridTemplateColumns = `repeat(${labels.length}, var(--chip-size))`;
+      list.forEach((item, i) => {
+        const chip = createChip(labels[i], item.hex);
+        const labelEl = chip.querySelector('.chip-label');
+        labelEl.style.mixBlendMode = 'normal';
+        labelEl.style.color = i <= 4 ? '#000' : '#fff'; // 左侧+Brand黑，右侧白
+        chips.appendChild(chip);
+      });
+      const explain = document.getElementById('explain');
+      explain.textContent = `调整展示：丢弃 L5；以 D3 作为最右端（不显示 D4/D5），左侧标签用黑色，右侧用白色。软端点：Smin≈8、Smax≈94、Bceil≈97、Bfloor≈6，步进规则不变并受端点限制。`;
+
+      // 渲染表格
+      const tbody = document.querySelector('#dataTable tbody');
+      tbody.innerHTML = '';
+      list.forEach((item, i) => {
+        const tr = document.createElement('tr');
+        const tds = [labels[i], item.hex, item.h.toFixed(1), item.s.toFixed(2), item.b.toFixed(2)];
+        tds.forEach(txt => { const td = document.createElement('td'); td.textContent = txt; tr.appendChild(td); });
+        tbody.appendChild(tr);
+      });
+      // 复制 CSV
+      const btn = document.getElementById('copyCsvBtn');
+      btn.onclick = () => {
+        const header = ['Label','HEX','H','S','B'];
+        const rows = list.map((item, i) => [labels[i], item.hex, item.h.toFixed(1), item.s.toFixed(2), item.b.toFixed(2)]);
+        const csv = [header.join(','), ...rows.map(r => r.join(','))].join('\n');
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(csv).then(() => { btn.textContent = '已复制'; setTimeout(() => btn.textContent = '复制 CSV', 1200); });
+        } else {
+          // 退化处理
+          const ta = document.createElement('textarea'); ta.value = csv; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+          btn.textContent = '已复制'; setTimeout(() => btn.textContent = '复制 CSV', 1200);
+        }
+      };
+    }
+
+    document.getElementById('genBtn').addEventListener('click', () => {
+      const hex = document.getElementById('hexInput').value.trim(); render(hex);
+    });
+
+    // 初始渲染
+    render(document.getElementById('hexInput').value.trim());
+  </script>
+</body>
+</html>
