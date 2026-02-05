@@ -61,36 +61,42 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
         return result;
     }
 
+    function transformString(str) {
+        const chars = str.split('');
+
+        let negativePart = '';
+        let positiveParts = [];
+
+        // 遍历每个字符，分离负数和正数
+        chars.forEach(char => {
+            if (char.startsWith('-')) {
+                negativePart = char; // 找到负数
+            } else {
+                positiveParts.push(char); // 收集正数
+            }
+        });
+
+        // 组合：负数 + 正数1 + 正数2
+        return negativePart + positiveParts.join('');
+    }
     function GetLabel(position, face) {
         if (!showCode) return "";
         const type = localStorage.getItem("type");
-
-        let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
+        let code = blindCode.find((x) => (x.id === position[3]) && x.面 === face);
 
         if (code) {
             let faceId = code.面 + code.面序号;
-            switch(type.toUpperCase()){
+            switch (type.toUpperCase()) {
                 case "CFOP":
-                    code=faceId
+                    code = faceId
                     break;
                 default:
                     code = code.编码;
                     break;
             }
-           
-            if (showFaces && showFaces.length > 0) {
-                if (
-                    !showFaces.includes(faceId) &&
-                    !showFaceColor &&
-                    showFaces.length > 0
-                ) {
-                    code = "";
-                }
-            }
-           
+
         } else {
             code = face;
-         
         }
         return code;
     }

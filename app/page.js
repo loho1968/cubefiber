@@ -114,10 +114,12 @@ export default function Home() {
     useEffect(() => {
         document.title = "魔方学习";
         localStorage.removeItem("currentFormula");
-        setFormulaType("blind")
+        const type=localStorage.getItem("type");
+        setFormulaType(type?type:"blind")
+        const cfopType = localStorage.getItem("cfopType");
+        setCfopType(cfopType?cfopType:"F2L")
         setShowCodeCheckedValue(true)
         setAllColorCheckedValue(true)
-        localStorage.setItem("type", 'blind');
         async function fetchPosts() {
             const res = await loadData();
             //#region CFOP
@@ -201,7 +203,7 @@ export default function Home() {
 
     //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
     useEffect(() => {
-        setCubeFormulaData();
+        setCubeFormulaData(formulaType, cfopType);
         //  filterBlindData()
         rubiksCubeRef.current.setShowCodeValue(true);
     }, [blindCode, blindFormula]);
@@ -215,7 +217,8 @@ export default function Home() {
     //切换公式数据
     const setCubeFormulaData = (type = "blind", formulaType = "") => {
    
-           localStorage.setItem("type", type);
+        localStorage.setItem("type", type);
+         
         switch (type) {
             case "cfop":
                 if (formulaType === "") formulaType = "F2L";
@@ -307,6 +310,7 @@ export default function Home() {
     //切换CFOP公式类型
     const setCfopTypeValue = ({target: {value}}) => {
         setCfopType(value);
+        localStorage.setItem("cfopType", value);
         setCubeFormulaData("cfop", value);
     };
 
