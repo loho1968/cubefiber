@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import {createRef, forwardRef, useEffect, useImperativeHandle, useRef, useState,} from "react";
-import {Canvas} from "@react-three/fiber";
-import {OrbitControls, RoundedBox, Text} from "@react-three/drei";
+import { createRef, forwardRef, useEffect, useImperativeHandle, useRef, useState, } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, RoundedBox, Text } from "@react-three/drei";
 // 导入所有魔方旋转相关的函数
 import {
     rotateBackClockwise,
@@ -31,7 +31,7 @@ import {
 右面(R)中心块：x=1, y=0, z=0，即 position 为 1, 0, 0
 左面(L)中心块：x=-1, y=0, z=0，即 position 为 -1, 0, 0
  */
-const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
+const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
     const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
     const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
@@ -51,10 +51,10 @@ const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
             if (showFaces.includes(faceId)) {
                 result = color;
             } else {
-                 //如果是中心块，固定显示颜色
-                if(code.面序号==5) {
-                    result=color;
-                    console.log(face,position)
+                //如果是中心块，固定显示颜色
+                if (code.面序号 == 5) {
+                    result = color;
+                    console.log(face, position)
                 }
             }
         }
@@ -63,12 +63,21 @@ const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
 
     function GetLabel(position, face) {
         if (!showCode) return "";
+        const type = localStorage.getItem("type");
 
         let code = blindCode.find((x) => x.id === position[3] && x.面 === face);
+
         if (code) {
             let faceId = code.面 + code.面序号;
-
-            code = code.编码;
+            switch(type.toUpperCase()){
+                case "CFOP":
+                    code=faceId
+                    break;
+                default:
+                    code = code.编码;
+                    break;
+            }
+           
             if (showFaces && showFaces.length > 0) {
                 if (
                     !showFaces.includes(faceId) &&
@@ -78,8 +87,10 @@ const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
                     code = "";
                 }
             }
+           
         } else {
             code = face;
+         
         }
         return code;
     }
@@ -103,7 +114,7 @@ const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
                 radius={0.15 * cubeScale}
                 smoothness={10}
             >
-                <meshStandardMaterial color="black"/>
+                <meshStandardMaterial color="black" />
             </RoundedBox>
 
             {/* 渲染6个面的贴纸*/}
@@ -144,10 +155,10 @@ const Cube = ({position, refProp, blindCode, showCode, showFaceColor}) => {
                     color: colors[3],
                     face: "D",
                 },
-            ].map(({pos, rot, color, face}, i) => (
+            ].map(({ pos, rot, color, face }, i) => (
                 <group key={i} position={pos} rotation={rot}>
                     <mesh>
-                        <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]}/>
+                        <planeGeometry args={[0.85 * cubeScale, 0.85 * cubeScale]} />
                         <meshStandardMaterial
                             color={GetFaceColor(position, color, face, showFaceColor)}
                             emissive={0.2}
@@ -287,29 +298,29 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
                 }}
             >
                 {/* Up face */}
-                <div style={{marginBottom: "8px"}}>
-                    <div style={{marginLeft: "96px"}}>
+                <div style={{ marginBottom: "8px" }}>
+                    <div style={{ marginLeft: "96px" }}>
                         {renderFace(cube[0], cellSize)}
                     </div>
                 </div>
 
                 {/* Middle row: Left, Front, Right, Back */}
-                <div style={{display: "flex"}}>
-                    <div style={{marginRight: "8px"}}>
+                <div style={{ display: "flex" }}>
+                    <div style={{ marginRight: "8px" }}>
                         {renderFace(cube[4], cellSize)}
                     </div>
-                    <div style={{marginRight: "8px"}}>
+                    <div style={{ marginRight: "8px" }}>
                         {renderFace(cube[1], cellSize)}
                     </div>
-                    <div style={{marginRight: "8px"}}>
+                    <div style={{ marginRight: "8px" }}>
                         {renderFace(cube[2], cellSize)}
                     </div>
                     <div>{renderFace(cube[3], cellSize)}</div>
                 </div>
 
                 {/* Down face */}
-                <div style={{marginTop: "8px"}}>
-                    <div style={{marginLeft: "96px"}}>
+                <div style={{ marginTop: "8px" }}>
+                    <div style={{ marginLeft: "96px" }}>
                         {renderFace(cube[5], cellSize)}
                     </div>
                 </div>
@@ -324,7 +335,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             for (let y = -1; y <= 1; y++) {
                 for (let z = -1; z <= 1; z++) {
                     const ref = createRef();
-                    refs.push({ref, position: [x, y, z, x + "" + y + "" + z]});
+                    refs.push({ ref, position: [x, y, z, x + "" + y + "" + z] });
                 }
             }
         }
@@ -335,7 +346,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (rotateStatus.current) return; // Prevent multiple rotations at once
-            const {key, shiftKey} = event;
+            const { key, shiftKey } = event;
 
             const keyPressed = key.toLowerCase();
 
@@ -452,7 +463,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         const rotate = () => {
             const step = Math.sign(totalRotation) * rotationSpeed;
 
-            cubeRefs.forEach(({ref}) => {
+            cubeRefs.forEach(({ ref }) => {
                 if (ref.current) {
                     ref.current.rotateOnWorldAxis(rotationVector, step);
                     ref.current.position.applyAxisAngle(rotationVector, step);
@@ -462,7 +473,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             progress += rotationSpeed;
             if (progress >= Math.abs(totalRotation)) {
                 // Snap to final rotation to avoid floating-point issues
-                cubeRefs.forEach(({ref, position}) => {
+                cubeRefs.forEach(({ ref, position }) => {
                     if (ref.current) {
                         ref.current.rotation.set(
                             Math.round(ref.current.rotation.x / (Math.PI / 2)) *
@@ -522,7 +533,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         const rotationStep = Math.PI / 2; // 旋转90度
 
         const cubesToRotate = cubeRefs.filter(
-            ({position}) =>
+            ({ position }) =>
                 position[axis === "x" ? 0 : axis === "y" ? 1 : 2] === layerValue,
         ); // 筛选出要旋转的立方体
 
@@ -544,7 +555,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
         const rotate = async () => {
             // 遍历所有需要旋转的立方体小块
-            cubesToRotate.forEach(({ref}) => {
+            cubesToRotate.forEach(({ ref }) => {
                 if (ref.current) {
                     // 让小块围绕指定轴旋转 rotationSpeed 弧度，实现动画效果
                     ref.current.rotateOnWorldAxis(rotationVector, rotationSpeed);
@@ -556,7 +567,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             progress += rotationSpeed;
             if (progress >= rotationStep) {
                 // ✅ 旋转后，消除精度差异，对齐魔方块
-                cubesToRotate.forEach(({ref, position}) => {
+                cubesToRotate.forEach(({ ref, position }) => {
                     if (ref.current) {
                         ref.current.rotation.set(
                             Math.round(ref.current.rotation.x / rotationStep) * rotationStep,
@@ -807,7 +818,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         setShowFaceColor(showFaceColor);
     };
     const setNewCube = () => {
-        cubeRefs.forEach(({ref, position}) => {
+        cubeRefs.forEach(({ ref, position }) => {
             if (ref.current) {
                 // 获取原始坐标（从position数组的第0-2位）
                 const [x, y, z] = position.slice(0, 3).map(Number);
@@ -831,12 +842,12 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     return (
         <div className="flex items-center justify-center w-full h-full position-relative">
             <div className="flex-1 w-full h-full ">
-                <Canvas camera={{position: [5, 5, 5]}}>
-                    <ambientLight intensity={1}/>
-                    <pointLight position={[5, 5, 5]}/>
-                    <OrbitControls/>
+                <Canvas camera={{ position: [5, 5, 5] }}>
+                    <ambientLight intensity={1} />
+                    <pointLight position={[5, 5, 5]} />
+                    <OrbitControls />
                     <group>
-                        {cubeRefs.map(({ref, position}, index) => (
+                        {cubeRefs.map(({ ref, position }, index) => (
                             <Cube
                                 key={index}
                                 position={position}

@@ -117,7 +117,7 @@ export default function Home() {
         setFormulaType("blind")
         setShowCodeCheckedValue(true)
         setAllColorCheckedValue(true)
-
+        localStorage.setItem("type", 'blind');
         async function fetchPosts() {
             const res = await loadData();
             //#region CFOP
@@ -214,6 +214,8 @@ export default function Home() {
     //#region 基础函数
     //切换公式数据
     const setCubeFormulaData = (type = "blind", formulaType = "") => {
+   
+           localStorage.setItem("type", type);
         switch (type) {
             case "cfop":
                 if (formulaType === "") formulaType = "F2L";
@@ -276,7 +278,7 @@ export default function Home() {
         // if (formulaType === "cfop") {
         //     record.包含面 = //GetCFOPFaces(cfopType);
         // }
-        record.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ")
+        if(record.包含面.length === 0) record.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ")
         setCurrentFormula(record);
         setCurrentStep(0);
         setTotalSteps(record.公式.length);
@@ -288,7 +290,7 @@ export default function Home() {
         setFormulaType(value);
         switch (value) {
             case "cfop":
-                setShowCodeCheckedValue(false);
+                // setShowCodeCheckedValue(false);
                 break;
             case "special":
                 setShowCodeCheckedValue(false);
@@ -378,9 +380,9 @@ export default function Home() {
     };
     const initCube = (formula) => {
         rubiksCubeRef.current.setNewCube();
-        rubiksCubeRef.current.setShowCodeValue(
-            formulaType === "blind" ? showCodeChecked : false,
-        );
+        // rubiksCubeRef.current.setShowCodeValue(
+        //     formulaType === "blind" ? showCodeChecked : false,
+        // );
         rubiksCubeRef.current.setShowFacesValue(allColorChecked);
         localStorage.setItem("currentFormula", JSON.stringify(formula));
         rubiksCubeRef.current.rotateCube(transform(formula.逆向公式));
@@ -467,7 +469,7 @@ export default function Home() {
                                 onChange={setAllColorCheckedValue}
                             />
                         </div>
-                        {formulaType === "blind" && (
+                        { (
                             <div className="ml-4">
                                 <Switch
                                     checkedChildren="显示编码"
