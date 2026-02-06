@@ -87,7 +87,6 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlind
             let faceId = code.面 + code.面序号;
             code = code.编码;
             //showBlindCode
-            console.log('showBlindCode',showBlindCode)
             switch (type.toUpperCase()) {
                 case "CFOP":
                     code = showBlindCode ? code : faceId

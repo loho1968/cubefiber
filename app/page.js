@@ -118,6 +118,9 @@ export default function Home() {
         setFormulaType(type?type:"blind")
         const cfopType = localStorage.getItem("cfopType");
         setCfopType(cfopType?cfopType:"F2L")
+        const edgeCheckedValue = localStorage.getItem("edgeChecked");
+        setEdgeChecked(edgeCheckedValue==="true"?true:false)
+
         setShowCodeCheckedValue(true)
         setAllColorCheckedValue(false)
         async function fetchPosts() {
@@ -203,7 +206,7 @@ export default function Home() {
 
     //React的状态更新是异步的 添加新的 useEffect 来监听 blindData 的变化
     useEffect(() => {
-        setCubeFormulaData(formulaType, cfopType);
+        setCubeFormulaData(formulaType, formulaType==="blind"?edgeChecked?"edge":"corner":cfopType);
         //  filterBlindData()
         rubiksCubeRef.current.setShowCodeValue(true);
     }, [blindCode, blindFormula]);
@@ -316,6 +319,7 @@ export default function Home() {
     //盲拧公式切换按角块、棱块类型
     const setEdgeCheckedValue = (checked) => {
         setEdgeChecked(checked);
+        localStorage.setItem("edgeChecked", checked);
         setCubeFormulaData("blind", checked ? "edge" : "corner");
     };
 
