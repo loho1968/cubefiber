@@ -48,7 +48,7 @@ export default function Home() {
 
     const [edgeChecked, setEdgeChecked] = useState(true); //盲拧公式的：角块、棱块类型
     const [search, setSearch] = useState(""); //盲拧搜索编码
-    const [allColorChecked, setAllColorChecked] = useState(true); //颜色显示
+    const [allColorChecked, setAllColorChecked] = useState(false); //颜色显示
     const [showCodeChecked, setShowCodeChecked] = useState(true);
 
     const cfopColumns = [
@@ -119,7 +119,7 @@ export default function Home() {
         const cfopType = localStorage.getItem("cfopType");
         setCfopType(cfopType?cfopType:"F2L")
         setShowCodeCheckedValue(true)
-        setAllColorCheckedValue(true)
+        setAllColorCheckedValue(false)
         async function fetchPosts() {
             const res = await loadData();
             //#region CFOP
@@ -300,8 +300,7 @@ export default function Home() {
                 setAllColorCheckedValue(false);
                 break;
             default:
-                setShowCodeCheckedValue(true);
-                setAllColorCheckedValue(true);
+                // setShowCodeCheckedValue(true);
                 break;
         }
         setCubeFormulaData(value);
@@ -374,14 +373,22 @@ export default function Home() {
         moveCube(step);
     };
     //最后一步
-    const lastStep = () => {
-        setCurrentStep(currentFormula.公式.length);
-        rubiksCubeRef.current.setNewCube();
+    const lastStep = async () => {
+        if (!currentFormula?.公式 || currentStep === currentFormula.公式.length) return;
+        for (let i = currentStep; i < currentFormula.公式.length; i++) {
+            setCurrentStep(i + 1);
+            const step = transform([currentFormula.公式[i]]);
+            moveCube(step);
+            await new Promise((resolve) => setTimeout(resolve, 500));
+        }
     };
 
     const moveCube = (step) => {
         rubiksCubeRef.current.rotateCube(transform(step));
     };
+    const test=()=>{
+         rubiksCubeRef.current.setNewCube();
+    }
     const initCube = (formula) => {
         rubiksCubeRef.current.setNewCube();
         // rubiksCubeRef.current.setShowCodeValue(
@@ -539,7 +546,7 @@ export default function Home() {
                         {currentStep > -1 && (
                             <div className={`flex items-center justify-center`}>
                                 <Button className="ml-1 mr-2" type="text" size="large">
-                                    {currentStep + 1}/{totalSteps}
+                                    {currentStep }/{totalSteps}
                                 </Button>
                                 <Button
                                     className="mr-2"

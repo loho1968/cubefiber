@@ -54,7 +54,6 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
                 //如果是中心块，固定显示颜色
                 if (code.面序号 == 5) {
                     result = color;
-                    console.log(face, position)
                 }
             }
         }
@@ -89,6 +88,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
             switch (type.toUpperCase()) {
                 case "CFOP":
                     code = faceId
+                    code=position[3]
                     break;
                 default:
                     code = code.编码;
@@ -97,6 +97,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
 
         } else {
             code = face;
+            code=position[3];
         }
         return code;
     }
