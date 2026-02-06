@@ -50,7 +50,7 @@ export default function Home() {
     const [search, setSearch] = useState(""); //盲拧搜索编码
     const [allColorChecked, setAllColorChecked] = useState(false); //颜色显示
     const [showCodeChecked, setShowCodeChecked] = useState(true);
-
+    const [showBlindCode,setshowBlindCode] = useState(true) //显示编码类型
     const cfopColumns = [
         {
             title: "名称",
@@ -318,6 +318,12 @@ export default function Home() {
         setEdgeChecked(checked);
         setCubeFormulaData("blind", checked ? "edge" : "corner");
     };
+
+    //切换显示编码
+    const setshowBlindCodeValue=(checked)=>{
+        setshowBlindCode(checked);
+        rubiksCubeRef.current.setShowBlindCodeValue(checked)
+    }
     //盲拧编码搜索
     const setSearchValue = (value) => {
         setSearch(value);
@@ -487,6 +493,16 @@ export default function Home() {
                                     unCheckedChildren="不显示编码"
                                     checked={showCodeChecked}
                                     onChange={setShowCodeCheckedValue}
+                                />
+                            </div>
+                        )}
+                        { (
+                            <div className="ml-4">
+                                <Switch
+                                    checkedChildren="盲码"
+                                    unCheckedChildren="面码"
+                                    checked={showBlindCode}
+                                    onChange={setshowBlindCodeValue}
                                 />
                             </div>
                         )}

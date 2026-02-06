@@ -31,7 +31,7 @@ import {
 右面(R)中心块：x=1, y=0, z=0，即 position 为 1, 0, 0
 左面(L)中心块：x=-1, y=0, z=0，即 position 为 -1, 0, 0
  */
-const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
+const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlindCode }) => {
     const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
     const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
@@ -85,19 +85,19 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor }) => {
 
         if (code) {
             let faceId = code.面 + code.面序号;
+            code = code.编码;
+            //showBlindCode
+            console.log('showBlindCode',showBlindCode)
             switch (type.toUpperCase()) {
                 case "CFOP":
-                    code = faceId
-                    code=position[3]
+                    code = showBlindCode ? code : faceId
                     break;
                 default:
-                    code = code.编码;
                     break;
             }
 
         } else {
             code = face;
-            code=position[3];
         }
         return code;
     }
@@ -196,7 +196,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     const [showCode, setShowCode] = useState(false);
     const [showFaceColor, setShowFaceColor] = useState([]);
     const rotateStatus = useRef(false);
-
+    const [showBlindCode, setshowBlindCode] = useState(true); //显示编码类型
     //用于在二维中映射三维立方体的初始立方体
     const initialCube = [
         // Up (Yellow)
@@ -824,6 +824,9 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     const setShowFacesValue = (showFaceColor) => {
         setShowFaceColor(showFaceColor);
     };
+    const setShowBlindCodeValue = (showBlindCode) => {
+        setshowBlindCode(showBlindCode);
+    };
     const setNewCube = () => {
         cubeRefs.forEach(({ ref, position }) => {
             if (ref.current) {
@@ -845,6 +848,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         setNewCube: setNewCube,
         setShowCodeValue: setShowCodeValue,
         setShowFacesValue: setShowFacesValue,
+        setShowBlindCodeValue: setShowBlindCodeValue
     }));
     return (
         <div className="flex items-center justify-center w-full h-full position-relative">
@@ -862,6 +866,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
                                 showCode={showCode}
                                 showFaceColor={showFaceColor}
                                 blindCode={blindCodeData.blindCodeData}
+                                showBlindCode={showBlindCode}
                             />
                         ))}
                     </group>
