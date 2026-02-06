@@ -341,7 +341,11 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             for (let y = -1; y <= 1; y++) {
                 for (let z = -1; z <= 1; z++) {
                     const ref = createRef();
-                    refs.push({ ref, position: [x, y, z, x + "" + y + "" + z] });
+                    refs.push({
+                        ref,
+                        position: [x, y, z, x + "" + y + "" + z],
+                        originalPosition: [x, y, z],
+                    });
                 }
             }
         }
@@ -827,19 +831,18 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         setshowBlindCode(showBlindCode);
     };
     const setNewCube = () => {
-        cubeRefs.forEach(({ ref, position }) => {
+        cubeRefs.forEach(({ ref, position, originalPosition }) => {
             if (ref.current) {
-                // 获取原始坐标（从position数组的第0-2位）
-                const [x, y, z] = position.slice(0, 3).map(Number);
-
-                // 重置旋转和位置
+                const [x, y, z] = originalPosition;
                 ref.current.rotation.set(0, 0, 0);
                 ref.current.position.set(x * cubeScale, y * cubeScale, z * cubeScale);
+                position[0] = x;
+                position[1] = y;
+                position[2] = z;
             }
         });
 
-        // 重置二维状态数组
-        setCube(initialCube);
+        setCube(JSON.parse(JSON.stringify(initialCube)));
     };
     // 把子组件方法暴露出去  一定注意要把组件的第二个参数ref传递进来
     useImperativeHandle(refProp, () => ({

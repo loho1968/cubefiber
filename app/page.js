@@ -396,9 +396,7 @@ export default function Home() {
     const moveCube = (step) => {
         rubiksCubeRef.current.rotateCube(transform(step));
     };
-    const test=()=>{
-         rubiksCubeRef.current.setNewCube();
-    }
+ 
     const initCube = (formula) => {
         rubiksCubeRef.current.setNewCube();
         // rubiksCubeRef.current.setShowCodeValue(
