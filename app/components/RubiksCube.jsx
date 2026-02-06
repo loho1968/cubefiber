@@ -47,14 +47,27 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlind
         let result = "gray";
         const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
         if (code) {
+            if (code.面序号 == 5) {
+                result = color;
+            }
             const faceId = code.面 + code.面序号;
             if (showFaces.includes(faceId)) {
                 result = color;
             } else {
-                //如果是中心块，固定显示颜色
-                if (code.面序号 == 5) {
-                    result = color;
+                //可能使用盲拧编码
+                const block = blindCode.filter((x) => {
+                    return x.块编码 && showFaces.includes(x.块编码.toLowerCase())
                 }
+                );
+                //块面码 块编码
+                console.log(showFaces, block, position[3])
+                if (block.length > 0) {
+                    const find = block.find(x => x.id === position[3] && x.面 === face);
+                    if (find) {
+                        result = color;
+                    }
+                }
+
             }
         }
         return result;
