@@ -280,7 +280,7 @@ export default function Home() {
     const clickRow = (record) => {
         if (formulaType === "reference") return;
         record.逆向公式 = getReverseFormula(record.公式);
-        record.包含面 = record.包含面 ? typeof (record.包含面) === "object" ? record.包含面 : record.包含面.split(" ") : [];
+        record.包含面 = record.包含面 ? typeof (record.包含面) === "object" ? record.包含面 : record.包含面.toLowerCase().split(" ") : [];
         // if (formulaType === "cfop") {
         //     record.包含面 = //GetCFOPFaces(cfopType);
         // }
