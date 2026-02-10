@@ -18,87 +18,29 @@ export function transform(formula) {
     for (let i = 0; i < formula.length; i++) {
         let temp = formula[i];
         switch (temp) {
-            case "u":
-                result.push(temp.toUpperCase());
-                result.push("E'");
-                break;
-            case "u'":
-                result.push(temp.toUpperCase());
-                result.push("E");
-                break;
             case "u2":
-                result.push("U");
-                result.push("U");
-                result.push("E");
-                result.push("E");
-                break;
-            case "d":
-                result.push(temp.toUpperCase());
-                result.push("E");
-                break;
-            case "d'":
-                result.push(temp.toUpperCase());
-                result.push("E'");
+                result.push("u");
+                result.push("u");
                 break;
             case "d2":
-                result.push("D");
-                result.push("D");
-                result.push("E");
-                result.push("E");
-                break;
-            case "f":
-                result.push(temp.toUpperCase());
-                result.push("S");
-                break;
-            case "f'":
-                result.push(temp.toUpperCase());
-                result.push("S'");
+                result.push("d");
+                result.push("d");
                 break;
             case "f2":
-                result.push("F");
-                result.push("F");
-                result.push("S");
-                result.push("S");
-                break;
-            case "b":
-                result.push(temp.toUpperCase());
-                result.push("S'");
-                break;
-            case "b'":
-                result.push(temp.toUpperCase());
-                result.push("S");
+                result.push("f");
+                result.push("f");
                 break;
             case "b2":
-                result.push("B");
-                result.push("B");
-                result.push("S");
-                result.push("S");
+                result.push("b");
+                result.push("b");
                 break;
-            // case "r":
-            //     result.push(temp.toUpperCase());
-            //     result.push("M'");
-            //     break;
-            // case "r'":
-            //     result.push(temp.toUpperCase());
-            //     result.push("M");
-            //     break;
             case "r2":
                 result.push("r");
                 result.push("r");
                 break;
-            // case "l":
-            //     result.push(temp.toUpperCase());
-            //     result.push("M");
-            //     break;
-            // case "l'":
-            //     result.push(temp.toUpperCase());
-            //     result.push("M'");
-            //     break;
             case "l2":
                 result.push("l");
                 result.push("l");
-                // result.push("M'");
-                // result.push("M'");
                 break;
             default:
                 result.push(temp);
