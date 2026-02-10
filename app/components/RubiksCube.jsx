@@ -350,8 +350,16 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     //绑定键盘事件
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (rotateStatus.current) return; // Prevent multiple rotations at once
             const { key, shiftKey, ctrlKey } = event;
+            const lower = key.toLowerCase();
+            if (ctrlKey && lower === "o") {
+                if (blindCodeData.onKeydownToggle) {
+                    blindCodeData.onKeydownToggle(!blindCodeData.keydownEnabled);
+                }
+                return;
+            }
+            if (!blindCodeData.keydownEnabled) return;
+            if (rotateStatus.current) return;
 
             const keyPressed = key.toLowerCase();
 
@@ -460,7 +468,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [cube, cubeRefs]); //依赖数组
+    }, [cube, cubeRefs, blindCodeData.keydownEnabled]);
 
     //在二维立方体中实现
     const rotateFullCube = (axis, rotationStep, direction) => {

@@ -45,6 +45,7 @@ export default function Home() {
     const [totalSteps, setTotalSteps] = useState(0); //公式总步数
 
     const [cfopGroups, setCfopGroups] = useState([]);
+    const [keydownEnabled, setKeydownEnabled] = useState(false);
 
     const [edgeChecked, setEdgeChecked] = useState(true); //盲拧公式的：角块、棱块类型
     const [search, setSearch] = useState(""); //盲拧搜索编码
@@ -508,6 +509,9 @@ export default function Home() {
                                 />
                             </div>
                         )}
+                        <div className="ml-4 mt-[-4px] text-sm">
+                            键盘: {keydownEnabled ? "开" : "关"}
+                        </div>
                     </div>
                 </div>
             </HeaderBase>
@@ -557,7 +561,7 @@ export default function Home() {
                 {/* Right Panel - 70% with Canvas */}
                 <div className="w-[70%] flex flex-col items-center justify-center rounded-lg">
                     <div className="w-full h-full flex items-center justify-center ">
-                        <MainCube blindCodeData={blindCode} ref={rubiksCubeRef}/>
+                        <MainCube blindCodeData={blindCode} keydownEnabled={keydownEnabled} onKeydownToggle={setKeydownEnabled} ref={rubiksCubeRef}/>
                     </div>
                     {/* Footer */}
                     <footer className="h-[64px] shrink-0 mb-32 bg-gray-800 text-white flex items-center justify-center">
