@@ -343,7 +343,7 @@ export default function Home() {
         setTotalSteps(formula.公式.length);
         setCurrentFormula(formula);
         formula.逆向公式 = getReverseFormula(formula.公式);
-        formula.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ") //GetCFOPFaces(cfopType);
+        // formula.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ") //GetCFOPFaces(cfopType);
         initCube(formula);
     };
     //颜色显示
