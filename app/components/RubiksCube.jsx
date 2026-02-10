@@ -73,25 +73,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlind
         return result;
     }
 
-    function transformString(str) {
-        const chars = str.split('');
-
-        let negativePart = '';
-        let positiveParts = [];
-
-        // 遍历每个字符，分离负数和正数
-        chars.forEach(char => {
-            if (char.startsWith('-')) {
-                negativePart = char; // 找到负数
-            } else {
-                positiveParts.push(char); // 收集正数
-            }
-        });
-
-        // 组合：负数 + 正数1 + 正数2
-        return negativePart + positiveParts.join('');
-    }
-    function GetLabel(position, face) {
+     function GetLabel(position, face) {
         if (!showCode) return "";
         const type = localStorage.getItem("type");
         let code = blindCode.find((x) => (x.id === position[3]) && x.面 === face);
@@ -369,9 +351,28 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (rotateStatus.current) return; // Prevent multiple rotations at once
-            const { key, shiftKey } = event;
+            const { key, shiftKey, ctrlKey } = event;
 
             const keyPressed = key.toLowerCase();
+
+            if (ctrlKey) {
+                if (keyPressed === "l") {
+                    if (shiftKey) {
+                        rotateLeftAndMiddleX("left", "anti-clockwise");
+                    } else {
+                        rotateLeftAndMiddleX("left", "clockwise");
+                    }
+                    return;
+                }
+                if (keyPressed === "r") {
+                    if (shiftKey) {
+                        rotateLeftAndMiddleX("right", "anti-clockwise");
+                    } else {
+                        rotateLeftAndMiddleX("right", "clockwise");
+                    }
+                    return;
+                }
+            }
 
             if (shiftKey) {
                 // 按Shift键，旋转反向  R L U D F B
@@ -751,14 +752,100 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         rotate();
     };
 
+    const rotateLeftAndMiddleX = (side, direction) => {
+        if (rotateStatus.current) return;
+        rotateStatus.current = true;
+        const rotationStep = Math.PI / 2;
+        const cubesToRotate = cubeRefs.filter(({ position }) =>
+            side === "left" ? position[0] === -1 || position[0] === 0 : position[0] === 1 || position[0] === 0
+        );
+        const rotationVector =
+            side === "left"
+                ? (direction === "clockwise" ? new THREE.Vector3(-1, 0, 0) : new THREE.Vector3(1, 0, 0))
+                : (direction === "clockwise" ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(-1, 0, 0));
+        let progress = 0;
+        const rotationSpeed = rotationStep / 10;
+        const rotate = async () => {
+            cubesToRotate.forEach(({ ref }) => {
+                if (ref.current) {
+                    ref.current.rotateOnWorldAxis(rotationVector, rotationSpeed);
+                    ref.current.position.applyAxisAngle(rotationVector, rotationSpeed);
+                }
+            });
+            progress += rotationSpeed;
+            if (progress >= rotationStep) {
+                cubesToRotate.forEach(({ ref, position }) => {
+                    if (ref.current) {
+                        ref.current.rotation.set(
+                            Math.round(ref.current.rotation.x / rotationStep) * rotationStep,
+                            Math.round(ref.current.rotation.y / rotationStep) * rotationStep,
+                            Math.round(ref.current.rotation.z / rotationStep) * rotationStep,
+                        );
+                        const matrix = new THREE.Matrix4().makeRotationAxis(rotationVector, rotationStep);
+                        const newPosition = new THREE.Vector3(...position).applyMatrix4(matrix);
+                        position[0] = Math.round(newPosition.x);
+                        position[1] = Math.round(newPosition.y);
+                        position[2] = Math.round(newPosition.z);
+                        ref.current.position.set(
+                            position[0] * cubeScale,
+                            position[1] * cubeScale,
+                            position[2] * cubeScale,
+                        );
+                    }
+                });
+                rotateStatus.current = false;
+                setCube((prevCube) => {
+                    let tmp = prevCube;
+                    if (side === "left") {
+                        if (direction === "clockwise") {
+                            tmp = rotateLeftClockwise(tmp);
+                            tmp = rotateMiddleLayerX(tmp);
+                            return tmp;
+                        } else {
+                            tmp = rotateLeftCounterclockwise(tmp);
+                            tmp = rotateMiddleLayerX(tmp);
+                            return tmp;
+                        }
+                    } else {
+                        if (direction === "clockwise") {
+                            tmp = rotateRightClockwise(tmp);
+                            tmp = rotateMiddleLayerX(tmp);
+                            return tmp;
+                        } else {
+                            tmp = rotateRightCounterclockwise(tmp);
+                            tmp = rotateMiddleLayerX(tmp);
+                            return tmp;
+                        }
+                    }
+                });
+            } else {
+                requestAnimationFrame(rotate);
+            }
+        };
+        rotate();
+    };
+
     //通过公式选择魔方
     const rotateCube = async (stepSequence) => {
+        console.log(stepSequence);
         for (const step of stepSequence) {
             // 等待上一次选择完成
             while (rotateStatus.current) {
                 await new Promise((resolve) => setTimeout(resolve, 50));
             }
             switch (step) {
+                case "l":
+                    rotateLeftAndMiddleX("left", "clockwise");
+                    break;
+                case "l'":
+                    rotateLeftAndMiddleX("left", "anti-clockwise");
+                    break;
+                case "r":
+                    rotateLeftAndMiddleX("right", "clockwise");
+                    break;
+                case "r'":
+                    rotateLeftAndMiddleX("right", "anti-clockwise");
+                    break;
                 case "E":
                     rotateLayer("y", 0, "clockwise");
                     break;

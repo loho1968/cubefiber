@@ -74,33 +74,31 @@ export function transform(formula) {
                 result.push("S");
                 result.push("S");
                 break;
-            case "r":
-                result.push(temp.toUpperCase());
-                result.push("M'");
-                break;
-            case "r'":
-                result.push(temp.toUpperCase());
-                result.push("M");
-                break;
+            // case "r":
+            //     result.push(temp.toUpperCase());
+            //     result.push("M'");
+            //     break;
+            // case "r'":
+            //     result.push(temp.toUpperCase());
+            //     result.push("M");
+            //     break;
             case "r2":
-                result.push("R");
-                result.push("R");
-                result.push("M'");
-                result.push("M'");
+                result.push("r");
+                result.push("r");
                 break;
-            case "l":
-                result.push(temp.toUpperCase());
-                result.push("M");
-                break;
-            case "l'":
-                result.push(temp.toUpperCase());
-                result.push("M'");
-                break;
+            // case "l":
+            //     result.push(temp.toUpperCase());
+            //     result.push("M");
+            //     break;
+            // case "l'":
+            //     result.push(temp.toUpperCase());
+            //     result.push("M'");
+            //     break;
             case "l2":
-                result.push("L");
-                result.push("L");
-                result.push("M'");
-                result.push("M'");
+                result.push("l");
+                result.push("l");
+                // result.push("M'");
+                // result.push("M'");
                 break;
             default:
                 result.push(temp);
