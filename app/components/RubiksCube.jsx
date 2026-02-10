@@ -1051,7 +1051,6 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
 
     //通过公式选择魔方
     const rotateCube = async (stepSequence) => {
-        console.log(stepSequence);
         for (const step of stepSequence) {
             // 等待上一次选择完成
             while (rotateStatus.current) {
@@ -1059,40 +1058,40 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
             }
             switch (step) {
                 case "l":
-                    rotateLeftAndMiddleX("left", "clockwise");
-                    break;
-                case "l'":
                     rotateLeftAndMiddleX("left", "anti-clockwise");
                     break;
-                case "r":
-                    rotateLeftAndMiddleX("right", "clockwise");
+                case "l'":
+                    rotateLeftAndMiddleX("left", "clockwise");
                     break;
-                case "r'":
+                case "r":
                     rotateLeftAndMiddleX("right", "anti-clockwise");
                     break;
-                case "f":
-                    rotateFrontAndMiddleZ("clockwise");
+                case "r'":
+                    rotateLeftAndMiddleX("right", "clockwise");
                     break;
-                case "f'":
+                case "f":
                     rotateFrontAndMiddleZ("anti-clockwise");
                     break;
-                case "b":
-                    rotateBackAndMiddleZ("clockwise");
+                case "f'":
+                    rotateFrontAndMiddleZ("clockwise");
                     break;
-                case "b'":
+                case "b":
                     rotateBackAndMiddleZ("anti-clockwise");
                     break;
-                case "u":
-                    rotateUpAndMiddleY("clockwise");
+                case "b'":
+                    rotateBackAndMiddleZ("clockwise");
                     break;
-                case "u'":
+                case "u":
                     rotateUpAndMiddleY("anti-clockwise");
                     break;
+                case "u'":
+                    rotateUpAndMiddleY("clockwise");
+                    break;
                 case "d":
-                    rotateDownAndMiddleY("clockwise");
+                    rotateDownAndMiddleY("anti-clockwise");
                     break;
                 case "d'":
-                    rotateDownAndMiddleY("anti-clockwise");
+                    rotateDownAndMiddleY("clockwise");
                     break;
                 case "E":
                     rotateLayer("y", 0, "clockwise");
