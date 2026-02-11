@@ -31,18 +31,20 @@ import {
 右面(R)中心块：x=1, y=0, z=0，即 position 为 1, 0, 0
 左面(L)中心块：x=-1, y=0, z=0，即 position 为 -1, 0, 0
  */
-const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlindCode }) => {
+const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlindCode,showFaces }) => {
     const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
     const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
 
-    let formula = localStorage.getItem("currentFormula");
-    let showFaces = [];
-    if (formula !== null) {
-        formula = JSON.parse(formula);
-        showFaces = formula.包含面 ? formula.包含面 : [];
-    }
+    // let formula = localStorage.getItem("currentFormula");
+    // let showFaces = [];
+    // if (formula !== null) {
+    //     formula = JSON.parse(formula);
+    //     showFaces = formula.包含面 ? formula.包含面 : [];
+    // }
 
     function GetFaceColor(position, color, face) {
+        const type = localStorage.getItem("type");
+      
         if (showFaceColor || showFaces.length === 0) return color;
         let result = "gray";
         const code = blindCode.find((x) => x.id === position[3] && x.面 === face);
@@ -76,6 +78,7 @@ const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlind
      function GetLabel(position, face) {
         if (!showCode) return "";
         const type = localStorage.getItem("type");
+        
         let code = blindCode.find((x) => (x.id === position[3]) && x.面 === face);
 
         if (code) {
@@ -189,6 +192,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     const [cubeRefs, setCubeRefs] = useState([]);
     const [showCode, setShowCode] = useState(false);
     const [showFaceColor, setShowFaceColor] = useState([]);
+    const [showFaces, setShowFaces] = useState([]);
     const rotateStatus = useRef(false);
     const [showBlindCode, setshowBlindCode] = useState(true); //显示编码类型
     //用于在二维中映射三维立方体的初始立方体
@@ -1182,6 +1186,8 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
     const setShowFacesValue = (showFaceColor) => {
         setShowFaceColor(showFaceColor);
     };
+    const setShowFacesArray=(showFaces) =>
+    setShowFaces(showFaces);
     const setShowBlindCodeValue = (showBlindCode) => {
         setshowBlindCode(showBlindCode);
     };
@@ -1205,7 +1211,8 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
         setNewCube: setNewCube,
         setShowCodeValue: setShowCodeValue,
         setShowFacesValue: setShowFacesValue,
-        setShowBlindCodeValue: setShowBlindCodeValue
+        setShowBlindCodeValue: setShowBlindCodeValue,
+        setShowFacesArray: setShowFacesArray,
     }));
     return (
         <div className="flex items-center justify-center w-full h-full position-relative">
@@ -1224,6 +1231,7 @@ const RubiksCube = forwardRef((blindCodeData, refProp) => {
                                 showFaceColor={showFaceColor}
                                 blindCode={blindCodeData.blindCodeData}
                                 showBlindCode={showBlindCode}
+                                showFaces={showFaces}
                             />
                         ))}
                     </group>

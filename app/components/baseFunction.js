@@ -81,7 +81,7 @@ export function GetCFOPFaces(type) {
     let result = []
     switch (type) {
         case "F2L":
-            result = "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ");
+            result = "WMN OPQ RST QR ST WX YZ".toLocaleLowerCase().split(" ");
             break;
         case "PLL":
             result = "U1 U2 U3 U4 U5 U6 U7 U8 U9".split(" ");
@@ -178,20 +178,37 @@ export async function loadData() {
         headers = rawData[0];
 
         // 将数据转换为对象数组，使用表头作为属性名
+    
         data = rawData.slice(1).map((row) => {
             const obj = {};
             headers.forEach((header, index) => {
                 obj[header] = row[index];
             });
+            obj.名称=obj.分组+"-"+obj.棱角相邻+"-"+obj.棱色相+"-转体:"+obj.转体;
             return obj;
         });
+        //排序：类型 名称 公式 棱角相邻 棱色相 分组 转体 排序
         data = data.sort((a, b) => {
-            // 先比较分组
+            //排序规则：
+            // 1. 先比较分组
+            // 2. 分组相同时比较棱角相邻
+            // 3. 棱角相邻相同时比较棱色相：正确排在前面
+            // 4. 棱色相相同时比较转体
+            // 5. 转体相同时比较排序
             if (a.分组 !== b.分组) {
                 return a.分组.localeCompare(b.分组);
             }
-            // 分组相同时比较名称
-            return a.排序 ? a.排序 > b.排序 : a.名称.localeCompare(b.名称);
+            if (a.棱角相邻 !== b.棱角相邻) {
+                return a.棱角相邻 > b.棱角相邻 ? -1 : 1;
+            }
+            if (a.棱色相 !== b.棱色相) {
+                //正确、错误：正确排在前面
+                return a.棱色相 === "正确" ? -1 : 1;
+            }
+            if (a.转体 !== b.转体) {
+                return a.转体.localeCompare(b.转体);
+            }
+            return a.排序 ? a.排序 > b.排序 ? -1 : 1 : a.名称.localeCompare(b.名称);
         });
         result.cfop = data;
         //#endregion

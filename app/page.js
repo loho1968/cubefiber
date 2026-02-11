@@ -45,13 +45,16 @@ export default function Home() {
     const [totalSteps, setTotalSteps] = useState(0); //公式总步数
 
     const [cfopGroups, setCfopGroups] = useState([]);
+    const [cfopEdgeColorGroups, setCfopEdgeColorGroups] = useState([]);
+    const [cfopAdjacentGroups, setCfopAdjacentGroups] = useState([]);
+    const [cfopRotateGroups, setCfopRotateGroups] = useState([]);
     const [keydownEnabled, setKeydownEnabled] = useState(false);
 
     const [edgeChecked, setEdgeChecked] = useState(true); //盲拧公式的：角块、棱块类型
     const [search, setSearch] = useState(""); //盲拧搜索编码
     const [allColorChecked, setAllColorChecked] = useState(false); //颜色显示
     const [showCodeChecked, setShowCodeChecked] = useState(true);
-    const [showBlindCode,setshowBlindCode] = useState(true) //显示编码类型
+    const [showOnlyRelated,setshowOnlyRelated] = useState(true) //显示编码类型
     const cfopColumns = [
         {
             title: "名称",
@@ -76,6 +79,36 @@ export default function Home() {
             defaultSortOrder: "descend",
             filters: cfopGroups,
             onFilter: (value, record) => record.分组.indexOf(value) === 0,
+        },{
+            title: "棱色相",
+            dataIndex: "棱色相",
+            align: "center",
+            showSorterTooltip: {target: "full-header"},
+            sorter: (a, b) => a.棱色相 > b.棱色相,
+            sortDirections: ["ascend", "descend"],
+            defaultSortOrder: "descend",
+            filters: cfopEdgeColorGroups,
+            onFilter: (value, record) => record.棱色相.indexOf(value) === 0,
+        },{
+            title: "棱角相邻",
+            dataIndex: "棱角相邻",
+            align: "center",
+            showSorterTooltip: {target: "full-header"},
+            sorter: (a, b) => a.棱角相邻 > b.棱角相邻,
+            sortDirections: ["ascend", "descend"],
+            defaultSortOrder: "descend",
+            filters: cfopAdjacentGroups,
+            onFilter: (value, record) => record.棱角相邻.indexOf(value) === 0,
+        },{
+            title: "转体",
+            dataIndex: "转体",
+            align: "center",
+            showSorterTooltip: {target: "full-header"},
+            sorter: (a, b) => a.转体 > b.转体,
+            sortDirections: ["ascend", "descend"],
+            defaultSortOrder: "descend",
+            filters: cfopRotateGroups,
+            onFilter: (value, record) => record.转体.indexOf(value) === 0,
         },
     ];
     const referenceColumns = [
@@ -133,11 +166,21 @@ export default function Home() {
                 return {text: item, value: item};
             });
             setCfopGroups(tmp);
+            //棱色相分组
+            tmp = getCFOPGroupByField(res.cfop, "棱色相").map((item) => ({text: item, value: item}));
+            setCfopEdgeColorGroups(tmp);
+            //棱角相邻分组
+            tmp = getCFOPGroupByField(res.cfop, "棱角相邻").map((item) => ({text: item, value: item}));
+            setCfopAdjacentGroups(tmp);
+            //转体分组
+            tmp = getCFOPGroupByField(res.cfop, "转体").map((item) => ({text: item, value: item}));
+            setCfopRotateGroups(tmp);
             res.cfop.forEach((item, index) => {
                 item.id = index;
                 item.公式文本 = item.公式;
                 item.公式 = parseFormula(item.公式);
             });
+            
             setCfopFormula(res.cfop);
             //#endregion
 
@@ -255,10 +298,20 @@ export default function Home() {
     //获取CFOP公式分组
     const getCFOPGroup = (data) => {
         let groups = [];
-        //把cfopFormula按“分组”属性进行分组，获得分组列表
         data.forEach((item) => {
             if (!groups.includes(item.分组)) {
                 groups.push(item.分组);
+            }
+        });
+        return groups;
+    };
+    //按指定字段获取CFOP分组
+    const getCFOPGroupByField = (data, field) => {
+        let groups = [];
+        data.forEach((item) => {
+            const v = item[field];
+            if (v !== undefined && !groups.includes(v)) {
+                groups.push(v);
             }
         });
         return groups;
@@ -285,7 +338,7 @@ export default function Home() {
         // if (formulaType === "cfop") {
         //     record.包含面 = //GetCFOPFaces(cfopType);
         // }
-        if(record.包含面.length === 0) record.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ")
+        if(record.包含面.length === 0) record.包含面 = formulaType !== "cfop" ? [] : "WMN OPQ RST XYZ QR ST WX YZ".toLowerCase().split(" ")
         setCurrentFormula(record);
         setCurrentStep(0);
         setTotalSteps(record.公式.length);
@@ -325,9 +378,25 @@ export default function Home() {
     };
 
     //切换显示编码
-    const setshowBlindCodeValue=(checked)=>{
-        setshowBlindCode(checked);
-        rubiksCubeRef.current.setShowBlindCodeValue(checked)
+    const setshowOnlyRelatedValue=(onlyRelated)=>{
+        setshowOnlyRelated(onlyRelated);
+        let facesArray=[]
+        if(onlyRelated || currentFormula.包含面.length === 0){
+            switch (formulaType) {
+                case "cfop":
+                    facesArray = GetCFOPFaces(cfopType);
+                    break;
+                case "special":
+                    facesArray = [];
+                    break;
+                default:
+                    facesArray = [];
+                    break;
+            }
+        }else{
+            facesArray = currentFormula.包含面;
+        }
+        rubiksCubeRef.current.setShowFacesArray(facesArray)
     }
     //盲拧编码搜索
     const setSearchValue = (value) => {
@@ -344,6 +413,19 @@ export default function Home() {
         setTotalSteps(formula.公式.length);
         setCurrentFormula(formula);
         formula.逆向公式 = getReverseFormula(formula.公式);
+        if(showOnlyRelated){
+            switch (formulaType) {
+                case "cfop":
+                    formula.包含面 = GetCFOPFaces(cfopType);
+                    break;
+                case "special":
+                    formula.包含面 = [];
+                    break;
+                default:
+                    formula.包含面 = [];
+                    break;
+            }
+        }
         // formula.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ") //GetCFOPFaces(cfopType);
         initCube(formula);
     };
@@ -502,10 +584,10 @@ export default function Home() {
                         { (
                             <div className="ml-4">
                                 <Switch
-                                    checkedChildren="盲码"
-                                    unCheckedChildren="面码"
-                                    checked={showBlindCode}
-                                    onChange={setshowBlindCodeValue}
+                                    checkedChildren="固定相关面"
+                                    unCheckedChildren="设置相关面"
+                                    checked={showOnlyRelated}
+                                    onChange={setshowOnlyRelatedValue}
                                 />
                             </div>
                         )}
@@ -530,7 +612,7 @@ export default function Home() {
                             size="large"
                             showSorterTooltip={{target: "sorter-icon"}}
                             pagination={{
-                                position: ["bottomLeft"],
+                                placement: ["bottomLeft"],
                                 align: "start",
                                 pageSize: 20,
                                 hideOnSinglePage: true,
