@@ -2,7 +2,6 @@
  * 做一个react的header组件，用tailwindcss，左边有一个图标+App的title,宽度110px，宽度可配置；右边依次dark、light主题切换按钮；中文、英文切换按钮。中间靠右对齐，可以传入的其他导航菜单组件，比如消息显示、下拉菜单。header高度缺省64px,可配置。缺省固定在Top，可配置或通过方法隐藏、显示
  */
 import React from "react";
-import "@ant-design/v5-patch-for-react-19";
 import { Button } from "antd";
 import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 

@@ -1,5 +1,4 @@
 'use client'
-import '@ant-design/v5-patch-for-react-19';
 import { Button } from "antd";
 import Image from "next/image";
 import { Canvas, useFrame } from '@react-three/fiber'
