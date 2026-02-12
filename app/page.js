@@ -70,9 +70,6 @@ export default function Home() {
       title: "分组",
       dataIndex: "分组",
       align: "center",
-      showSorterTooltip: { target: "full-header" },
-      sorter: (a, b) => a.分组 > b.分组,
-      sortDirections: ["ascend", "descend"],
       defaultSortOrder: "descend",
       filters: cfopGroups,
       onFilter: (value, record) => record.分组.indexOf(value) === 0,
@@ -81,9 +78,6 @@ export default function Home() {
       title: "棱色相",
       dataIndex: "棱色相",
       align: "center",
-      showSorterTooltip: { target: "full-header" },
-      sorter: (a, b) => a.棱色相 > b.棱色相,
-      sortDirections: ["ascend", "descend"],
       defaultSortOrder: "descend",
       filters: cfopEdgeColorGroups,
       onFilter: (value, record) => record.棱色相.indexOf(value) === 0,
@@ -92,9 +86,6 @@ export default function Home() {
       title: "棱角相邻",
       dataIndex: "棱角相邻",
       align: "center",
-      showSorterTooltip: { target: "full-header" },
-      sorter: (a, b) => a.棱角相邻 > b.棱角相邻,
-      sortDirections: ["ascend", "descend"],
       defaultSortOrder: "descend",
       filters: cfopAdjacentGroups,
       onFilter: (value, record) => record.棱角相邻.indexOf(value) === 0,
@@ -103,9 +94,6 @@ export default function Home() {
       title: "同层",
       dataIndex: "同层",
       align: "center",
-      showSorterTooltip: { target: "full-header" },
-      sorter: (a, b) => (a.同层 || "") > (b.同层 || ""),
-      sortDirections: ["ascend", "descend"],
       defaultSortOrder: "descend",
       filters: cfopSameLayerGroups,
       onFilter: (value, record) => (record.同层 || "").indexOf(value) === 0,
@@ -114,9 +102,6 @@ export default function Home() {
       title: "手向",
       dataIndex: "手向",
       align: "center",
-      showSorterTooltip: { target: "full-header" },
-      sorter: (a, b) => (a.手向 || "") > (b.手向 || ""),
-      sortDirections: ["ascend", "descend"],
       defaultSortOrder: "descend",
       filters: cfopHandGroups,
       onFilter: (value, record) => (record.手向 || "").indexOf(value) === 0,
@@ -125,9 +110,6 @@ export default function Home() {
       title: "转体",
       dataIndex: "转体",
       align: "center",
-      showSorterTooltip: { target: "full-header" },
-      sorter: (a, b) => a.转体 > b.转体,
-      sortDirections: ["ascend", "descend"],
       defaultSortOrder: "descend",
       filters: cfopRotateGroups,
       onFilter: (value, record) => record.转体.indexOf(value) === 0,
@@ -500,8 +482,8 @@ export default function Home() {
   };
 
   const showFaceSetup = (formula, allColorChecked, showOnlyRelated) => {
-    let faces = formula.包含面 && formula.包含面.length > 0 ? formula.包含面.toLowerCase() : "";
-    faces = faces.length > 0 ? faces.split(" ") : [];
+    let faces = formula.包含面 && formula.包含面.length > 0 ? formula.包含面: "";
+    faces = faces.length > 0  && typeof(faces) === "string" ? faces.split(" ") : faces;
     if (formulaType.toLowerCase() === "cfop") {
       faces = faces.length === 0 || showOnlyRelated ? GetCFOPFaces(formula.类型) : faces;
     }
