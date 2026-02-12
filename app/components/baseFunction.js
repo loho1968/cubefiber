@@ -190,6 +190,7 @@ export async function loadData() {
         data = data.sort((a, b) => {
             if(!a.排序) a.排序 = 9999999;
             if(!b.排序) b.排序 = 9999999;
+            
             return a.排序 < b.排序 ? -1 : 1 
         });
         result.cfop = data;

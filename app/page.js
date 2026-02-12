@@ -339,16 +339,9 @@ export default function Home() {
   //点击公式行
   const clickRow = (record) => {
     if (formulaType === "reference") return;
+    if(record.包含面.length>0) record.包含面 = record.包含面.toLowerCase();
     record.逆向公式 = getReverseFormula(record.公式);
-    // record.包含面 = record.包含面 ? typeof (record.包含面) === "object" ? record.包含面 : record.包含面.toLowerCase().split(" ") : [];
-    // if (formulaType === "cfop") {
-    //     record.包含面 = //GetCFOPFaces(cfopType);
-    // setShowCodeValue: setShowCodeValue,
-    // setShowFacesValue: setShowFacesValue,
-    // setShowBlindCodeValue: setShowBlindCodeValue,
-    // setShowFacesArray: setShowFacesArray,
-    // }
-    // if(record.包含面.length === 0) record.包含面 = formulaType !== "cfop" ? [] : "WMN OPQ RST XYZ QR ST WX YZ".toLowerCase().split(" ")
+    
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);
@@ -420,7 +413,6 @@ export default function Home() {
           break;
       }
     }
-    // formula.包含面 = formulaType !== "cfop" ? [] : "F4 F6 F7 F9 L4 L6 L7 L9 B4 B6 B7 B9 R4 R6 R7 R9 U2 U4 U6 U8 F2 L2 B2 R2 D1 D3 D4 D6 D7 D9".split(" ") //GetCFOPFaces(cfopType);
     initCube(formula);
   };
   //颜色显示
@@ -487,6 +479,7 @@ export default function Home() {
     if (formulaType.toLowerCase() === "cfop") {
       faces = faces.length === 0 || showOnlyRelated ? GetCFOPFaces(formula.类型) : faces;
     }
+    console.log(faces);
     rubiksCubeRef.current.setShowFacesValue(allColorChecked);
     rubiksCubeRef.current.setShowFacesArray(faces);
   };
