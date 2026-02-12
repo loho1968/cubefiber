@@ -34,7 +34,7 @@ import {
 const Cube = ({ position, refProp, blindCode, showCode, showFaceColor, showBlindCode,showFaces }) => {
     const stickerOffset = 0.535; // 贴纸偏移量，略高于方块表面
     const cubeScale = 1.5; // 添加缩放变量，可以根据需要调整这个值来改变魔方大小
-
+    if(!showFaces) showFaces=[]
     // let formula = localStorage.getItem("currentFormula");
     // let showFaces = [];
     // if (formula !== null) {
