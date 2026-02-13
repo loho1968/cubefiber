@@ -188,10 +188,10 @@ export async function loadData() {
         });
         //排序：类型 名称 公式 棱角相邻 棱色相 分组 转体 排序
         data = data.sort((a, b) => {
-            if(!a.排序) a.排序 = 9999999;
-            if(!b.排序) b.排序 = 9999999;
+            if(!a.序号) a.序号 = 9999999;
+            if(!b.序号) b.序号 = 9999999;
             
-            return a.排序 < b.排序 ? -1 : 1 
+            return a.序号 < b.序号 ? -1 : 1 
         });
         result.cfop = data;
         //#endregion

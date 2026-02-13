@@ -75,20 +75,12 @@ export default function Home() {
       onFilter: (value, record) => record.分组.indexOf(value) === 0,
     },
     {
-      title: "棱色相",
-      dataIndex: "棱色相",
+      title: "颜色",
+      dataIndex: "颜色",
       align: "center",
       defaultSortOrder: "descend",
       filters: cfopEdgeColorGroups,
-      onFilter: (value, record) => record.棱色相.indexOf(value) === 0,
-    },
-    {
-      title: "棱角相邻",
-      dataIndex: "棱角相邻",
-      align: "center",
-      defaultSortOrder: "descend",
-      filters: cfopAdjacentGroups,
-      onFilter: (value, record) => record.棱角相邻.indexOf(value) === 0,
+      onFilter: (value, record) => record.颜色.indexOf(value) === 0,
     },
     {
       title: "同层",
@@ -113,6 +105,10 @@ export default function Home() {
       defaultSortOrder: "descend",
       filters: cfopRotateGroups,
       onFilter: (value, record) => record.转体.indexOf(value) === 0,
+    },{
+      title: "序号",
+      dataIndex: "序号",
+      align: "center",
     },
   ];
   const referenceColumns = [
@@ -174,12 +170,10 @@ export default function Home() {
         return { text: item, value: item };
       });
       setCfopGroups(tmp);
-      //棱色相分组
-      tmp = getCFOPGroupByField(res.cfop, "棱色相").map((item) => ({ text: item, value: item }));
+      //颜色分组
+      tmp = getCFOPGroupByField(res.cfop, "颜色").map((item) => ({ text: item, value: item }));
       setCfopEdgeColorGroups(tmp);
-      //棱角相邻分组
-      tmp = getCFOPGroupByField(res.cfop, "棱角相邻").map((item) => ({ text: item, value: item }));
-      setCfopAdjacentGroups(tmp);
+     
       //同层分组（主要用于F2L）
       tmp = getCFOPGroupByField(res.cfop, "同层").map((item) => ({ text: item, value: item }));
       setCfopSameLayerGroups(tmp);
