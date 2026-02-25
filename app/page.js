@@ -428,9 +428,14 @@ export default function Home() {
   //#endregion
 
   //#region 公式步骤操作
+  //转换为左手公式 
   const toLeft = () => {
     
     if (formulaType === "reference") return;
+    if(tempFormula && tempFormula!==""){
+      setTempFormulaValue(rightToLeft(tempFormula))
+      return;
+    }
     const record = currentFormula;
     let faces=record.包含面.split(" ");
     if (handType === "左手") {
@@ -636,6 +641,11 @@ export default function Home() {
               </div>
             }
             <div className="ml-4 mt-[-4px] text-sm">键盘: {keydownEnabled ? "开" : "关"}</div>
+            <div className="ml-auto">
+              <a href="/Cube+Academy+Free+F2L.pdf" target="_blank" rel="noopener noreferrer">
+                <Button type="primary">打开 F2L PDF</Button>
+              </a>
+            </div>
           </div>
         </div>
       </HeaderBase>
