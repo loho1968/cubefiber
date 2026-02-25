@@ -74,6 +74,41 @@ export function parseFormula(formula) {
     return moves || [];
 }
 
+export function rightToLeft(input) {
+    const isArray = Array.isArray(input);
+    const tokens = isArray ? input : parseFormula(input);
+//F' R U R' U' R' F R 
+    const swapRL = (c) => {
+        if (c === "R") return "L";
+        if (c === "L") return "R";
+        if (c === "r") return "l";
+        if (c === "l") return "r";
+        return c;
+    };
+
+    const mapped = tokens.map((t) => {
+        if (!t || typeof t !== "string") return t;
+        const head = t[0];
+        const rest = t.slice(1);
+        const has2 = rest.includes("2");
+        const hasPrime = rest.includes("'");
+
+        let base = swapRL(head);
+        let primeStr = hasPrime ? "'" : "";
+        let twoStr = has2 ? "2" : "";
+
+        // 镜像需要翻转除双击外的方向
+        if (!has2) {
+            primeStr = hasPrime ? "" : "'";
+        }
+
+        // 统一输出顺序：字母 + 2(若有) + '(若有)
+        return base + twoStr + primeStr;
+    });
+
+    return isArray ? mapped : mapped.join(" ");
+}
+
 /*
  * CFOP公式包含面
  * */

@@ -4,7 +4,7 @@ import { Button, Radio, Switch, Table } from "antd";
 import { LeftOutlined, RightOutlined, VerticalLeftOutlined, VerticalRightOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import { useEffect, useRef, useState } from "react";
-import { getReverseFormula, loadData, parseFormula, transform, GetCFOPFaces } from "./components/baseFunction";
+import { getReverseFormula, loadData, parseFormula, transform, GetCFOPFaces, rightToLeft } from "./components/baseFunction";
 import MainCube from "./components/RubiksCube";
 
 export default function Home() {
@@ -105,7 +105,8 @@ export default function Home() {
       defaultSortOrder: "descend",
       filters: cfopRotateGroups,
       onFilter: (value, record) => record.转体.indexOf(value) === 0,
-    },{
+    },
+    {
       title: "序号",
       dataIndex: "序号",
       align: "center",
@@ -141,7 +142,7 @@ export default function Home() {
 
   const [cubeFormula, setCubeFormula] = useState([]); //用于表格显示的公式数据,
   const [tempFormula, setTempFormula] = useState("");
-
+  const [handType, setHandType] = useState("左手");
   const [cfopType, setCfopType] = useState("F2L");
 
   const [formulaType, setFormulaType] = useState("blind");
@@ -173,7 +174,7 @@ export default function Home() {
       //颜色分组
       tmp = getCFOPGroupByField(res.cfop, "颜色").map((item) => ({ text: item, value: item }));
       setCfopEdgeColorGroups(tmp);
-     
+
       //同层分组（主要用于F2L）
       tmp = getCFOPGroupByField(res.cfop, "同层").map((item) => ({ text: item, value: item }));
       setCfopSameLayerGroups(tmp);
@@ -333,9 +334,13 @@ export default function Home() {
   //点击公式行
   const clickRow = (record) => {
     if (formulaType === "reference") return;
-    if(record.包含面.length>0) record.包含面 = record.包含面.toLowerCase();
+    setHandType("左手")
+    if(record.右手公式){
+      record.公式=record.右手公式;
+    }
+    if (record.包含面.length > 0) record.包含面 = record.包含面.toLowerCase();
     record.逆向公式 = getReverseFormula(record.公式);
-    
+
     setCurrentFormula(record);
     setCurrentStep(0);
     setTotalSteps(record.公式.length);
@@ -423,6 +428,83 @@ export default function Home() {
   //#endregion
 
   //#region 公式步骤操作
+  const toLeft = () => {
+    
+    if (formulaType === "reference") return;
+    const record = currentFormula;
+    let faces=record.包含面.split(" ");
+    if (handType === "左手") {
+      record.右手公式 = record.公式;
+      record.公式 = rightToLeft(record.公式);
+      
+      faces.forEach((item) => {
+        switch (item) {
+          case "gh":
+            item = "cd";
+            break;
+          case "qr":
+            item = "st";
+            break;
+          case "yz":
+            item = "ws";
+            break;
+          case "jkl":
+            item = "abc";
+            break;
+          case "ghi":
+            item = "def";
+            break;
+          case "rst":
+            item = "opq";
+            break;
+          case "xyz":
+            item = "wmn";
+            break;
+        }
+      });
+    }else{
+      record.公式=record.右手公式;
+       faces.forEach((item) => {
+        switch (item) {
+          case "cd":
+            item = "gh";
+            break;
+          case "st":
+            item = "qr";
+            break;
+          case "ws":
+            item = "yz";
+            break;
+          case "abc":
+            item = "jkl";
+            break;
+          case "def":
+            item = "ghi";
+            break;
+          case "opq":
+            item = "rst";
+            break;
+          case "wmn":
+            item = "xyz";
+            break;
+        }
+      });
+    }
+    record.包含面=faces.join(" ");
+    if (record.包含面.length > 0) record.包含面 = record.包含面.toLowerCase();
+    record.逆向公式 = getReverseFormula(record.公式);
+
+    setCurrentFormula(record);
+    setCurrentStep(0);
+    setTotalSteps(record.公式.length);
+    initCube(record);
+    if (handType === "右手") {
+      setHandType("左手");
+    } else {
+      setHandType("右手");
+    }
+    console.log(1);
+  };
   //按公式重置
   const firstStep = () => {
     if (currentStep === 0) return;
@@ -468,8 +550,8 @@ export default function Home() {
   };
 
   const showFaceSetup = (formula, allColorChecked, showOnlyRelated) => {
-    let faces = formula.包含面 && formula.包含面.length > 0 ? formula.包含面: "";
-    faces = faces.length > 0  && typeof(faces) === "string" ? faces.split(" ") : faces;
+    let faces = formula.包含面 && formula.包含面.length > 0 ? formula.包含面 : "";
+    faces = faces.length > 0 && typeof faces === "string" ? faces.split(" ") : faces;
     if (formulaType.toLowerCase() === "cfop") {
       faces = faces.length === 0 || showOnlyRelated ? GetCFOPFaces(formula.类型) : faces;
     }
@@ -514,7 +596,15 @@ export default function Home() {
                   buttonStyle="solid"></Radio.Group>
               </div>
             )}
-
+            <div className="mt-[-4px] ml-4">
+              <Button
+                type="primary"
+                onClick={() => {
+                  (toLeft(this), console.log(this));
+                }}>
+                {handType}
+              </Button>
+            </div>
             {formulaType === "blind" && (
               <div className="flex ml-4">
                 <div className="mr-4">
